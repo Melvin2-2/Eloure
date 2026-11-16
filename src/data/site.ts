@@ -6,7 +6,7 @@ export const site = {
   legalName: 'Eloure GmbH',
   claim: 'Laserhaarentfernung in Amriswil',
   url: 'https://www.elourethestudio.ch',
-  team: ['Corine', 'Caro'],
+  team: ['Caro', 'Sarah'], // Caro = Inhaberin, Sarah = Mitarbeiterin
 
   address: {
     street: 'Bahnhofstrasse 20',
@@ -38,7 +38,11 @@ export const site = {
 
   cancellationHours: 24,
   payment: 'Bezahlt wird erst vor Ort – nach deinem Termin.',
-  experience: 'Fast 5 Jahre Erfahrung',
+  experience: '5 Jahre Erfahrung',
+  paymentMethods: 'Bar, TWINT oder Karte',
+  parking: 'Parkplätze direkt an der Strasse',
+  // Google-Bewertungen (Link aus Google Business Profil)
+  googleReviewsUrl: 'https://share.google/16LOJS7FUaPbZWTDE',
 } as const;
 
 // Neukunden-Aktion (Paid Ads). Der Code wird im Checkout eingelöst.

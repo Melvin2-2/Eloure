@@ -16,6 +16,7 @@ const data = {
     group: s.group,
     minutes: s.minutes,
     price: s.price,
+    priceLabel: s.priceLabel ?? null,
     single: !!s.single,
     requires: s.requires ?? [],
     note: s.note ?? '',
@@ -118,7 +119,7 @@ const data = {
                               <strong>{s.name}</strong>
                               <small>{s.note}</small>
                               <span class="fv-meta">
-                                {duration(s.minutes)} · <b>kostenlos</b>
+                                {duration(s.minutes)} · {s.priceLabel ? <span>{s.priceLabel}</span> : <b>kostenlos</b>}
                               </span>
                             </span>
                             <span class="tick" aria-hidden="true">
@@ -264,7 +265,7 @@ const data = {
               <div class="sum-total"><span>Total</span><span data-sum-total>CHF 0</span></div>
             </div>
             <ul class="sum-trust">
-              <li><Icon name="check" size={15} /> Bezahlt wird erst vor Ort</li>
+              <li><Icon name="check" size={15} /> Bezahlt wird vor Ort – bar, TWINT oder Karte</li>
               <li><Icon name="check" size={15} /> Kostenlos absagen bis {site.cancellationHours} Std. vorher</li>
               <li><Icon name="check" size={15} /> Persönliche Beratung inklusive</li>
             </ul>
@@ -1235,6 +1236,7 @@ const data = {
     group: 'frauen' | 'maenner';
     minutes: number;
     price: number | null;
+    priceLabel: string | null;
     single: boolean;
     requires: string[];
     note: string;
@@ -1278,9 +1280,10 @@ const data = {
   const selectedList = () => [...state.selected].map((id) => byId.get(id)!).filter(Boolean);
   const totalMinutes = () => selectedList().reduce((a, s) => a + s.minutes, 0);
   const subtotal = () => selectedList().reduce((a, s) => a + (s.price ?? 0), 0);
+  // Rabatt pro Behandlung auf ganze Franken gerundet (identisch mit den Preisen auf der Landingpage)
   const discount = () => {
     if (!state.code || state.returning) return 0;
-    return subtotal() - round05((subtotal() * (100 - data.promo.percent)) / 100);
+    return selectedList().reduce((a, s) => a + (s.price ? s.price - Math.round((s.price * (100 - data.promo.percent)) / 100) : 0), 0);
   };
 
   // ——— Schritt 1: Auswahl ———
@@ -1571,7 +1574,7 @@ const data = {
   function submit() {
     // Visuelle Demo – hier würde die Buchung an das Buchungssystem übergeben.
     const name = String(new FormData(form).get('vorname') ?? '').trim();
-    const onlyConsult = selectedList().every((s) => s.price === null);
+    const onlyConsult = selectedList().every((s) => s.id === 'beratungsgespraech');
     $('[data-success-title]').textContent = `Danke${name ? ', ' + name : ''}! Deine Anfrage ist bei uns.`;
     $('[data-success-text]').textContent = `Wir haben deinen Wunschtermin am ${whenText()} notiert und bestätigen ihn dir per E-Mail. ${
       onlyConsult ? 'Bring einfach all deine Fragen mit – wir nehmen uns Zeit für dich.' : 'Wir freuen uns auf dich!'
@@ -1587,7 +1590,7 @@ const data = {
     if (!list.length) ul.innerHTML = '<li class="sum-empty">Noch nichts ausgewählt.</li>';
     list.forEach((s) => {
       const li = document.createElement('li');
-      li.innerHTML = `<span></span><span>${s.price === null ? 'kostenlos' : fmtChf(s.price)}</span>`;
+      li.innerHTML = `<span></span><span>${s.priceLabel ?? (s.price === null ? 'kostenlos' : fmtChf(s.price))}</span>`;
       li.firstElementChild!.textContent = s.name;
       ul.append(li);
     });

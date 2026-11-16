@@ -1,25 +1,35 @@
 ---
+import Icon from './Icon.astro';
 import { reviews, googleRating } from '../data/reviews';
+import { site } from '../data/site';
+
 interface Props {
   title?: string;
 }
-const { title = 'Was unsere Kund:innen sagen' } = Astro.props;
+const { title = 'Was unsere Kund:innen <em>sagen</em>' } = Astro.props;
 ---
 
-{
-  reviews.length > 0 && (
-    <section class="section reviews">
-      <div class="wrap">
-        <div class="section-head">
-          <h2>{title}</h2>
-          {googleRating && (
-            <p class="lead">
-              <a href={googleRating.url} target="_blank" rel="noopener">
-                {googleRating.rating.toFixed(1)} von 5 Sternen · {googleRating.count} Google-Bewertungen
-              </a>
-            </p>
-          )}
-        </div>
+<section class="section reviews bg-paper">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <h2 set:html={title} />
+        <p class="lead">
+          Viele unserer Kundinnen und Kunden haben ihre Erfahrungen auf Google geteilt. Lies selbst, wie sie sich bei uns
+          gefühlt haben – vom ersten Termin bis zum Ergebnis.
+        </p>
+      </div>
+      <a class="g-card" href={site.googleReviewsUrl} target="_blank" rel="noopener">
+        <span class="g-stars" aria-hidden="true">★★★★★</span>
+        <span class="g-title">
+          {googleRating ? `${googleRating.rating.toFixed(1).replace('.', ',')} von 5 · ${googleRating.count} Bewertungen` : 'Bewertungen auf Google'}
+        </span>
+        <span class="g-go">Alle Bewertungen lesen <Icon name="arrow" size={15} /></span>
+      </a>
+    </div>
+
+    {
+      reviews.length > 0 && (
         <div class="grid">
           {reviews.map((r) => (
             <figure class="reveal">
@@ -28,19 +38,76 @@ const { title = 'Was unsere Kund:innen sagen' } = Astro.props;
               <figcaption>
                 <strong>{r.name}</strong>
                 {r.treatment && <span> · {r.treatment}</span>}
+                <span class="src"> · Google</span>
               </figcaption>
             </figure>
           ))}
         </div>
-      </div>
-    </section>
-  )
-}
+      )
+    }
+  </div>
+</section>
 
 <style>
+  .head {
+    display: grid;
+    gap: 28px 64px;
+    align-items: end;
+  }
+
+  @media (min-width: 900px) {
+    .head {
+      grid-template-columns: 1.4fr 0.6fr;
+    }
+  }
+
+  .head .lead {
+    margin-bottom: 0;
+  }
+
+  .g-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 24px;
+    border-radius: var(--radius);
+    background: var(--ink);
+    color: var(--paper);
+    text-decoration: none;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+
+  .g-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-l);
+  }
+
+  .g-stars {
+    color: var(--lime);
+    letter-spacing: 3px;
+    font-size: 1.2rem;
+  }
+
+  .g-title {
+    font-family: var(--serif);
+    font-size: 1.7rem;
+    line-height: 1.1;
+  }
+
+  .g-go {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--lime);
+  }
+
   .grid {
     display: grid;
     gap: 16px;
+    margin-top: 48px;
   }
 
   @media (min-width: 900px) {
@@ -53,8 +120,7 @@ const { title = 'Was unsere Kund:innen sagen' } = Astro.props;
     margin: 0;
     padding: 28px;
     border-radius: var(--radius);
-    background: var(--paper);
-    border: 1px solid var(--line);
+    background: var(--bg);
   }
 
   .stars {

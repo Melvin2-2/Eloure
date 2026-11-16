@@ -1,12 +1,26 @@
 ---
 import Base from '../layouts/Base.astro';
 import Legal from '../components/Legal.astro';
-// Übernommen von der bisherigen Website. Vor dem Livegang an neues Hosting & Schweizer revDSG anpassen.
-import text from '../data/legal/datenschutz.html?raw';
+import { site } from '../data/site';
+// Platzhalter: Die alte Fassung (Wix-Hosting, alte Adresse Balgach, DSGVO/TTDSG) liegt unter
+// src/data/legal/datenschutz.html. Vor dem Livegang auf neues Hosting & Schweizer revDSG anpassen.
 ---
 
-<Base title="Datenschutz | Eloure The Studio" description="Datenschutzerklärung der Eloure GmbH.">
+<Base title="Datenschutz | Eloure The Studio" description="Datenschutzerklärung der Eloure GmbH." noindex>
   <Legal title="Datenschutzerklärung">
-    <Fragment set:html={text} />
+    <p class="placeholder">
+      Hinweis: Diese Datenschutzerklärung wird vor dem Livegang der neuen Website aktualisiert (Hosting, Buchungssystem,
+      Kontaktformular, Schweizer Datenschutzgesetz revDSG).
+    </p>
+    <h3>Verantwortliche Stelle</h3>
+    <p>
+      {site.legalName}<br />
+      {site.address.street}<br />
+      {site.address.zip} {site.address.city}<br />
+      Telefon: <a href={site.phoneHref}>+41 76 529 71 29</a><br />
+      E-Mail: <a href={`mailto:${site.email}`}>{site.email}</a>
+    </p>
+    <h3>Fragen zum Datenschutz</h3>
+    <p>Bei Fragen zu deinen Daten kannst du dich jederzeit unter den oben genannten Kontaktdaten an uns wenden.</p>
   </Legal>
 </Base>

@@ -22,8 +22,8 @@ export const faqGroups: FaqGroup[] = [
       {
         id: 'schmerz',
         q: 'Tut Laserhaarentfernung weh?',
-        a: `<p>Du spürst bei jedem Impuls eine kurze, punktuelle Wärme. Wie intensiv sich das anfühlt, hängt von der Zone, der Haardichte und deinem eigenen Empfinden ab.</p>
-<p>Wir sagen dir vorher genau, was dich erwartet, fragen während der Behandlung nach und passen die Einstellungen an dich an. Eine Pause ist jederzeit okay – du gibst das Tempo vor.</p>`,
+        a: `<p>Ehrlich gesagt: Das ist sehr individuell. Viele beschreiben es als kurzes, warmes Pieksen – gut aushaltbar, aber je nach Zone, Haardichte und Tagesform unterschiedlich stark.</p>
+<p>Wir sagen dir vorher, was dich erwartet, fragen während der Behandlung immer wieder nach und passen die Einstellungen an dich an. Eine Pause ist jederzeit okay – du gibst das Tempo vor.</p>`,
       },
       {
         id: 'unangenehm',
@@ -68,7 +68,7 @@ export const faqGroups: FaqGroup[] = [
       {
         id: 'sitzungen',
         q: 'Wie viele Sitzungen brauche ich?',
-        a: `<p>Weil immer nur ein Teil deiner Haare gerade in der Wachstumsphase ist, braucht es mehrere Sitzungen. Je nach Zone, Haardichte, Hauttyp und Hormonhaushalt sind <strong>in der Regel 10 bis 15 Behandlungen</strong> realistisch.</p>
+        a: `<p>Weil immer nur ein Teil deiner Haare gerade in der Wachstumsphase ist, braucht es mehrere Sitzungen. Wie viele es bei dir sind, ist <strong>sehr individuell</strong> – das hängt von Zone, Haardichte, Hauttyp und Hormonhaushalt ab. Darum geben wir dir keine pauschale Zahl, sondern schauen uns deinen Verlauf von Sitzung zu Sitzung an.</p>
 <p>Am Anfang liegen etwa 4 bis 8 Wochen zwischen den Terminen. Wenn der Haarwuchs nachlässt, vergrössern wir den Abstand schrittweise auf bis zu 12 Wochen. Zonen mit schnellerem Haarwuchs wie Gesicht oder Achseln brauchen oft etwas mehr Sitzungen.</p>
 <p>Wir arbeiten bewusst nicht mit Standard-Versprechen wie «8 Behandlungen für alle», sondern planen mit dir, was für deinen Körper realistisch ist.</p>`,
       },
@@ -92,7 +92,7 @@ export const faqGroups: FaqGroup[] = [
         id: 'ipl',
         q: 'Laser oder IPL – wo ist der Unterschied?',
         a: `<p>Ein Laser arbeitet mit einem fokussierten Lichtstrahl in einer bestimmten Wellenlänge und trifft die Haarwurzel dadurch sehr gezielt. IPL nutzt ein breites Lichtspektrum, das weniger zielgerichtet und oft weniger effektiv ist.</p>
-<p>Wir arbeiten ausschliesslich mit einem <strong>medizinischen Laser</strong>.</p>`,
+<p>Wir arbeiten ausschliesslich mit einem <strong>medizinischen Diodenlaser</strong>. Er ist vielseitig einsetzbar und bietet eine gute Balance aus Wirksamkeit und Sicherheit – auch bei unterschiedlichen Hauttypen.</p>`,
       },
     ],
   },
@@ -147,7 +147,12 @@ export const faqGroups: FaqGroup[] = [
       {
         id: 'bezahlen',
         q: 'Wann und wie bezahle ich?',
-        a: `<p>Erst <strong>vor Ort, nach deinem Termin</strong>. Online musst du nichts bezahlen.</p>`,
+        a: `<p>Erst <strong>vor Ort, nach deinem Termin</strong> – ganz wie es dir passt: <strong>bar, mit TWINT oder mit Karte</strong>. Online musst du nichts bezahlen.</p>`,
+      },
+      {
+        id: 'parken',
+        q: 'Wo kann ich parken?',
+        a: `<p>Direkt an der Strasse vor dem Studio gibt es Parkplätze. Du findest uns an der Bahnhofstrasse 20 in Amriswil.</p>`,
       },
       {
         id: 'absagen',

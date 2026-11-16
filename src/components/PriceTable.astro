@@ -1,6 +1,6 @@
 ---
 import Icon from './Icon.astro';
-import { byRegion, chf, duration, firstVisit, type Group } from '../data/services';
+import { byRegion, chf, duration, firstVisit, priceText, type Group } from '../data/services';
 
 interface Props {
   initial?: Group;
@@ -54,7 +54,7 @@ const groups: { id: Group; label: string }[] = [
                         {duration(s.minutes)} · {s.note}
                       </span>
                     </div>
-                    <span class="price free">{chf(s.price)}</span>
+                    <span class:list={['price', { free: s.price === null && !s.priceLabel }]}>{priceText(s)}</span>
                     <a class="book" href={`/termin?behandlung=${s.id}&gruppe=${g.id}`} aria-label={`${s.name} buchen`}>
                       <Icon name="arrow" size={16} />
                     </a>

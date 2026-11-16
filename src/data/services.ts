@@ -10,6 +10,7 @@ export interface Service {
   region: string;
   minutes: number;
   price: number | null; // null = kostenlos
+  priceLabel?: string; // überschreibt die Preisanzeige
   note?: string;
   single?: boolean; // kann nur einzeln gebucht werden
   requires?: string[]; // nur in Verbindung mit …
@@ -34,6 +35,8 @@ export const firstVisit: Service[] = [
     region: 'Erster Besuch',
     minutes: 30,
     price: null,
+    // TODO: Preis von Eloure bestätigen lassen – im alten Buchungssystem war kein Preis hinterlegt.
+    priceLabel: 'Preis folgt',
     note: 'Exklusiv für Laserjungfrauen – kann nur einzeln gebucht werden.',
     single: true,
   },
@@ -113,7 +116,9 @@ export function duration(min: number) {
   return m ? `${h} Std. ${m} Min.` : `${h} Std.`;
 }
 
-/** Rabattpreis, auf 5 Rappen gerundet */
+/** Rabattpreis, auf ganze Franken gerundet */
 export function discounted(price: number, percent: number) {
-  return Math.round((price * (100 - percent)) / 100 / 0.05) * 0.05;
+  return Math.round((price * (100 - percent)) / 100);
 }
+
+export const priceText = (s: Service) => s.priceLabel ?? chf(s.price);

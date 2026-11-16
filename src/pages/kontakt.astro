@@ -76,6 +76,7 @@ import imgLounge from '../assets/img/lounge-sofa.jpg';
           {site.address.street}<br />
           {site.address.zip} {site.address.city}
         </address>
+        <p class="park">{site.parking} · Bezahlung: {site.paymentMethods}</p>
         <dl class="hours">
           {site.hours.map((h) => (<div><dt>{h.days}</dt><dd>{h.time}</dd></div>))}
         </dl>
@@ -265,6 +266,11 @@ import imgLounge from '../assets/img/lounge-sofa.jpg';
 
   .pic {
     aspect-ratio: 1;
+  }
+
+  .park {
+    font-weight: 600;
+    margin-bottom: 20px;
   }
 </style>
 
