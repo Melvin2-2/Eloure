@@ -1,0 +1,89 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import PriceTable from '../components/PriceTable.astro';
+import CtaFinal from '../components/CtaFinal.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+import imgLegs from '../assets/img/treatment-closeup.jpg';
+---
+
+<Base
+  title="Preise Laserhaarentfernung Amriswil | Eloure The Studio"
+  description="Alle Preise für Laserhaarentfernung bei Eloure in Amriswil: über 30 Zonen für Frauen und Männer, ab CHF 29 pro Sitzung. Kostenloses Beratungsgespräch möglich."
+>
+  <PageHero
+    title="Behandlungen <em>& Preise</em>"
+    lead="Transparent, pro Sitzung und ohne Vorauszahlung. Wähle deine Zone, und wir kümmern uns um den Rest."
+  />
+
+  <section class="section-tight" style="padding-top:0">
+    <div class="wrap">
+      <ul class="facts">
+        <li><Icon name="check" size={18} /> Bezahlt wird erst vor Ort, nach dem Termin</li>
+        <li><Icon name="check" size={18} /> Persönliche Beratung bei jedem ersten Termin inklusive</li>
+        <li><Icon name="check" size={18} /> Kostenlos verschieben bis {site.cancellationHours} Std. vorher</li>
+      </ul>
+      <PriceTable />
+    </div>
+  </section>
+
+  <section class="section bg-paper">
+    <div class="wrap split wide-left">
+      <div>
+        <h2>Was kostet mich das <em>insgesamt?</em></h2>
+        <p class="lead">Eine ehrliche Frage, die eine ehrliche Antwort verdient.</p>
+        <p>
+          Damit möglichst alle Haarwurzeln in ihrer Wachstumsphase erwischt werden, braucht es mehrere Sitzungen – je nach
+          Zone, Haardichte und Hauttyp sind <strong>in der Regel 10 bis 15 Behandlungen</strong> realistisch. Am Anfang liegen
+          4 bis 8 Wochen dazwischen, später werden die Abstände grösser.
+        </p>
+        <p>
+          Du bezahlst immer nur die Sitzung, die du gerade machst. Bei deinem ersten Termin schauen wir uns deine Haut und Haare
+          genau an und sagen dir, womit du rechnen kannst. Ohne Schönreden.
+        </p>
+        <div class="btn-row" style="margin-top:28px">
+          <a class="btn btn-primary" href="/termin">Termin buchen<span class="arrow"><Icon name="arrow" size={15} /></span></a>
+          <a class="text-link" href="/laserhaarentfernung">Wie die Behandlung wirkt</a>
+        </div>
+      </div>
+      <div class="media pic">
+        <Image src={imgLegs} alt="Laserbehandlung am Unterschenkel mit Kühlgel" widths={[480, 800]} sizes="(min-width: 900px) 40vw, 100vw" />
+      </div>
+    </div>
+  </section>
+
+  <CtaFinal title="Deine Zone gefunden? <em>Dann lass uns starten.</em>" />
+</Base>
+
+<style>
+  .facts {
+    list-style: none;
+    margin: 0 0 48px;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .facts li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .facts :global(svg) {
+    color: var(--ok);
+  }
+
+  .pic {
+    aspect-ratio: 4 / 5;
+  }
+</style>

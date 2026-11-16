@@ -1,0 +1,311 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+
+interface Props {
+  variant: 'full' | 'minimal';
+  ctaHref: string;
+  ctaLabel: string;
+}
+const { variant, ctaHref, ctaLabel } = Astro.props;
+
+const nav = [
+  { href: '/preise', label: 'Behandlungen & Preise' },
+  { href: '/laserhaarentfernung', label: 'So funktioniert’s' },
+  { href: '/studio', label: 'Studio & Team' },
+  { href: '/faq', label: 'FAQ' },
+  { href: '/kontakt', label: 'Kontakt' },
+];
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<header class="site-header" data-header>
+  <div class="wrap bar">
+    <a href="/" class="logo" aria-label={`${site.name} – Startseite`}>
+      <img src="/brand/logo-dark.png" alt="Eloure The Studio" width="368" height="116" />
+    </a>
+
+    {
+      variant === 'full' && (
+        <nav class="nav" aria-label="Hauptnavigation">
+          <ul>
+            {nav.map((n) => (
+              <li>
+                <a href={n.href} aria-current={path === n.href ? 'page' : undefined}>
+                  {n.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+
+    <div class="actions">
+      {
+        variant === 'full' && (
+          <a class="icon-btn hide-s" href={site.phoneHref} aria-label={`Anrufen: ${site.phone}`}>
+            <Icon name="phone" size={19} />
+          </a>
+        )
+      }
+      <a class="btn btn-primary btn-sm hide-xs" href={ctaHref}>{ctaLabel}<span class="arrow"><Icon name="arrow" size={15} /></span></a>
+      {
+        variant === 'full' && (
+          <button class="icon-btn menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" data-menu-toggle>
+            <span class="sr-only">Menü öffnen</span>
+            <Icon name="menu" size={22} class="i-open" />
+            <Icon name="close" size={22} class="i-close" />
+          </button>
+        )
+      }
+    </div>
+  </div>
+
+  {
+    variant === 'full' && (
+      <div class="mobile-nav" id="mobile-nav" hidden data-menu>
+        <nav class="wrap" aria-label="Mobile Navigation">
+          <ul>
+            <li><a href="/">Start</a></li>
+            {nav.map((n) => (
+              <li>
+                <a href={n.href} aria-current={path === n.href ? 'page' : undefined}>
+                  {n.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a class="btn btn-primary btn-block" href={ctaHref}>
+            {ctaLabel}
+            <span class="arrow">
+              <Icon name="arrow" size={15} />
+            </span>
+          </a>
+          <div class="mobile-contact">
+            <a href={site.phoneHref}>
+              <Icon name="phone" size={18} /> {site.phone}
+            </a>
+            <a href={site.whatsappHref} target="_blank" rel="noopener">
+              <Icon name="whatsapp" size={18} /> WhatsApp
+            </a>
+          </div>
+        </nav>
+      </div>
+    )
+  }
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(246, 242, 238, 0.86);
+    backdrop-filter: saturate(1.4) blur(14px);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s ease;
+  }
+
+  .site-header.is-scrolled {
+    border-bottom-color: var(--line);
+  }
+
+  .bar {
+    height: var(--header-h);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .logo {
+    flex: none;
+    display: block;
+  }
+
+  .logo img {
+    height: 36px;
+    width: auto;
+  }
+
+  .nav {
+    margin-left: auto;
+  }
+
+  .nav ul {
+    list-style: none;
+    display: flex;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav a {
+    display: block;
+    padding: 8px 12px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 0.93rem;
+    font-weight: 600;
+    color: var(--ink-2);
+    transition:
+      background 0.2s,
+      color 0.2s;
+  }
+
+  .nav a:hover {
+    color: var(--ink);
+    background: rgba(46, 45, 43, 0.05);
+  }
+
+  .nav a[aria-current='page'] {
+    color: var(--ink);
+    background: var(--paper);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+  }
+
+  .nav + .actions {
+    margin-left: 8px;
+  }
+
+  .btn-sm {
+    min-height: 46px;
+    padding: 0 20px;
+    font-size: 0.92rem;
+  }
+
+  .icon-btn {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition:
+      border-color 0.2s,
+      background 0.2s;
+  }
+
+  .icon-btn:hover {
+    border-color: var(--ink);
+    background: var(--paper);
+  }
+
+  .menu-btn {
+    display: none;
+  }
+
+  .menu-btn :global(.i-close) {
+    display: none;
+  }
+
+  .menu-btn[aria-expanded='true'] :global(.i-close) {
+    display: block;
+  }
+
+  .menu-btn[aria-expanded='true'] :global(.i-open) {
+    display: none;
+  }
+
+  .mobile-nav {
+    position: fixed;
+    inset: var(--header-h) 0 0 0;
+    background: var(--bg);
+    overflow-y: auto;
+    padding-block: 16px 40px;
+  }
+
+  .mobile-nav ul {
+    list-style: none;
+    margin: 0 0 28px;
+    padding: 0;
+  }
+
+  .mobile-nav li a {
+    display: block;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--serif);
+    font-size: 2rem;
+    line-height: 1.1;
+    text-decoration: none;
+  }
+
+  .mobile-nav li a[aria-current='page'] {
+    font-style: italic;
+  }
+
+  .mobile-contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    margin-top: 24px;
+    font-weight: 600;
+  }
+
+  .mobile-contact a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+
+  @media (max-width: 1120px) {
+    .nav {
+      display: none;
+    }
+    .menu-btn {
+      display: grid;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hide-s {
+      display: none;
+    }
+    .logo img {
+      height: 30px;
+    }
+    .btn-sm {
+      padding: 0 14px;
+      min-height: 44px;
+      font-size: 0.88rem;
+    }
+    .btn-sm :global(.arrow) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 359px) {
+    body[data-variant='full'] .hide-xs {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 8);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = document.querySelector<HTMLElement>('[data-menu]');
+  toggle?.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!open));
+    if (menu) menu.hidden = open;
+    document.body.style.overflow = open ? '' : 'hidden';
+  });
+</script>

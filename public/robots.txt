@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /neukundenangebot
+Disallow: /termin
+
+Sitemap: https://www.elourethestudio.ch/sitemap-index.xml

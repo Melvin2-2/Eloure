@@ -1,0 +1,155 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+import img from '../assets/img/lounge-chairs.jpg';
+
+interface Props {
+  title?: string;
+  code?: string;
+}
+const { title = 'Bereit für den ersten Schritt?', code } = Astro.props;
+const q = code ? `?code=${code}` : '';
+---
+
+<section class="section cta-final">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <h2 set:html={title} />
+        <p class="lead">Such dir aus, was sich für dich gerade richtig anfühlt. Beides ist bei uns willkommen.</p>
+
+        <div class="paths">
+          <a class="path main" href={`/termin${q}`}>
+            <span class="label">Ich weiss, was ich möchte</span>
+            <span class="title">Behandlung buchen</span>
+            <span class="sub">Inklusive persönlicher Beratung vor der ersten Session.</span>
+            <span class="go"><Icon name="arrow" size={18} /></span>
+          </a>
+          <a class="path" href={`/termin?behandlung=beratungsgespraech${code ? `&code=${code}` : ''}`}>
+            <span class="label">Ich bin noch unsicher</span>
+            <span class="title">Kostenlos beraten lassen</span>
+            <span class="sub">25 Minuten, unverbindlich, alle Fragen erlaubt.</span>
+            <span class="go"><Icon name="arrow" size={18} /></span>
+          </a>
+        </div>
+
+        <p class="contact muted small">
+          Lieber kurz schreiben? <a href={site.whatsappHref} target="_blank" rel="noopener">WhatsApp</a>{' oder '}
+          <a href={site.phoneHref}>{site.phone}</a> – wir melden uns persönlich.
+        </p>
+      </div>
+      <div class="pic media">
+        <Image src={img} alt="Gemütliche Lounge im Eloure Studio mit weissen Sesseln und Pflanzen" widths={[480, 800]} sizes="(min-width: 900px) 40vw, 100vw" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .card {
+    display: grid;
+    gap: 32px;
+    padding: clamp(24px, 5vw, 64px);
+    border-radius: var(--radius-l);
+    background: var(--linen);
+    overflow: hidden;
+  }
+
+  @media (min-width: 900px) {
+    .card {
+      grid-template-columns: 1.25fr 0.75fr;
+      align-items: stretch;
+    }
+  }
+
+  .pic {
+    position: relative;
+    min-height: 300px;
+    border-radius: var(--radius);
+  }
+
+  .pic :global(img) {
+    position: absolute;
+    inset: 0;
+  }
+
+  .paths {
+    display: grid;
+    gap: 12px;
+    margin: 28px 0 22px;
+  }
+
+  @media (min-width: 640px) {
+    .paths {
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+  }
+
+  .path {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 22px 64px 22px 22px;
+    border-radius: var(--radius);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    text-decoration: none;
+    transition:
+      transform 0.25s,
+      box-shadow 0.25s;
+  }
+
+  .path:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+  }
+
+  .path.main {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  .label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    opacity: 0.7;
+  }
+
+  .title {
+    font-family: var(--serif);
+    font-size: 1.75rem;
+    line-height: 1.1;
+  }
+
+  .sub {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    line-height: 1.45;
+  }
+
+  .go {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--lime);
+    color: var(--ink);
+  }
+
+  .path:not(.main) .go {
+    background: var(--linen);
+  }
+
+  .contact a {
+    color: var(--ink);
+    font-weight: 700;
+  }
+</style>

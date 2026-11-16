@@ -1,0 +1,155 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import FaqList from '../components/FaqList.astro';
+import CtaFinal from '../components/CtaFinal.astro';
+import Icon from '../components/Icon.astro';
+import { faqGroups, allFaqs } from '../data/faq';
+import { site } from '../data/site';
+
+const slug = (t: string) =>
+  t.toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/&/g, 'und').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+---
+
+<Base
+  title="Häufige Fragen zur Laserhaarentfernung | Eloure The Studio"
+  description="Tut Laserhaarentfernung weh? Wie viele Sitzungen brauche ich? Was muss ich vorher beachten? Alle Antworten von Eloure The Studio in Amriswil."
+  schema={[
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: allFaqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() },
+      })),
+    },
+  ]}
+>
+  <PageHero
+    title="Deine Fragen, <em>ehrlich beantwortet</em>"
+    lead="Es gibt keine dummen Fragen – schon gar nicht vor einer Behandlung, die so persönlich ist. Hier findest du alles, was uns am häufigsten gefragt wird."
+  />
+
+  <section class="section-tight" style="padding-top:0">
+    <div class="wrap layout">
+      <nav class="toc" aria-label="Themen">
+        <ul>
+          {faqGroups.map((g) => <li><a href={`#${slug(g.title)}`}>{g.title}</a></li>)}
+        </ul>
+        <div class="toc-help">
+          <p><strong>Nicht fündig geworden?</strong> Schreib uns – wir antworten persönlich.</p>
+          <a class="btn btn-ghost btn-block" href={site.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" size={18} /> WhatsApp</a>
+          <a class="btn btn-ghost btn-block" href={site.phoneHref}><Icon name="phone" size={18} /> {site.phone}</a>
+        </div>
+      </nav>
+
+      <div class="groups">
+        {
+          faqGroups.map((g) => (
+            <section id={slug(g.title)} class="group">
+              <h2>{g.title}</h2>
+              {g.intro && <p class="muted">{g.intro}</p>}
+              <FaqList items={g.items} />
+            </section>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CtaFinal title="Alles klar? <em>Dann bis bald.</em>" />
+</Base>
+
+<style>
+  .layout {
+    display: grid;
+    gap: 40px 72px;
+  }
+
+  @media (min-width: 960px) {
+    .layout {
+      grid-template-columns: 280px 1fr;
+    }
+    .toc {
+      position: sticky;
+      top: calc(var(--header-h) + 32px);
+      align-self: start;
+    }
+  }
+
+  .toc ul {
+    list-style: none;
+    margin: 0 0 28px;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @media (min-width: 960px) {
+    .toc ul {
+      flex-direction: column;
+      gap: 2px;
+    }
+  }
+
+  .toc ul a {
+    display: block;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.93rem;
+  }
+
+  @media (min-width: 960px) {
+    .toc ul a {
+      background: transparent;
+      border: 0;
+      padding: 8px 0;
+      border-radius: 0;
+    }
+    .toc ul a:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .toc-help {
+    display: none;
+    padding: 22px;
+    border-radius: var(--radius);
+    background: var(--paper);
+    border: 1px solid var(--line);
+  }
+
+  .toc-help p {
+    font-size: 0.93rem;
+  }
+
+  .toc-help .btn {
+    margin-top: 8px;
+    min-height: 46px;
+  }
+
+  @media (min-width: 960px) {
+    .toc-help {
+      display: block;
+    }
+  }
+
+  .group + .group {
+    margin-top: 64px;
+  }
+
+  .group h2 {
+    font-size: clamp(2rem, 3.6vw, 2.8rem);
+    margin-bottom: 0.25em;
+  }
+
+  .group > p {
+    margin-bottom: 24px;
+  }
+</style>

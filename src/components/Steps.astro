@@ -1,0 +1,93 @@
+---
+interface Props {
+  dark?: boolean;
+}
+const { dark = false } = Astro.props;
+const steps = [
+  {
+    title: 'Wir lernen uns kennen',
+    text: 'Wir nehmen uns Zeit für ein ausführliches Gespräch: Was wünschst du dir, gibt es medizinische Fragen, welcher Haut- und Haartyp bist du? Daraus entsteht ein realistischer Behandlungsplan – nur für dich.',
+  },
+  {
+    title: 'Deine erste Laser-Session',
+    text: 'Wir erklären dir jeden Schritt, bevor er passiert, bereiten die Haut vor und starten mit dem passenden Laser-Setting. Du kannst jederzeit Fragen stellen oder eine Pause machen.',
+  },
+  {
+    title: 'Wir begleiten dich bis zum Ziel',
+    text: 'Deine Folgetermine planen wir passend zu deinem Haarzyklus. Wir kontrollieren regelmässig den Fortschritt und passen Einstellungen und Abstände an – damit das Ergebnis bleibt.',
+  },
+];
+---
+
+<ol class:list={['steps', { dark }]}>
+  {
+    steps.map((s, i) => (
+      <li class="reveal" style={`transition-delay:${i * 90}ms`}>
+        <span class="num">{i + 1}</span>
+        <h3>{s.title}</h3>
+        <p>{s.text}</p>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 16px;
+    counter-reset: s;
+  }
+
+  @media (min-width: 900px) {
+    .steps {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+  }
+
+  li {
+    position: relative;
+    padding: clamp(24px, 3vw, 36px);
+    border-radius: var(--radius);
+    background: var(--paper);
+    border: 1px solid var(--line);
+  }
+
+  .dark li {
+    background: rgba(252, 250, 248, 0.06);
+    border-color: rgba(252, 250, 248, 0.14);
+  }
+
+  .num {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    margin-bottom: 28px;
+    border-radius: 50%;
+    background: var(--lime);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 1.7rem;
+    line-height: 1;
+  }
+
+  h3 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.75rem;
+    line-height: 1.1;
+  }
+
+  p {
+    color: var(--ink-2);
+    font-size: 0.98rem;
+  }
+
+  .dark p {
+    color: rgba(252, 250, 248, 0.74);
+  }
+</style>

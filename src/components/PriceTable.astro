@@ -1,0 +1,265 @@
+---
+import Icon from './Icon.astro';
+import { byRegion, chf, duration, firstVisit, type Group } from '../data/services';
+
+interface Props {
+  initial?: Group;
+  showFirstVisit?: boolean;
+}
+const { initial = 'frauen', showFirstVisit = true } = Astro.props;
+const groups: { id: Group; label: string }[] = [
+  { id: 'frauen', label: 'Frauen' },
+  { id: 'maenner', label: 'Männer' },
+];
+---
+
+<div class="price-table" data-tabs>
+  <div class="tabs" role="tablist" aria-label="Preisliste wählen">
+    {
+      groups.map((g) => (
+        <button
+          role="tab"
+          type="button"
+          id={`tab-${g.id}`}
+          aria-controls={`panel-${g.id}`}
+          aria-selected={String(g.id === initial)}
+          data-tab={g.id}
+        >
+          {g.label}
+        </button>
+      ))
+    }
+  </div>
+
+  {
+    groups.map((g) => (
+      <div role="tabpanel" id={`panel-${g.id}`} aria-labelledby={`tab-${g.id}`} hidden={g.id !== initial} data-panel={g.id}>
+        {showFirstVisit && (
+          <div class="first">
+            <div class="first-text">
+              <h3>Neu bei uns und noch unsicher?</h3>
+              <p class="muted">
+                Bei deinem ersten Termin beraten wir dich immer ausführlich. Wenn du vorher in Ruhe alles klären möchtest, geht das
+                auch – ganz ohne Verpflichtung.
+              </p>
+            </div>
+            <ul class="rows">
+              {firstVisit
+                .filter((s) => g.id === 'frauen' || s.id === 'beratungsgespraech')
+                .map((s) => (
+                  <li>
+                    <div class="name">
+                      <strong>{s.name}</strong>
+                      <span class="meta">
+                        {duration(s.minutes)} · {s.note}
+                      </span>
+                    </div>
+                    <span class="price free">{chf(s.price)}</span>
+                    <a class="book" href={`/termin?behandlung=${s.id}&gruppe=${g.id}`} aria-label={`${s.name} buchen`}>
+                      <Icon name="arrow" size={16} />
+                    </a>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        )}
+
+        <div class="regions">
+          {byRegion(g.id).map(([region, list]) => (
+            <section class="region">
+              <h3>{region}</h3>
+              <ul class="rows">
+                {list.map((s) => (
+                  <li>
+                    <div class="name">
+                      <strong>
+                        {s.name}
+                        {s.popular && <span class="tag">Beliebt</span>}
+                      </strong>
+                      <span class="meta">
+                        {duration(s.minutes)}
+                        {s.note && <> · {s.note}</>}
+                      </span>
+                    </div>
+                    <span class="price">{chf(s.price)}</span>
+                    <a class="book" href={`/termin?behandlung=${s.id}&gruppe=${g.id}`} aria-label={`${s.name} buchen`}>
+                      <Icon name="arrow" size={16} />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .tabs {
+    display: inline-flex;
+    padding: 5px;
+    border-radius: 999px;
+    background: var(--linen);
+    margin-bottom: 32px;
+  }
+
+  .tabs button {
+    border: 0;
+    background: transparent;
+    padding: 10px 26px;
+    border-radius: 999px;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--muted);
+    transition:
+      background 0.2s,
+      color 0.2s,
+      box-shadow 0.2s;
+  }
+
+  .tabs button[aria-selected='true'] {
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 4px 12px -4px rgba(0, 0, 0, 0.12);
+  }
+
+  .first {
+    display: grid;
+    gap: 16px 48px;
+    padding: clamp(20px, 3vw, 32px);
+    border-radius: var(--radius);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    margin-bottom: 40px;
+  }
+
+  @media (min-width: 900px) {
+    .first {
+      grid-template-columns: 0.8fr 1.2fr;
+      align-items: center;
+    }
+  }
+
+  .first h3 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.8rem;
+    line-height: 1.1;
+  }
+
+  .first p {
+    font-size: 0.95rem;
+  }
+
+  .regions {
+    display: grid;
+    gap: 40px 56px;
+  }
+
+  @media (min-width: 900px) {
+    .regions {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .region h3 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.65rem;
+    margin-bottom: 6px;
+  }
+
+  .rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .rows li {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .first .rows li:last-child {
+    border-bottom: 0;
+  }
+
+  .name {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .name strong {
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .meta {
+    font-size: 0.86rem;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  .tag {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--lime);
+  }
+
+  .price {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .price.free {
+    font-weight: 700;
+    color: var(--ok);
+  }
+
+  .book {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    transition:
+      background 0.2s,
+      border-color 0.2s;
+  }
+
+  .book:hover {
+    background: var(--ink);
+    color: var(--lime);
+    border-color: var(--ink);
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-tabs]').forEach((root) => {
+    const tabs = root.querySelectorAll<HTMLButtonElement>('[data-tab]');
+    const panels = root.querySelectorAll<HTMLElement>('[data-panel]');
+    const select = (id: string) => {
+      tabs.forEach((t) => t.setAttribute('aria-selected', String(t.dataset.tab === id)));
+      panels.forEach((p) => (p.hidden = p.dataset.panel !== id));
+    };
+    tabs.forEach((t) => t.addEventListener('click', () => select(t.dataset.tab!)));
+    const fromHash = location.hash.replace('#', '');
+    if (fromHash === 'maenner' || fromHash === 'frauen') select(fromHash);
+  });
+</script>

@@ -1,0 +1,790 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Steps from '../components/Steps.astro';
+import FaqList from '../components/FaqList.astro';
+import Reviews from '../components/Reviews.astro';
+import CtaFinal from '../components/CtaFinal.astro';
+import { site } from '../data/site';
+import { services, chf, duration } from '../data/services';
+import { pickFaqs, topFaqIds } from '../data/faq';
+
+import imgConsult from '../assets/img/consultation.jpg';
+import imgDevice from '../assets/img/team-device.jpg';
+import imgDuo from '../assets/img/team-duo.jpg';
+import imgSofa from '../assets/img/lounge-sofa.jpg';
+import imgWindow from '../assets/img/room-window.jpg';
+import imgWall from '../assets/img/wall-exhale.jpg';
+import imgDetail from '../assets/img/lounge-detail.jpg';
+
+const popular = {
+  frauen: ['achseln', 'bikini-intim', 'kombi-intim-achseln', 'unterschenkel', 'beine-komplett', 'ganzkoerper'],
+  maenner: ['ruecken-inkl-nacken', 'brust-bauch', 'achseln-1', 'nacken', 'beine', 'ganzkoerper-1'],
+};
+const pick = (ids: string[]) => ids.map((id) => services.find((s) => s.id === id)!);
+const faqs = pickFaqs(topFaqIds);
+---
+
+<Base
+  title="Laserhaarentfernung in Amriswil | Eloure The Studio"
+  description="Dauerhaft glatte Haut mit medizinischem Laser – persönlich beraten von Corine & Caro in Amriswil. Transparente Preise ab CHF 29, bezahlt wird erst vor Ort. Jetzt Termin buchen."
+  schema={[
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() },
+      })),
+    },
+  ]}
+>
+  <!-- ——— Hero ——— -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-text">
+        <h1>Dauerhaft glatte Haut.<br /><em class="mark">Mit Zeit für dich.</em></h1>
+        <p class="lead">
+          Eloure ist dein Studio für Laserhaarentfernung in Amriswil. Wir machen nur das – mit medizinischem Laser, ehrlicher
+          Beratung und einem Plan, der zu deinem Körper passt.
+        </p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="/termin">Termin buchen<span class="arrow"><Icon name="arrow" size={15} /></span></a>
+          <a class="btn btn-ghost" href="/preise">Preise ansehen</a>
+        </div>
+        <p class="hero-soft">
+          Noch unsicher? <a class="text-link" href="/termin?behandlung=beratungsgespraech">Lass dich kostenlos beraten</a>
+        </p>
+
+        <ul class="trust" aria-label="Darauf kannst du dich verlassen">
+          <li><Icon name="shield" size={18} /> Sachkunde nach V‑NISSG</li>
+          <li><Icon name="spark" size={18} /> Medizinischer Laser</li>
+          <li><Icon name="heart" size={18} /> 100 % spezialisiert</li>
+        </ul>
+      </div>
+
+      <div class="hero-visual">
+        <div class="media hero-main">
+          <Image
+            src={imgConsult}
+            alt="Persönliches Beratungsgespräch in der hellen Lounge des Eloure Studios"
+            widths={[480, 720, 960, 1200]}
+            sizes="(min-width: 900px) 46vw, 100vw"
+            loading="eager"
+            fetchpriority="high"
+          />
+        </div>
+        <div class="media hero-video">
+          <video autoplay muted loop playsinline preload="metadata" poster="/videos/behandlung-gel.jpg" aria-label="Ausschnitt einer Laserbehandlung im Studio">
+            <source src="/videos/behandlung-gel.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <div class="hero-badge">
+          <span class="dot"></span>
+          <span><strong>Bezahlt wird erst vor Ort</strong><br />nach deinem Termin</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ——— Problem / Gefühl ——— -->
+  <section class="section bg-paper">
+    <div class="wrap split">
+      <div class="reveal">
+        <h2>Weniger Haare. <em>Weniger Gedanken.</em></h2>
+        <p class="lead">
+          Ständig nachrasieren, gereizte Haut, kleine Pickel, eingewachsene Haare oder schmerzhaftes Wachsen – und ein paar Tage
+          später geht alles von vorne los.
+        </p>
+        <p>
+          Mit Laserhaarentfernung reduzierst du deinen Haarwuchs langfristig. Das ist schonender für deine Haut, spart dir jede
+          Menge Aufwand und schenkt dir etwas, das man nicht kaufen kann: ein entspanntes Gefühl in deiner Haut – im Alltag, im
+          Sommer, beim Sport.
+        </p>
+      </div>
+      <div class="compare reveal">
+        <div class="col">
+          <h3>Bisher</h3>
+          <ul>
+            <li>Rasieren, und am nächsten Tag stoppelt es wieder</li>
+            <li>Rötungen, Pickel und eingewachsene Haare</li>
+            <li>Wachsen und Epilieren, das wehtut</li>
+            <li>Planen, wann man sich «zeigen» kann</li>
+          </ul>
+        </div>
+        <div class="col good">
+          <h3>Mit Laser</h3>
+          <ul class="check-list">
+            <li>Langfristig deutlich weniger Haare</li>
+            <li>Schonender für deine Haut</li>
+            <li>Weniger Aufwand, mehr Zeit</li>
+            <li>Spontan glatte Haut – ganz ohne Vorlauf</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ——— Warum Eloure ——— -->
+  <section class="section">
+    <div class="wrap split wide-right">
+      <div class="media why-img reveal">
+        <Image src={imgDevice} alt="Behandlerin am medizinischen Lasergerät im Eloure Studio" widths={[480, 720, 960]} sizes="(min-width: 900px) 40vw, 100vw" />
+      </div>
+      <div>
+        <div class="section-head reveal">
+          <h2>Warum sich so viele bei uns <em>sofort wohlfühlen</em></h2>
+          <p class="lead">Laserhaarentfernung ist Vertrauenssache. Darum machen wir ein paar Dinge bewusst anders.</p>
+        </div>
+        <div class="usps">
+          <div class="usp reveal">
+            <h3>Nur Laser. Und das richtig.</h3>
+            <p>Wir sind kein Beauty-Allrounder, sondern konzentrieren uns zu 100 % auf Laserhaarentfernung. Diese Erfahrung merkst du in jeder Sitzung.</p>
+          </div>
+          <div class="usp reveal">
+            <h3>Ehrlich statt Standard-Versprechen</h3>
+            <p>Keine «8 Behandlungen für alle». Wir sagen dir, was bei deiner Haut und deinen Haaren realistisch ist – und planen danach.</p>
+          </div>
+          <div class="usp reveal">
+            <h3>Sicher und zertifiziert</h3>
+            <p>Medizinischer Laser, Sachkundenachweis nach V‑NISSG und fast fünf Jahre Erfahrung. Deine Sicherheit hat immer Vorrang.</p>
+          </div>
+          <div class="usp reveal">
+            <h3>Zeit, Ruhe und echte Betreuung</h3>
+            <p>Bei uns gibt es keine Fliessband-Termine. Du kannst alles fragen, und wir erklären jeden Schritt, bevor er passiert.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ——— Beliebte Behandlungen ——— -->
+  <section class="section bg-linen" id="behandlungen">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Transparente Preise, <em>pro Sitzung</em></h2>
+        <p class="lead">Du bezahlst pro Sitzung und Zone – ohne Vorauszahlung. Hier sind unsere beliebtesten Behandlungen.</p>
+      </div>
+
+      <div data-tabs class="pop">
+        <div class="tabs" role="tablist" aria-label="Behandlungen für">
+          <button role="tab" type="button" id="pt-frauen" aria-controls="pp-frauen" aria-selected="true" data-tab="frauen">Frauen</button>
+          <button role="tab" type="button" id="pt-maenner" aria-controls="pp-maenner" aria-selected="false" data-tab="maenner">Männer</button>
+        </div>
+        {
+          (['frauen', 'maenner'] as const).map((g) => (
+            <div role="tabpanel" id={`pp-${g}`} aria-labelledby={`pt-${g}`} data-panel={g} hidden={g !== 'frauen'}>
+              <ul class="cards">
+                {pick(popular[g]).map((s) => (
+                  <li>
+                    <a href={`/termin?behandlung=${s.id}&gruppe=${g}`} class="card">
+                      <span class="c-name">{s.name}</span>
+                      <span class="c-meta">
+                        <Icon name="clock" size={15} /> {duration(s.minutes)}
+                      </span>
+                      {s.note && <span class="c-note">{s.note}</span>}
+                      <span class="c-foot">
+                        <span class="c-price">{chf(s.price)}</span>
+                        <span class="c-go">
+                          Buchen <Icon name="arrow" size={15} />
+                        </span>
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="pop-foot">
+        <a class="btn btn-ghost" href="/preise">Alle Zonen & Preise<span class="arrow"><Icon name="arrow" size={15} /></span></a>
+        <p class="muted small">Gesicht, Oberkörper, Arme, Intimbereich, Beine – über 30 Zonen für Frauen und Männer.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ——— Ablauf ——— -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>So läuft dein Weg zu <em>glatter Haut</em></h2>
+        <p class="lead">Klar, transparent und in deinem Tempo – damit du dich von Anfang an sicher fühlst.</p>
+      </div>
+      <Steps />
+      <p class="steps-foot reveal">
+        <a class="text-link" href="/laserhaarentfernung">Wie Laserhaarentfernung genau wirkt</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ——— Team ——— -->
+  <section class="section bg-paper">
+    <div class="wrap split">
+      <div class="media team-img reveal">
+        <Image src={imgDuo} alt="Corine und Caro, das Team von Eloure The Studio" widths={[600, 900, 1200]} sizes="(min-width: 900px) 46vw, 100vw" />
+      </div>
+      <div class="reveal">
+        <h2>Hey, wir sind <em>Corine & Caro</em></h2>
+        <p class="lead">
+          Ein eingespieltes Team voller Leidenschaft, Kompetenz und Einfühlungsvermögen.
+        </p>
+        <p>
+          Bei uns stehst du im Mittelpunkt – mit deinen Fragen, deinen Wünschen und deinem Tempo. Wir wissen, dass sich eine
+          Behandlung am Anfang ungewohnt anfühlen kann. Genau deshalb nehmen wir uns Zeit, erklären alles in Ruhe und sind
+          auch zwischen den Terminen für dich da.
+        </p>
+        <p class="sign">Wir freuen uns auf dich!</p>
+        <a class="text-link" href="/studio">Mehr über uns & das Studio</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ——— Studio ——— -->
+  <section class="section studio">
+    <div class="wrap">
+      <div class="studio-head reveal">
+        <h2>Ein Ort zum <em>Durchatmen</em></h2>
+        <p class="lead">
+          Unser Studio im Herzen von Amriswil ist hell, ruhig und bewusst gemütlich eingerichtet. Damit du dich vom ersten
+          Moment an wohlfühlst – und nicht wie in einer Klinik.
+        </p>
+      </div>
+      <div class="gallery">
+        <div class="media g1 reveal"><Image src={imgSofa} alt="Weisses Sofa in der Lounge des Studios" widths={[500, 800]} sizes="(min-width: 900px) 34vw, 70vw" /></div>
+        <div class="media g2 reveal"><Image src={imgWall} alt="Wandschriftzug «Exhale the bullshit» im Studio" widths={[400, 600]} sizes="(min-width: 900px) 22vw, 50vw" /></div>
+        <div class="media g3 reveal"><Image src={imgWindow} alt="Heller Behandlungsraum mit grossem Fenster und Laserliege" widths={[500, 800, 1100]} sizes="(min-width: 900px) 40vw, 90vw" /></div>
+        <div class="media g4 reveal"><Image src={imgDetail} alt="Detail der Lounge mit Pflanze und Bildband" widths={[400, 600]} sizes="(min-width: 900px) 22vw, 50vw" /></div>
+      </div>
+      <p class="address reveal">
+        <Icon name="pin" size={18} />
+        <span>{site.address.street}, {site.address.zip} {site.address.city}</span>
+        <a class="text-link" href={site.mapsUrl} target="_blank" rel="noopener">Route planen</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ——— Sicherheit ——— -->
+  <section class="section bg-ink safety">
+    <div class="wrap">
+      <div class="split">
+        <div class="reveal">
+          <h2>Sicherheit und Qualität kommen <em>zuerst</em></h2>
+        </div>
+        <div class="reveal">
+          <p class="lead">
+            Wir arbeiten mit einem medizinischen Laser und haben fast fünf Jahre Erfahrung – ausschliesslich in der
+            Laserhaarentfernung. Unser Team hat die Ausbildung und den Sachkundenachweis nach der Schweizer Verordnung
+            V‑NISSG erfolgreich abgeschlossen.
+          </p>
+          <p class="muted">Jede Behandlung wird verantwortungsvoll, präzise und nach aktuellen Standards durchgeführt.</p>
+        </div>
+      </div>
+      <ul class="facts">
+        <li class="reveal"><span class="f-big">100 %</span><span>spezialisiert – wir machen nur Laserhaarentfernung</span></li>
+        <li class="reveal"><span class="f-big">V‑NISSG</span><span>Ausbildung & Sachkundenachweis abgeschlossen</span></li>
+        <li class="reveal"><span class="f-big">Fast 5 Jahre</span><span>Erfahrung mit medizinischem Laser</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ——— FAQ ——— -->
+  <section class="section">
+    <div class="wrap faq-grid">
+      <div class="faq-intro reveal">
+        <h2>Was viele vor dem ersten Termin <em>fragen</em></h2>
+        <p class="lead">Unsicher zu sein ist völlig normal. Hier die ehrlichen Antworten auf die häufigsten Fragen.</p>
+        <div class="ask">
+          <p>Deine Frage ist nicht dabei?</p>
+          <div class="btn-row">
+            <a class="btn btn-ghost" href={site.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" size={18} /> WhatsApp</a>
+            <a class="text-link" href="/faq">Alle Fragen</a>
+          </div>
+        </div>
+      </div>
+      <div class="reveal">
+        <FaqList items={faqs} open="schmerz" />
+      </div>
+    </div>
+  </section>
+
+  <Reviews />
+  <CtaFinal />
+</Base>
+
+<style>
+  /* Hero */
+  .hero {
+    padding-block: clamp(28px, 5vw, 72px) clamp(56px, 8vw, 112px);
+  }
+
+  .hero-grid {
+    display: grid;
+    gap: 48px;
+    align-items: center;
+  }
+
+  @media (min-width: 900px) {
+    .hero-grid {
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 64px;
+    }
+  }
+
+  .hero-text h1 {
+    max-width: 10.5em;
+  }
+
+  .hero-text .btn-row {
+    margin-top: 32px;
+  }
+
+  .hero-soft {
+    margin-top: 18px;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .hero-soft a {
+    color: var(--ink);
+  }
+
+  .trust {
+    list-style: none;
+    padding: 28px 0 0;
+    margin: 32px 0 0;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 26px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+
+  .trust li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hero-visual {
+    position: relative;
+    padding: 0 0 40px 40px;
+  }
+
+  .hero-main {
+    aspect-ratio: 4 / 5;
+    border-radius: 220px 220px var(--radius-l) var(--radius-l);
+  }
+
+  .hero-video {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 34%;
+    aspect-ratio: 9 / 16;
+    border-radius: var(--radius);
+    border: 5px solid var(--bg);
+    box-shadow: var(--shadow-l);
+  }
+
+  .hero-badge {
+    position: absolute;
+    right: -8px;
+    bottom: 64px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: var(--radius);
+    background: var(--paper);
+    box-shadow: var(--shadow-l);
+    font-size: 0.86rem;
+    line-height: 1.35;
+  }
+
+  @media (max-width: 640px) {
+    .hero-visual {
+      padding: 0 0 28px 20px;
+    }
+    .hero-badge {
+      right: 0;
+      bottom: auto;
+      top: 24px;
+    }
+  }
+
+  /* Vergleich */
+  .compare {
+    display: grid;
+    gap: 12px;
+  }
+
+  @media (min-width: 640px) {
+    .compare {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .compare .col {
+    padding: 28px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--bg);
+  }
+
+  .compare .col.good {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  .compare h3 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.7rem;
+  }
+
+  .compare ul:not(.check-list) {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 12px;
+    color: var(--muted);
+  }
+
+  .compare ul:not(.check-list) li {
+    padding-left: 22px;
+    position: relative;
+  }
+
+  .compare ul:not(.check-list) li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.75em;
+    width: 10px;
+    height: 1.5px;
+    background: var(--muted);
+  }
+
+  /* Warum */
+  .why-img {
+    aspect-ratio: 4 / 5;
+  }
+
+  .usps {
+    display: grid;
+    gap: 0;
+  }
+
+  .usp {
+    padding: 22px 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .usp p {
+    color: var(--ink-2);
+    margin: 0;
+  }
+
+  /* Beliebte Behandlungen */
+  .pop .tabs {
+    display: inline-flex;
+    padding: 5px;
+    border-radius: 999px;
+    background: var(--bg);
+    margin-bottom: 28px;
+  }
+
+  .pop .tabs button {
+    border: 0;
+    background: transparent;
+    padding: 10px 26px;
+    border-radius: 999px;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--muted);
+  }
+
+  .pop .tabs button[aria-selected='true'] {
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 4px 12px -4px rgba(0, 0, 0, 0.12);
+  }
+
+  .cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+
+  @media (min-width: 640px) {
+    .cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .cards {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+    padding: 24px;
+    border-radius: var(--radius);
+    background: var(--paper);
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition:
+      transform 0.25s,
+      box-shadow 0.25s,
+      border-color 0.25s;
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+    border-color: var(--line);
+  }
+
+  .c-name {
+    font-family: var(--serif);
+    font-size: 1.8rem;
+    line-height: 1.1;
+  }
+
+  .c-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    font-size: 0.87rem;
+    color: var(--muted);
+  }
+
+  .c-note {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .c-foot {
+    margin-top: auto;
+    padding-top: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .c-price {
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+
+  .c-go {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: var(--linen);
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: background 0.2s;
+  }
+
+  .card:hover .c-go {
+    background: var(--lime);
+  }
+
+  .pop-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    align-items: center;
+    margin-top: 32px;
+  }
+
+  .pop-foot p {
+    margin: 0;
+  }
+
+  .steps-foot {
+    margin-top: 28px;
+  }
+
+  /* Team */
+  .team-img {
+    aspect-ratio: 3 / 2;
+  }
+
+  .sign {
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    font-style: italic;
+    margin: 20px 0;
+  }
+
+  /* Studio */
+  .studio-head {
+    display: grid;
+    gap: 12px 64px;
+    margin-bottom: 40px;
+  }
+
+  @media (min-width: 900px) {
+    .studio-head {
+      grid-template-columns: 1fr 1fr;
+      align-items: end;
+    }
+    .studio-head h2 {
+      margin: 0;
+    }
+  }
+
+  .gallery {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .gallery .media {
+    border-radius: var(--radius);
+  }
+
+  .g1 {
+    aspect-ratio: 1;
+  }
+  .g2 {
+    aspect-ratio: 3 / 4;
+  }
+  .g3 {
+    grid-column: span 2;
+    aspect-ratio: 16 / 10;
+  }
+  .g4 {
+    display: none;
+  }
+
+  @media (min-width: 900px) {
+    .gallery {
+      grid-template-columns: 1.3fr 0.8fr 1.5fr 0.8fr;
+      align-items: end;
+    }
+    .g1 {
+      aspect-ratio: 1;
+    }
+    .g2 {
+      aspect-ratio: 3 / 4.4;
+    }
+    .g3 {
+      grid-column: auto;
+      aspect-ratio: 4 / 4.4;
+    }
+    .g4 {
+      display: block;
+      aspect-ratio: 3 / 4;
+    }
+  }
+
+  .address {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+    margin-top: 28px;
+    font-weight: 600;
+  }
+
+  /* Sicherheit */
+  .safety h2 {
+    max-width: 9em;
+  }
+
+  .facts {
+    list-style: none;
+    margin: 56px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1px;
+    background: rgba(252, 250, 248, 0.14);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  @media (min-width: 760px) {
+    .facts {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .facts li {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 28px;
+    background: var(--ink);
+    color: rgba(252, 250, 248, 0.74);
+  }
+
+  .f-big {
+    font-family: var(--serif);
+    font-size: 2.3rem;
+    line-height: 1;
+    color: var(--lime);
+  }
+
+  /* FAQ */
+  .faq-grid {
+    display: grid;
+    gap: 40px 72px;
+  }
+
+  @media (min-width: 900px) {
+    .faq-grid {
+      grid-template-columns: 0.8fr 1.2fr;
+    }
+    .faq-intro {
+      position: sticky;
+      top: calc(var(--header-h) + 32px);
+      align-self: start;
+    }
+  }
+
+  .ask {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+
+  .ask p {
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.pop[data-tabs]').forEach((root) => {
+    const tabs = root.querySelectorAll<HTMLButtonElement>('[data-tab]');
+    const panels = root.querySelectorAll<HTMLElement>('[data-panel]');
+    tabs.forEach((t) =>
+      t.addEventListener('click', () => {
+        tabs.forEach((x) => x.setAttribute('aria-selected', String(x === t)));
+        panels.forEach((p) => (p.hidden = p.dataset.panel !== t.dataset.tab));
+      }),
+    );
+  });
+</script>

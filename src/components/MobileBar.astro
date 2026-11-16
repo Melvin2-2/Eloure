@@ -1,0 +1,103 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+
+interface Props {
+  href: string;
+  label: string;
+  note?: string;
+}
+const { href, label, note } = Astro.props;
+---
+
+<div class="mobile-bar" data-mobile-bar aria-hidden="true">
+  <a class="mb-icon" href={site.whatsappHref} target="_blank" rel="noopener" tabindex="-1" aria-label="WhatsApp">
+    <Icon name="whatsapp" size={22} />
+  </a>
+  <a class="btn btn-primary mb-cta" href={href} tabindex="-1">
+    <span class="mb-text">
+      {label}
+      {note && <small>{note}</small>}
+    </span>
+    <span class="arrow"><Icon name="arrow" size={15} /></span>
+  </a>
+</div>
+
+<style>
+  .mobile-bar {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    z-index: 40;
+    display: none;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 999px;
+    background: rgba(252, 250, 248, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: var(--shadow-l);
+    border: 1px solid var(--line);
+    transform: translateY(140%);
+    transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .mobile-bar.is-visible {
+    transform: none;
+  }
+
+  @media (max-width: 1120px) {
+    .mobile-bar {
+      display: flex;
+    }
+  }
+
+  .mb-icon {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: var(--linen);
+  }
+
+  .mb-cta {
+    flex: 1;
+    justify-content: space-between;
+  }
+
+  .mb-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+    text-align: left;
+  }
+
+  .mb-text small {
+    font-weight: 500;
+    font-size: 0.75rem;
+    opacity: 0.75;
+  }
+
+  .mb-cta .arrow {
+    margin-right: -12px;
+    width: 36px;
+    height: 36px;
+  }
+</style>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-mobile-bar]');
+  if (bar) {
+    const update = () => {
+      const show = window.scrollY > 420;
+      bar.classList.toggle('is-visible', show);
+      bar.setAttribute('aria-hidden', String(!show));
+      bar.querySelectorAll('a').forEach((a) => (show ? a.removeAttribute('tabindex') : a.setAttribute('tabindex', '-1')));
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+  }
+</script>

@@ -1,0 +1,386 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Steps from '../components/Steps.astro';
+import CtaFinal from '../components/CtaFinal.astro';
+import Icon from '../components/Icon.astro';
+---
+
+<Base
+  title="Wie funktioniert Laserhaarentfernung? | Eloure The Studio Amriswil"
+  description="Wie Laserhaarentfernung wirkt, wie viele Sitzungen du brauchst, für wen sie geeignet ist und wie du dich optimal vorbereitest – ehrlich erklärt von Eloure in Amriswil."
+>
+  <PageHero
+    title="So funktioniert <em>Laserhaarentfernung</em>"
+    lead="Wer versteht, was passiert, fühlt sich sicherer. Darum erklären wir dir hier alles Wichtige – ohne Fachchinesisch und ohne leere Versprechen."
+  >
+    <div class="btn-row">
+      <a class="btn btn-primary" href="/termin">Termin buchen<span class="arrow"><Icon name="arrow" size={15} /></span></a>
+      <a class="btn btn-ghost" href="/termin?behandlung=beratungsgespraech">Kostenlos beraten lassen</a>
+    </div>
+  </PageHero>
+
+  <!-- Wirkung -->
+  <section class="section bg-paper">
+    <div class="wrap split">
+      <div class="reveal">
+        <h2>Licht, das genau <em>die Haarwurzel</em> trifft</h2>
+        <p class="lead">
+          Der Laser sendet gebündeltes Licht, das vom Farbstoff im Haar – dem Melanin – aufgenommen wird.
+        </p>
+        <p>
+          Die Energie wird dabei in Wärme umgewandelt und zerstört gezielt die Haarwurzel, ohne die umliegende Haut stark zu
+          belasten. So wird das Nachwachsen des Haares gehemmt oder gestoppt. Weil der Laser so präzise arbeitet, ist die
+          Behandlung schonender als Wachsen oder Epilieren.
+        </p>
+        <p class="muted small">Fachbegriff: selektive Photothermolyse.</p>
+      </div>
+      <div class="media video reveal">
+        <video autoplay muted loop playsinline preload="metadata" poster="/videos/behandlung-markierung.jpg" aria-label="Behandlerin führt den Laser über das markierte Bein">
+          <source src="/videos/behandlung-markierung.mp4" type="video/mp4" />
+        </video>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sitzungen -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Warum es <em>mehrere Sitzungen</em> braucht</h2>
+        <p class="lead">
+          Deine Haare wachsen nicht alle gleichzeitig. Wirksam behandeln lässt sich nur ein Haar, das gerade aktiv wächst.
+        </p>
+      </div>
+      <ol class="phases">
+        <li class="reveal">
+          <span class="ph-bar" style="--w:100%"></span>
+          <h3>Wachstumsphase</h3>
+          <p>Das Haar wächst aktiv und enthält am meisten Melanin. <strong>Jetzt wirkt der Laser am besten.</strong></p>
+        </li>
+        <li class="reveal">
+          <span class="ph-bar" style="--w:55%"></span>
+          <h3>Übergangsphase</h3>
+          <p>Das Haar löst sich langsam von der Wurzel und reagiert kaum noch auf den Laser.</p>
+        </li>
+        <li class="reveal">
+          <span class="ph-bar" style="--w:25%"></span>
+          <h3>Ruhephase</h3>
+          <p>Die Wurzel ruht – teils bis zu zwei Jahre. Diese Haare erwischen wir erst in einer späteren Sitzung.</p>
+        </li>
+      </ol>
+
+      <div class="numbers reveal">
+        <div>
+          <span class="n">10–15</span>
+          <span>Sitzungen sind in der Regel realistisch – je nach Zone, Haardichte, Hauttyp und Hormonhaushalt.</span>
+        </div>
+        <div>
+          <span class="n">4–8</span>
+          <span>Wochen Abstand am Anfang. Lässt der Haarwuchs nach, verlängern wir auf bis zu 12 Wochen.</span>
+        </div>
+        <div>
+          <span class="n">1–3</span>
+          <span>Wochen nach der Sitzung fallen die behandelten Haare aus. Ein sanftes Peeling hilft dabei.</span>
+        </div>
+      </div>
+      <p class="honest reveal">
+        <Icon name="heart" size={18} />
+        <span>
+          Wir arbeiten bewusst nicht mit Standard-Versprechen wie «8 Behandlungen für alle». Dein Plan richtet sich nach deinem
+          Körper und deinen Zielen.
+        </span>
+      </p>
+    </div>
+  </section>
+
+  <!-- Eignung -->
+  <section class="section bg-linen">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Ist das <em>etwas für mich?</em></h2>
+        <p class="lead">Das klären wir immer persönlich mit dir. Als erste Orientierung:</p>
+      </div>
+      <div class="fit">
+        <div class="fit-col reveal">
+          <h3><span class="badge good">Sehr gut geeignet</span></h3>
+          <ul class="check-list">
+            <li>Dunklere Haare auf hellerer bis mittlerer Haut</li>
+            <li>Frauen und Männer, fast alle Körperzonen</li>
+            <li>Wenn du Rasieren, Wachsen oder Epilieren satt hast</li>
+          </ul>
+        </div>
+        <div class="fit-col reveal">
+          <h3><span class="badge mid">Eingeschränkt</span></h3>
+          <ul>
+            <li><strong>Sehr helle, graue oder rote Haare</strong> enthalten wenig Melanin – der Laser wirkt dort schwächer.</li>
+            <li><strong>Sehr dunkle Haut:</strong> Wir machen vorher einen Teststreifen an einer kleinen Stelle.</li>
+          </ul>
+        </div>
+        <div class="fit-col reveal">
+          <h3><span class="badge no">Im Moment nicht möglich</span></h3>
+          <ul>
+            <li>Schwangerschaft und Stillzeit</li>
+            <li>Frische Bräune oder sonnengeschädigte Haut</li>
+            <li>Aktive Hauterkrankungen (z. B. Ekzeme, Psoriasis, Akne) in der Zone</li>
+            <li>Lichtsensibilisierende Medikamente (z. B. bestimmte Antibiotika, Isotretinoin)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ablauf -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Dein Ablauf <em>bei uns</em></h2>
+      </div>
+      <Steps />
+    </div>
+  </section>
+
+  <!-- Vorbereitung -->
+  <section class="section bg-paper" id="vorbereitung">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Gut vorbereitet <em>in 2 Minuten</em></h2>
+        <p class="lead">Mit diesen Tipps holst du das Beste aus jeder Sitzung heraus.</p>
+      </div>
+      <div class="prep">
+        <div class="prep-card reveal">
+          <h3>Vor der Behandlung</h3>
+          <ul class="check-list">
+            <li><span><strong>24–48 Std. vorher rasieren</strong> – leichte Stoppeln sollen noch sichtbar sein</span></li>
+            <li><span><strong>4 Wochen vorher</strong> nicht mehr wachsen, zupfen oder epilieren</span></li>
+            <li><span><strong>14 Tage vorher</strong> keine direkte Sonne und keine frische Bräune</span></li>
+            <li><span>In den Wochen davor <strong>keinen Selbstbräuner</strong></span></li>
+            <li><span><strong>10 Tage vorher</strong> keine Säurepeelings oder Retinoide auf der Zone</span></li>
+            <li><span>Medikamente? <strong>Sag uns vorher Bescheid</strong></span></li>
+            <li><span>Genug trinken – das hilft deiner Haut mit der Wärme</span></li>
+          </ul>
+        </div>
+        <div class="prep-card dark reveal">
+          <h3>Nach der Behandlung</h3>
+          <ul class="check-list">
+            <li><span><strong>Kühlen</strong> reduziert Rötungen</span></li>
+            <li><span>Eine <strong>sanfte Feuchtigkeitscreme</strong> beruhigt die Haut</span></li>
+            <li><span><strong>2 Wochen</strong> keine direkte Sonne – sonst LSF 50</span></li>
+            <li><span><strong>2 Tage</strong> kein Chlor- oder Salzwasser, kein starkes Schwitzen</span></li>
+            <li><span>Zwischen den Sitzungen nur <strong>rasieren</strong> – nicht wachsen oder zupfen</span></li>
+          </ul>
+          <p class="tip">
+            <strong>Tipp fürs Gesicht:</strong> Nimm einen Rasierer mit nur einer Klinge und rasiere in Wuchsrichtung.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Laser vs IPL -->
+  <section class="section">
+    <div class="wrap wrap-narrow center-text reveal">
+      <h2>Laser oder IPL?</h2>
+      <p class="lead">
+        Ein Laser arbeitet mit einem fokussierten Lichtstrahl in einer bestimmten Wellenlänge und trifft die Haarwurzel sehr
+        gezielt. IPL nutzt ein breites Lichtspektrum, das weniger zielgerichtet und oft weniger effektiv ist. Wir arbeiten
+        ausschliesslich mit einem medizinischen Laser.
+      </p>
+      <a class="text-link" href="/faq">Weitere Fragen & Antworten</a>
+    </div>
+  </section>
+
+  <CtaFinal />
+</Base>
+
+<style>
+  .video {
+    aspect-ratio: 3 / 4;
+    max-width: 460px;
+    justify-self: center;
+    width: 100%;
+  }
+
+  .phases {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+
+  @media (min-width: 900px) {
+    .phases {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .phases li {
+    padding: 28px;
+    border-radius: var(--radius);
+    background: var(--paper);
+    border: 1px solid var(--line);
+  }
+
+  .phases p {
+    color: var(--ink-2);
+  }
+
+  .ph-bar {
+    display: block;
+    height: 8px;
+    border-radius: 99px;
+    background: var(--linen);
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ph-bar::after {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--w);
+    border-radius: inherit;
+    background: var(--ink);
+  }
+
+  .phases li:first-child .ph-bar::after {
+    background: var(--lime);
+    box-shadow: inset 0 0 0 1px rgba(46, 45, 43, 0.2);
+  }
+
+  .numbers {
+    display: grid;
+    gap: 24px 48px;
+    margin-top: 56px;
+    padding-top: 40px;
+    border-top: 1px solid var(--line);
+  }
+
+  @media (min-width: 900px) {
+    .numbers {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .numbers div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: var(--ink-2);
+  }
+
+  .n {
+    font-family: var(--serif);
+    font-size: clamp(3rem, 6vw, 4.5rem);
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .honest {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-top: 40px;
+    padding: 20px 24px;
+    border-radius: var(--radius);
+    background: var(--lime);
+    font-weight: 600;
+    max-width: 760px;
+  }
+
+  .honest :global(svg) {
+    flex: none;
+    margin-top: 3px;
+  }
+
+  .fit {
+    display: grid;
+    gap: 12px;
+  }
+
+  @media (min-width: 900px) {
+    .fit {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .fit-col {
+    padding: 28px;
+    border-radius: var(--radius);
+    background: var(--paper);
+  }
+
+  .fit-col ul:not(.check-list) {
+    padding-left: 1.1em;
+    margin: 0;
+    display: grid;
+    gap: 10px;
+    color: var(--ink-2);
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+  }
+
+  .badge.good {
+    background: var(--lime);
+  }
+
+  .badge.mid {
+    background: var(--blush);
+  }
+
+  .badge.no {
+    background: var(--stone);
+  }
+
+  .prep {
+    display: grid;
+    gap: 12px;
+  }
+
+  @media (min-width: 900px) {
+    .prep {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .prep-card {
+    padding: clamp(24px, 3vw, 40px);
+    border-radius: var(--radius);
+    background: var(--bg);
+  }
+
+  .prep-card h3 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+
+  .prep-card.dark {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .tip {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(252, 250, 248, 0.16);
+    color: rgba(252, 250, 248, 0.8);
+    font-size: 0.95rem;
+  }
+
+  .center-text {
+    text-align: center;
+  }
+
+  .center-text .lead {
+    margin-inline: auto;
+  }
+</style>

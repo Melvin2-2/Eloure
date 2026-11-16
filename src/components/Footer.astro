@@ -1,0 +1,219 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+
+interface Props {
+  variant: 'full' | 'minimal';
+}
+const { variant } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer bg-ink">
+  <div class="wrap">
+    {
+      variant === 'full' && (
+        <div class="grid">
+          <div class="brand">
+            <img src="/brand/logo-light.png" alt="Eloure The Studio" width="368" height="116" loading="lazy" />
+            <p class="muted">
+              Dein Studio für Laserhaarentfernung in Amriswil. Persönlich, ehrlich und mit Zeit für dich.
+            </p>
+            <div class="social">
+              <a href={site.instagram} target="_blank" rel="noopener" aria-label="Instagram">
+                <Icon name="instagram" />
+              </a>
+              <a href={site.whatsappHref} target="_blank" rel="noopener" aria-label="WhatsApp">
+                <Icon name="whatsapp" />
+              </a>
+              <a href={`mailto:${site.email}`} aria-label="E-Mail">
+                <Icon name="mail" />
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <h3>Studio</h3>
+            <address>
+              {site.address.street}
+              <br />
+              {site.address.zip} {site.address.city}
+            </address>
+            <a class="flink" href={site.mapsUrl} target="_blank" rel="noopener">
+              Route planen
+            </a>
+          </div>
+
+          <div>
+            <h3>Öffnungszeiten</h3>
+            <dl class="hours">
+              {site.hours.map((h) => (
+                <div>
+                  <dt>{h.days}</dt>
+                  <dd>{h.time}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+
+          <div>
+            <h3>Kontakt</h3>
+            <ul class="plain">
+              <li>
+                <a href={site.phoneHref}>{site.phone}</a>
+              </li>
+              <li>
+                <a href={site.whatsappHref} target="_blank" rel="noopener">
+                  WhatsApp schreiben
+                </a>
+              </li>
+              <li>
+                <a href={`mailto:${site.email}`}>{site.email}</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      )
+    }
+
+    <div class="legal">
+      <span>© {year} {site.legalName} · {site.name}</span>
+      <nav aria-label="Rechtliches">
+        {variant === 'minimal' && <a href="/">Zur Website</a>}
+        <a href="/impressum">Impressum</a>
+        <a href="/datenschutz">Datenschutz</a>
+        <a href="/agb">AGB</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-block: clamp(56px, 8vw, 96px) 28px;
+    font-size: 0.95rem;
+  }
+
+  body[data-variant='minimal'] .site-footer {
+    padding-top: 28px;
+  }
+
+  .grid {
+    display: grid;
+    gap: 40px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid rgba(252, 250, 248, 0.14);
+  }
+
+  @media (min-width: 760px) {
+    .grid {
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    }
+  }
+
+  .brand img {
+    height: 38px;
+    width: auto;
+    margin-bottom: 18px;
+  }
+
+  .brand p {
+    max-width: 30ch;
+  }
+
+  h3 {
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(252, 250, 248, 0.6);
+    margin-bottom: 14px;
+  }
+
+  address {
+    font-style: normal;
+    margin-bottom: 10px;
+  }
+
+  a {
+    text-decoration-color: rgba(252, 250, 248, 0.3);
+  }
+
+  a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .flink {
+    font-weight: 600;
+  }
+
+  .plain {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+
+  .hours {
+    margin: 0;
+    display: grid;
+    gap: 6px;
+  }
+
+  .hours div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .hours dd {
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .social {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .social a {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid rgba(252, 250, 248, 0.25);
+    transition:
+      background 0.2s,
+      color 0.2s;
+  }
+
+  .social a:hover {
+    background: var(--lime);
+    color: var(--ink);
+    border-color: var(--lime);
+  }
+
+  .legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px 24px;
+    padding-top: 24px;
+    color: rgba(252, 250, 248, 0.6);
+    font-size: 0.86rem;
+  }
+
+  .legal nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+  }
+
+  @media (max-width: 1120px) {
+    .site-footer {
+      padding-bottom: 104px;
+    }
+  }
+</style>

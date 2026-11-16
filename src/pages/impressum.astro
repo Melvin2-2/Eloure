@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import Legal from '../components/Legal.astro';
+import { site } from '../data/site';
+---
+
+<Base title="Impressum | Eloure The Studio" description="Impressum der Eloure GmbH, Bahnhofstrasse 20, 8580 Amriswil.">
+  <Legal title="Impressum">
+    <h3>Eloure GmbH</h3>
+    <p>
+      {site.address.street}<br />
+      {site.address.zip} {site.address.city}<br />
+      Schweiz
+    </p>
+    <h3>Vertreten durch</h3>
+    <p>Corine Claudia Keller</p>
+    <h3>Kontakt</h3>
+    <p>
+      Telefon: <a href={site.phoneHref}>+41 76 529 71 29</a><br />
+      E-Mail: <a href={`mailto:${site.email}`}>{site.email}</a>
+    </p>
+    <h3>Handelsregister</h3>
+    <p>
+      Handelsregister: TR 6257<br />
+      Registergericht: Kanton St. Gallen<br />
+      UID: CHE-492.666.255
+    </p>
+    <h3>Verbraucherstreitbeilegung / Universalschlichtungsstelle</h3>
+    <p>Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+  </Legal>
+</Base>

@@ -1,0 +1,296 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaFinal from '../components/CtaFinal.astro';
+import Reviews from '../components/Reviews.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+
+import imgDuo from '../assets/img/team-duo.jpg';
+import imgP1 from '../assets/img/team-portrait-1.jpg';
+import imgP2 from '../assets/img/team-portrait-2.jpg';
+import imgChairs from '../assets/img/lounge-chairs.jpg';
+import imgRoom from '../assets/img/treatment-room.jpg';
+import imgWindow from '../assets/img/room-window.jpg';
+import imgWall from '../assets/img/wall-exhale.jpg';
+import imgSofa from '../assets/img/lounge-sofa.jpg';
+---
+
+<Base
+  title="Über uns – Corine & Caro | Eloure The Studio Amriswil"
+  description="Lerne Corine & Caro kennen: zertifizierte Expertinnen für Laserhaarentfernung in Amriswil. Ein Studio mit offener, vertrauensvoller Atmosphäre, fairen Preisen und viel Zeit für dich."
+>
+  <PageHero
+    title="Grüezi, schön <em>bist du da.</em>"
+    lead="Wir sind Eloure – deine zertifizierten Expertinnen für Laserhaarentfernung im Herzen von Amriswil. Und wir haben uns ganz bewusst auf genau eine Sache spezialisiert."
+  />
+
+  <section class="section-tight" style="padding-top:0">
+    <div class="wrap team-collage">
+      <div class="media c-duo reveal">
+        <Image src={imgDuo} alt="Corine und Caro im Studio" widths={[700, 1000, 1400]} sizes="(min-width: 900px) 58vw, 100vw" loading="eager" />
+      </div>
+      <div class="media c-p1 reveal">
+        <Image src={imgP1} alt="Porträt aus dem Eloure-Team" widths={[400, 700]} sizes="(min-width: 900px) 20vw, 50vw" />
+      </div>
+      <div class="media c-p2 reveal">
+        <Image src={imgP2} alt="Porträt aus dem Eloure-Team" widths={[400, 700]} sizes="(min-width: 900px) 20vw, 50vw" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap split wide-right">
+      <div class="reveal">
+        <h2>Hey, wir sind <em>Corine & Caro</em></h2>
+      </div>
+      <div class="reveal">
+        <p class="lead">
+          Ein eingespieltes Team voller Leidenschaft, Kompetenz und Einfühlungsvermögen. Unser Ziel ist es, dir zu einem
+          selbstbewussten und strahlenden Auftritt zu verhelfen.
+        </p>
+        <p>
+          Seit Jahren konzentrieren wir uns ausschliesslich auf die professionelle Entfernung unerwünschter Haare mit moderner
+          Lasertechnologie. In unserem Studio legen wir grossen Wert auf eine offene und vertrauensvolle Atmosphäre – bei jeder
+          einzelnen Behandlung.
+        </p>
+        <p>
+          Unser Anspruch: faire Preise und beste Qualität. Unsere Mission: dir eine zertifizierte Dienstleistung anzubieten und
+          dabei immer auf deine individuellen Bedürfnisse einzugehen. Denn dein Wohlbefinden und deine Zufriedenheit sind uns
+          das Wichtigste.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-paper">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Worauf du dich bei uns <em>verlassen kannst</em></h2>
+      </div>
+      <ul class="values">
+        <li class="reveal">
+          <Icon name="chat" size={26} />
+          <h3>Ehrliche Beratung</h3>
+          <p>Wir sagen dir, was realistisch ist – auch wenn das mal nicht das ist, was du hören möchtest.</p>
+        </li>
+        <li class="reveal">
+          <Icon name="shield" size={26} />
+          <h3>Zertifizierte Sicherheit</h3>
+          <p>Medizinischer Laser, Ausbildung und Sachkundenachweis nach V‑NISSG, fast fünf Jahre Erfahrung.</p>
+        </li>
+        <li class="reveal">
+          <Icon name="heart" size={26} />
+          <h3>Individuell statt Schema F</h3>
+          <p>Einstellungen, Abstände und Plan passen wir laufend an deine Haut, deine Haare und deine Ziele an.</p>
+        </li>
+        <li class="reveal">
+          <Icon name="leaf" size={26} />
+          <h3>Ruhe und Diskretion</h3>
+          <p>Ein heller, privater Ort ohne Hektik. Du gibst das Tempo vor, und jede Frage ist willkommen.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="studio-head reveal">
+        <h2>Unser <em>Studio</em></h2>
+        <p class="lead">
+          Neu, hell und mit viel Liebe eingerichtet: Bei uns wartest du nicht im Neonlicht, sondern kommst in einer ruhigen
+          Lounge an. Damit du entspannt in deine Behandlung startest.
+        </p>
+      </div>
+
+      <div class="studio-grid">
+        <div class="media s1 reveal"><Image src={imgChairs} alt="Lounge mit weissen Sesseln, Pflanze und Tageslicht" widths={[500, 800]} sizes="(min-width: 900px) 30vw, 50vw" /></div>
+        <div class="media s2 reveal"><Image src={imgWindow} alt="Behandlungsraum mit Laserliege und grossem Fenster" widths={[600, 1000, 1400]} sizes="(min-width: 900px) 40vw, 100vw" /></div>
+        <div class="media s3 reveal"><Image src={imgRoom} alt="Behandlungsliege und Lasergerät" widths={[400, 700]} sizes="(min-width: 900px) 30vw, 50vw" /></div>
+        <div class="media s4 reveal"><Image src={imgWall} alt="Schriftzug «Exhale the bullshit» an der Wand" widths={[400, 700]} sizes="(min-width: 900px) 30vw, 50vw" /></div>
+        <div class="media s5 reveal"><Image src={imgSofa} alt="Gemütliches weisses Sofa in der Lounge" widths={[500, 800]} sizes="(min-width: 900px) 40vw, 50vw" /></div>
+        <div class="media s6 reveal">
+          <video autoplay muted loop playsinline preload="metadata" poster="/videos/behandlung-studio.jpg" aria-label="Eindrücke einer Behandlung im Studio">
+            <source src="/videos/behandlung-studio.mp4" type="video/mp4" />
+          </video>
+        </div>
+      </div>
+
+      <div class="visit reveal">
+        <div>
+          <h3>Hier findest du uns</h3>
+          <p>
+            {site.address.street}, {site.address.zip} {site.address.city}
+          </p>
+          <a class="text-link" href={site.mapsUrl} target="_blank" rel="noopener">Route planen</a>
+        </div>
+        <div>
+          <h3>Öffnungszeiten</h3>
+          {site.hours.map((h) => <p class="hrow"><span>{h.days}</span><span>{h.time}</span></p>)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Reviews />
+  <CtaFinal title="Lust, uns <em>kennenzulernen?</em>" />
+</Base>
+
+<style>
+  .team-collage {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .c-duo {
+    grid-column: span 2;
+    aspect-ratio: 3 / 2;
+  }
+
+  .c-p1,
+  .c-p2 {
+    aspect-ratio: 3 / 4;
+  }
+
+  @media (min-width: 900px) {
+    .team-collage {
+      grid-template-columns: 2.4fr 1fr 1fr;
+      align-items: end;
+    }
+    .c-duo {
+      grid-column: auto;
+    }
+    .c-p2 {
+      margin-bottom: 48px;
+    }
+  }
+
+  .values {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+
+  @media (min-width: 700px) {
+    .values {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .values {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .values li {
+    padding: 28px;
+    border-radius: var(--radius);
+    background: var(--bg);
+  }
+
+  .values :global(svg) {
+    margin-bottom: 32px;
+  }
+
+  .values p {
+    color: var(--ink-2);
+    font-size: 0.97rem;
+  }
+
+  .studio-head {
+    display: grid;
+    gap: 12px 64px;
+    margin-bottom: 40px;
+  }
+
+  @media (min-width: 900px) {
+    .studio-head {
+      grid-template-columns: 1fr 1fr;
+      align-items: end;
+    }
+    .studio-head h2 {
+      margin: 0;
+    }
+  }
+
+  .studio-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .studio-grid .media {
+    border-radius: var(--radius);
+  }
+
+  .s1,
+  .s3,
+  .s4 {
+    aspect-ratio: 3 / 4;
+  }
+
+  .s2 {
+    grid-column: span 2;
+    aspect-ratio: 16 / 11;
+  }
+
+  .s5 {
+    aspect-ratio: 1;
+  }
+
+  .s6 {
+    grid-column: span 2;
+    aspect-ratio: 1280 / 564;
+  }
+
+  @media (min-width: 900px) {
+    .studio-grid {
+      grid-template-columns: repeat(6, 1fr);
+    }
+    .s1 {
+      grid-column: span 2;
+    }
+    .s2 {
+      grid-column: span 4;
+      aspect-ratio: auto;
+    }
+    .s3,
+    .s4 {
+      grid-column: span 1;
+    }
+    .s5 {
+      grid-column: span 1;
+      aspect-ratio: 3 / 4;
+    }
+    .s6 {
+      grid-column: span 3;
+      aspect-ratio: auto;
+    }
+  }
+
+  .visit {
+    display: grid;
+    gap: 24px 64px;
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+  }
+
+  @media (min-width: 760px) {
+    .visit {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .hrow {
+    display: flex;
+    justify-content: space-between;
+    max-width: 340px;
+    margin: 0 0 4px;
+  }
+</style>

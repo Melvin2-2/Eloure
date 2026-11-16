@@ -1,0 +1,118 @@
+---
+import type { Faq } from '../data/faq';
+
+interface Props {
+  items: Faq[];
+  open?: string; // id, die initial geöffnet ist
+}
+const { items, open } = Astro.props;
+---
+
+<div class="faq">
+  {
+    items.map((f) => (
+      <details id={`faq-${f.id}`} open={open === f.id}>
+        <summary>
+          <span>{f.q}</span>
+          <span class="pm" aria-hidden="true" />
+        </summary>
+        <div class="answer" set:html={f.a} />
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  .faq {
+    border-top: 1px solid var(--line-strong);
+  }
+
+  details {
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  summary {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding: 22px 0;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1.08rem;
+    line-height: 1.35;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .pm {
+    position: relative;
+    flex: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    transition:
+      background 0.25s,
+      border-color 0.25s,
+      transform 0.3s;
+  }
+
+  .pm::before,
+  .pm::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 12px;
+    height: 1.6px;
+    background: currentColor;
+    transform: translate(-50%, -50%);
+  }
+
+  .pm::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+    transition: transform 0.3s;
+  }
+
+  summary:hover .pm {
+    border-color: var(--ink);
+  }
+
+  details[open] .pm {
+    background: var(--lime);
+    border-color: var(--lime);
+  }
+
+  details[open] .pm::after {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  .answer {
+    padding: 0 56px 26px 0;
+    color: var(--ink-2);
+    max-width: 68ch;
+  }
+
+  .answer :global(ul) {
+    padding-left: 1.1em;
+    margin: 0 0 1em;
+  }
+
+  .answer :global(li) {
+    margin-bottom: 0.35em;
+  }
+
+  .answer :global(a) {
+    font-weight: 700;
+  }
+
+  @media (max-width: 600px) {
+    .answer {
+      padding-right: 0;
+    }
+  }
+</style>

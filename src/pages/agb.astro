@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+import Legal from '../components/Legal.astro';
+import agb from '../data/legal/agb.html?raw';
+---
+
+<Base title="AGB | Eloure The Studio" description="Allgemeine Geschäftsbedingungen der Eloure GmbH.">
+  <Legal title="Allgemeine Geschäftsbedingungen">
+    <Fragment set:html={agb} />
+  </Legal>
+</Base>

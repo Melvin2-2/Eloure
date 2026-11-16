@@ -1,0 +1,279 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+import imgLounge from '../assets/img/lounge-sofa.jpg';
+---
+
+<Base
+  title="Kontakt & Anfahrt | Eloure The Studio Amriswil"
+  description="Eloure The Studio, Bahnhofstrasse 20, 8580 Amriswil. Mo–Fr 10–20 Uhr, Sa 10–16 Uhr. Erreiche uns per Telefon, WhatsApp, E-Mail oder buche direkt online."
+>
+  <PageHero
+    title="Meld dich – <em>wir freuen uns auf dich</em>"
+    lead="Ob kurze Frage oder erster Termin: Schreib uns, wie es dir am liebsten ist. Wir antworten persönlich."
+  />
+
+  <section class="section-tight" style="padding-top:0">
+    <div class="wrap grid">
+      <div class="channels">
+        <a class="ch main" href="/termin">
+          <Icon name="calendar" size={24} />
+          <span><strong>Direkt online buchen</strong><small>Freie Termine sehen und sofort anfragen</small></span>
+          <Icon name="arrow" size={18} class="go" />
+        </a>
+        <a class="ch" href={site.whatsappHref} target="_blank" rel="noopener">
+          <Icon name="whatsapp" size={24} />
+          <span><strong>WhatsApp</strong><small>Am schnellsten für kurze Fragen</small></span>
+          <Icon name="arrow" size={18} class="go" />
+        </a>
+        <a class="ch" href={site.phoneHref}>
+          <Icon name="phone" size={24} />
+          <span><strong>{site.phone}</strong><small>Ruf uns an während der Öffnungszeiten</small></span>
+          <Icon name="arrow" size={18} class="go" />
+        </a>
+        <a class="ch" href={`mailto:${site.email}?subject=Anfrage`}>
+          <Icon name="mail" size={24} />
+          <span><strong>{site.email}</strong><small>Für alles, was etwas mehr Platz braucht</small></span>
+          <Icon name="arrow" size={18} class="go" />
+        </a>
+        <a class="ch" href={site.instagram} target="_blank" rel="noopener">
+          <Icon name="instagram" size={24} />
+          <span><strong>{site.instagramHandle}</strong><small>Einblicke ins Studio & Behandlungen</small></span>
+          <Icon name="arrow" size={18} class="go" />
+        </a>
+      </div>
+
+      <form class="form" data-contact-form>
+        <h2>Nachricht schreiben</h2>
+        <div class="row2">
+          <label>Vorname<input name="vorname" autocomplete="given-name" required /></label>
+          <label>Nachname<input name="nachname" autocomplete="family-name" /></label>
+        </div>
+        <label>E-Mail<input type="email" name="email" autocomplete="email" required /></label>
+        <label>Telefon <span class="opt">(optional)</span><input type="tel" name="telefon" autocomplete="tel" /></label>
+        <label>Deine Nachricht<textarea name="nachricht" rows="5" required placeholder="Was möchtest du wissen?"></textarea></label>
+        <label class="consent">
+          <input type="checkbox" required />
+          <span>Ich bin einverstanden, dass meine Angaben zur Beantwortung meiner Anfrage verwendet werden. Mehr in der <a href="/datenschutz">Datenschutzerklärung</a>.</span>
+        </label>
+        <button class="btn btn-primary" type="submit">Nachricht senden<span class="arrow"><Icon name="arrow" size={15} /></span></button>
+        <p class="sent" hidden data-sent>
+          <Icon name="check" size={18} /> Danke! Wir haben deine Nachricht erhalten und melden uns so schnell wie möglich.
+        </p>
+      </form>
+    </div>
+  </section>
+
+  <section class="section bg-paper">
+    <div class="wrap split">
+      <div>
+        <h2>So findest du <em>zu uns</em></h2>
+        <address class="lead">
+          {site.name}<br />
+          {site.address.street}<br />
+          {site.address.zip} {site.address.city}
+        </address>
+        <dl class="hours">
+          {site.hours.map((h) => (<div><dt>{h.days}</dt><dd>{h.time}</dd></div>))}
+        </dl>
+        <a class="btn btn-ghost" href={site.mapsUrl} target="_blank" rel="noopener"><Icon name="pin" size={18} /> Route in Google Maps</a>
+      </div>
+      <div class="media pic">
+        <Image src={imgLounge} alt="Lounge im Eloure Studio in Amriswil" widths={[500, 800]} sizes="(min-width: 900px) 46vw, 100vw" />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 40px 64px;
+  }
+
+  @media (min-width: 960px) {
+    .grid {
+      grid-template-columns: 0.9fr 1.1fr;
+      align-items: start;
+    }
+  }
+
+  .channels {
+    display: grid;
+    gap: 10px;
+  }
+
+  .ch {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+    border-radius: var(--radius);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .ch:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+  }
+
+  .ch span {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .ch small {
+    color: var(--muted);
+    font-size: 0.86rem;
+  }
+
+  .ch.main {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .ch.main small {
+    color: rgba(252, 250, 248, 0.7);
+  }
+
+  .ch.main :global(.go) {
+    color: var(--lime);
+  }
+
+  .form {
+    display: grid;
+    gap: 16px;
+    padding: clamp(24px, 4vw, 44px);
+    border-radius: var(--radius-l);
+    background: var(--paper);
+    border: 1px solid var(--line);
+  }
+
+  .form h2 {
+    font-size: 2.2rem;
+    margin-bottom: 4px;
+  }
+
+  .row2 {
+    display: grid;
+    gap: 16px;
+  }
+
+  @media (min-width: 560px) {
+    .row2 {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  label {
+    display: grid;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 0.92rem;
+  }
+
+  .opt {
+    font-weight: 400;
+    color: var(--muted);
+  }
+
+  input:not([type='checkbox']),
+  textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--line-strong);
+    background: var(--bg);
+    font-weight: 500;
+    font-size: 1rem;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  input:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--ink);
+    background: var(--paper);
+  }
+
+  .consent {
+    grid-template-columns: 20px 1fr;
+    align-items: start;
+    gap: 10px;
+    font-weight: 500;
+    font-size: 0.86rem;
+    color: var(--ink-2);
+  }
+
+  .consent input {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    accent-color: var(--ink);
+  }
+
+  .form .btn {
+    justify-self: start;
+  }
+
+  .sent {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: var(--lime);
+    font-weight: 600;
+  }
+
+  .sent[hidden] {
+    display: none;
+  }
+
+  address {
+    font-style: normal;
+    margin-bottom: 24px;
+  }
+
+  .hours {
+    margin: 0 0 28px;
+    max-width: 360px;
+    display: grid;
+    gap: 6px;
+  }
+
+  .hours div {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .hours dd {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .pic {
+    aspect-ratio: 1;
+  }
+</style>
+
+<script>
+  // Visuelle Demo: Vor dem Livegang an einen Formular-Dienst (z. B. Formspree, Netlify Forms) anbinden.
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    form.querySelector<HTMLElement>('[data-sent]')!.hidden = false;
+    form.querySelector<HTMLButtonElement>('button[type=submit]')!.disabled = true;
+  });
+</script>

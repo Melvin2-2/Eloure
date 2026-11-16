@@ -1,0 +1,12 @@
+---
+import Base from '../layouts/Base.astro';
+import Legal from '../components/Legal.astro';
+// Übernommen von der bisherigen Website. Vor dem Livegang an neues Hosting & Schweizer revDSG anpassen.
+import text from '../data/legal/datenschutz.html?raw';
+---
+
+<Base title="Datenschutz | Eloure The Studio" description="Datenschutzerklärung der Eloure GmbH.">
+  <Legal title="Datenschutzerklärung">
+    <Fragment set:html={text} />
+  </Legal>
+</Base>
