@@ -36,7 +36,7 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
         reviews.map((r, i) => (
           <figure class:list={['slide', { 'is-active': i === 0 }]} data-slide aria-hidden={i === 0 ? 'false' : 'true'}>
             {r.topic && <span class="topic label">{r.topic}</span>}
-            <blockquote class="serif">«{r.text}»</blockquote>
+            <blockquote>«{r.text}»</blockquote>
             <figcaption>
               <strong>{r.name}</strong> · Google · {r.when}
             </figcaption>
