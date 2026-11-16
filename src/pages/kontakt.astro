@@ -4,8 +4,8 @@ import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
-import imgLounge from '../assets/shoot/sessel.jpg';
-import imgHero from '../assets/shoot/lounge-tuer.jpg';
+import imgLounge from '../assets/shoot/detail-tuecher.jpg';
+import imgHero from '../assets/shoot/caro-portrait.jpg';
 ---
 
 <Base
@@ -16,7 +16,7 @@ import imgHero from '../assets/shoot/lounge-tuer.jpg';
     title={['Meld dich.', 'Wir freuen uns.']}
     sub="Kontakt & Anfahrt"
     image={imgHero}
-    alt="Lounge mit weissen Sesseln im Eloure Studio"
+    alt="Caro, deine Ansprechpartnerin bei Eloure"
     lead="Ob kurze Frage oder erster Termin: Schreib uns, wie es dir am liebsten ist. Wir antworten persönlich."
   />
 
@@ -87,7 +87,7 @@ import imgHero from '../assets/shoot/lounge-tuer.jpg';
         <a class="btn btn-ghost" href={site.mapsUrl} target="_blank" rel="noopener"><Icon name="pin" size={18} /> Route in Google Maps</a>
       </div>
       <div class="media pic" data-anim="img">
-        <Image src={imgLounge} alt="Lounge im Eloure Studio in Amriswil" widths={[500, 800]} sizes="(min-width: 900px) 46vw, 100vw" />
+        <Image src={imgLounge} alt="Frische Tücher im Behandlungsraum" widths={[500, 800]} sizes="(min-width: 900px) 46vw, 100vw" />
       </div>
     </div>
   </section>
@@ -138,7 +138,7 @@ import imgHero from '../assets/shoot/lounge-tuer.jpg';
 
   .ch small {
     color: var(--muted);
-    font-size: 0.86rem;
+    font-size: 0.94rem;
   }
 
   .ch.main {
@@ -215,7 +215,7 @@ import imgHero from '../assets/shoot/lounge-tuer.jpg';
     align-items: start;
     gap: 10px;
     font-weight: 500;
-    font-size: 0.86rem;
+    font-size: 0.94rem;
     color: var(--ink-2);
   }
 

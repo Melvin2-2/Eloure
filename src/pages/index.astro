@@ -4,9 +4,9 @@ import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import Lines from '../components/Lines.astro';
 import ImageExpand from '../components/ImageExpand.astro';
-import ZoneFinder from '../components/ZoneFinder.astro';
+import ZoneHighlights from '../components/ZoneHighlights.astro';
 import Counters from '../components/Counters.astro';
-import StickySteps from '../components/StickySteps.astro';
+import StepsCompact from '../components/StepsCompact.astro';
 import FaqList from '../components/FaqList.astro';
 import Gallery from '../components/Gallery.astro';
 import Reviews from '../components/Reviews.astro';
@@ -15,9 +15,8 @@ import { site } from '../data/site';
 import { pickFaqs, topFaqIds } from '../data/faq';
 import { googleRating, pickReview } from '../data/reviews';
 
-import imgHero from '../assets/shoot/laser-achsel.jpg';
 import imgCaro from '../assets/shoot/caro-laechelt.jpg';
-import imgExhale from '../assets/shoot/raum-exhale.jpg';
+import imgExhale from '../assets/shoot/exhale-wand.jpg';
 import imgHands from '../assets/shoot/beratung-haende.jpg';
 import imgCaroSw from '../assets/shoot/caro-sw.jpg';
 
@@ -28,7 +27,7 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
 
 <Base
   title="Laserhaarentfernung in Amriswil | Eloure The Studio"
-  description="Laserhaarentfernung in Amriswil mit medizinischem Diodenlaser – persönlich betreut von Caro & Sarah. Transparente Preise ab CHF 29, bezahlt wird erst vor Ort. Jetzt Termin buchen."
+  description="Laserhaarentfernung in Amriswil mit medizinischem Diodenlaser – persönlich betreut von Gründerin Caro. Transparente Preise ab CHF 29, bezahlt wird erst vor Ort. Jetzt Termin buchen."
   schema={[
     {
       '@context': 'https://schema.org',
@@ -44,7 +43,9 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
   <!-- 1 · HERO – Was, wo, warum. Headline läuft über das Bild. -->
   <section class="hero bg-dark">
     <div class="hero-img">
-      <Image src={imgHero} alt="Laserhaarentfernung an der Achsel mit medizinischem Diodenlaser" widths={[700, 1100, 1600, 2000]} sizes="(min-width: 1000px) 56vw, 100vw" loading="eager" fetchpriority="high" data-parallax="10" />
+      <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="/video/hero.jpg" aria-label="Eindrücke einer Laserbehandlung im Eloure Studio">
+        <source src="/video/hero.mp4" type="video/mp4" />
+      </video>
       <div class="hero-shade"></div>
     </div>
 
@@ -53,8 +54,8 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
         <span class="hero-sub" data-anim="up">Laserhaarentfernung in Amriswil</span>
       </Lines>
       <p class="lead" data-anim="up">
-        Medizinischer Diodenlaser, ehrliche Beratung und ein Plan, der zu deinem Körper passt. Persönlich betreut von Caro &
-        Sarah.
+        Medizinischer Diodenlaser, ehrliche Beratung und ein Plan, der zu deinem Körper passt. Persönlich betreut von Caro,
+        Gründerin von Eloure.
       </p>
       <div class="btn-row" data-anim="up">
         <a class="btn btn-primary" href="/termin">Termin buchen<span class="arrow"><Icon name="arrow" size={16} /></span></a>
@@ -101,7 +102,7 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
         <a class="text-link" href="/studio">Wer wir sind</a>
       </div>
     </div>
-    <div class="pos-img" data-anim="img">
+    <div class="pos-img fade-l" data-anim="img">
       <Image src={imgCaro} alt="Caro, Gründerin von Eloure, lächelt in der Studio-Lounge" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 42vw, 100vw" />
     </div>
   </section>
@@ -118,7 +119,7 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
   />
 
   <!-- 4 · ZONEN & PREISE – Entscheidung -->
-  <ZoneFinder />
+  <ZoneHighlights />
 
   <!-- 5 · BEWEIS -->
   <Counters
@@ -131,11 +132,11 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
   />
 
   <!-- 6 · ABLAUF – Sicherheit durch Klarheit -->
-  <StickySteps />
+  <StepsCompact />
 
   <!-- 7 · SORGEN – Ängste abbauen -->
   <section class="fears bg-dark">
-    <div class="f-img" data-anim="img">
+    <div class="f-img fade-r" data-anim="img">
       <Image src={imgHands} alt="Beratung mit Tablet im Studio" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 45vw, 100vw" />
       <figure class="f-quote glass">
         <span class="stars">★★★★★</span>
@@ -156,23 +157,23 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
 
   <!-- 8 · MENSCHEN -->
   <section class="team bg-sand">
-    <div class="t-img" data-anim="img">
-      <Image src={imgCaroSw} alt="Caro, Gründerin und Inhaberin von Eloure The Studio" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 46vw, 100vw" />
-      <span class="t-cap glass">Caro · Gründerin & Inhaberin</span>
+    <div class="t-img fade-r" data-anim="img">
+      <Image src={imgCaroSw} alt="Caro, Gründerin von Eloure The Studio" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 46vw, 100vw" />
+      <span class="t-cap glass">Caro · Gründerin & deine Ansprechpartnerin</span>
     </div>
     <div class="t-content">
-      <Lines lines={['Hey, wir sind', 'Caro & Sarah.']} class="t-title" />
+      <Lines lines={['Hey,', 'ich bin Caro.']} class="t-title" />
       <p class="lead reveal">
-        Caro hat Eloure gegründet, Sarah ist an ihrer Seite. Wir wissen, dass sich eine Behandlung am Anfang ungewohnt anfühlen
-        kann – gerade an intimen Stellen.
+        Ich habe Eloure gegründet und bin deine Ansprechpartnerin – vom ersten Gespräch bis zum Ergebnis. Ich weiss, dass sich
+        eine Behandlung am Anfang ungewohnt anfühlen kann, gerade an intimen Stellen.
       </p>
       <p class="reveal">
-        Darum nehmen wir uns Zeit, erklären jeden Schritt in Ruhe und sind auch zwischen den Terminen für dich da. Du gibst das
-        Tempo vor.
+        Darum nehme ich mir Zeit, erkläre jeden Schritt in Ruhe und bin auch zwischen den Terminen für dich da – per WhatsApp
+        oder Telefon. Du gibst das Tempo vor.
       </p>
       <div class="btn-row reveal">
-        <a class="btn btn-dark" href="/termin">Termin bei uns buchen<span class="arrow"><Icon name="arrow" size={16} /></span></a>
-        <a class="text-link" href="/studio">Mehr über uns</a>
+        <a class="btn btn-dark" href="/termin">Termin bei Caro buchen<span class="arrow"><Icon name="arrow" size={16} /></span></a>
+        <a class="text-link" href="/studio">Studio & Team</a>
       </div>
     </div>
   </section>
@@ -206,13 +207,12 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
     overflow: hidden;
   }
 
-  .hero-img :global(img) {
+  .hero-video {
     position: absolute;
-    inset: -6% 0;
+    inset: 0;
     width: 100%;
-    height: 112%;
+    height: 100%;
     object-fit: cover;
-    object-position: center 30%;
   }
 
   .hero-shade {
@@ -544,7 +544,7 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
   }
 
   .f-quote figcaption {
-    font-size: 0.88rem;
+    font-size: 0.94rem;
     opacity: 0.8;
   }
 </style>

@@ -4,26 +4,23 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import Lines from '../components/Lines.astro';
-import ZoneFinder from '../components/ZoneFinder.astro';
-import StickySteps from '../components/StickySteps.astro';
+import ZoneHighlights from '../components/ZoneHighlights.astro';
+import StepsCompact from '../components/StepsCompact.astro';
 import FaqList from '../components/FaqList.astro';
 import Reviews from '../components/Reviews.astro';
 import CtaFinal from '../components/CtaFinal.astro';
 import { site, promo } from '../data/site';
-import { services, chf, discounted } from '../data/services';
 import { pickFaqs } from '../data/faq';
 import { googleRating } from '../data/reviews';
 
-import imgHero from '../assets/shoot/kundin-brille.jpg';
 import imgDevice from '../assets/shoot/geraet.jpg';
-import uRoom from '../assets/shoot/liege-fenster.jpg';
+import uRoom from '../assets/shoot/geraet-2.jpg';
 import uCaro from '../assets/shoot/caro-beratung-2.jpg';
 import uDisplay from '../assets/shoot/display.jpg';
 import uLounge from '../assets/shoot/lounge-tuer.jpg';
 
 const q = `code=${promo.code}`;
 const pct = `${promo.percent} %`;
-const top = ['ganzkoerper', 'kombi-intim-achseln', 'beine-komplett', 'brust-bauch'].map((id) => services.find((s) => s.id === id)!);
 
 const usps = [
   { img: imgDevice, alt: 'Medizinischer Diodenlaser im Studio', title: 'Medizinischer Diodenlaser', text: 'Schonend, präzise und für verschiedene Haut- und Haartypen geeignet.' },
@@ -60,7 +57,9 @@ const faqs = [
   <!-- HERO -->
   <section class="hero bg-dark">
     <div class="hero-img">
-      <Image src={imgHero} alt="Kundin mit Schutzbrille während der Laserbehandlung" widths={[700, 1100, 1600, 2000]} sizes="(min-width: 1000px) 52vw, 100vw" loading="eager" fetchpriority="high" data-parallax="10" />
+      <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="/video/hero.jpg" aria-label="Eindrücke einer Laserbehandlung im Eloure Studio">
+        <source src="/video/hero.mp4" type="video/mp4" />
+      </video>
       <div class="hero-shade"></div>
     </div>
 
@@ -97,36 +96,8 @@ const faqs = [
     </div>
   </section>
 
-  <!-- BELIEBTE ZONEN mit Rabatt -->
-  <section class="top bg-lime">
-    <div class="wrap">
-      <div class="top-head">
-        <Lines lines={['Beliebt bei', 'Neukundinnen.']} />
-        <a class="btn btn-dark reveal" href={`/termin?${q}`}>Jetzt {pct} sichern<span class="arrow"><Icon name="arrow" size={16} /></span></a>
-      </div>
-      <ul class="top-list">
-        {
-          top.map((s) => (
-            <li class="reveal">
-              <a href={`/termin?behandlung=${s.id}&${q}`}>
-                <span class="t-name serif">{s.name}</span>
-                <span class="t-prices">
-                  <s>{chf(s.price)}</s>
-                  <strong class="serif">{chf(discounted(s.price!, promo.percent))}</strong>
-                </span>
-                <span class="t-go label">
-                  Buchen <Icon name="arrow" size={14} />
-                </span>
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
-
   <!-- ALLE ZONEN mit Rabatt -->
-  <ZoneFinder code={promo.code} discount={promo.percent} />
+  <ZoneHighlights code={promo.code} discount={promo.percent} title={['Alle Topseller', `${pct} günstiger.`]} />
 
   <!-- WARUM ELOURE: Bildkacheln mit Glas-Text -->
   <section class="why bg-dark">
@@ -155,12 +126,12 @@ const faqs = [
   </section>
 
   <!-- ABLAUF -->
-  <StickySteps title={['So läuft dein', 'erster Termin.']} ctaHref={`/termin?${q}`} ctaLabel={`Mit ${pct} starten`} />
+  <StepsCompact title={['So läuft dein', 'erster Termin.']} ctaHref={`/termin?${q}`} ctaLabel={`Mit ${pct} starten`} />
 
   <!-- SICHERHEIT -->
   <section class="safe bg-mocha">
     <div class="safe-img" data-anim="img">
-      <Image src={uRoom} alt="Behandlungsraum mit Laserliege am Fenster" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 50vw, 100vw" />
+      <Image src={uRoom} alt="Medizinischer Diodenlaser im Behandlungsraum" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 50vw, 100vw" />
     </div>
     <div class="safe-content">
       <Lines lines={['Sicherheit', 'zuerst.']} />
@@ -216,13 +187,12 @@ const faqs = [
     overflow: hidden;
   }
 
-  .hero-img :global(img) {
+  .hero-video {
     position: absolute;
-    inset: -6% 0;
+    inset: 0;
     width: 100%;
-    height: 112%;
+    height: 100%;
     object-fit: cover;
-    object-position: center 35%;
   }
 
   .hero-shade {
@@ -277,7 +247,7 @@ const faqs = [
 
   .code-box small {
     display: block;
-    font-size: 0.78rem;
+    font-size: 0.85rem;
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -300,7 +270,7 @@ const faqs = [
     background: var(--espresso);
     color: var(--cream);
     font-weight: 600;
-    font-size: 0.78rem;
+    font-size: 0.85rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     cursor: pointer;
@@ -334,7 +304,7 @@ const faqs = [
     margin-right: 10px;
     background: var(--lime);
     color: var(--espresso);
-    font-size: 0.85rem;
+    font-size: 0.94rem;
   }
 
   .hero-card .g {
@@ -509,7 +479,7 @@ const faqs = [
 
   .tile-card h3 {
     font-family: var(--serif);
-    font-weight: 400;
+    font-weight: 600;
     font-size: clamp(1.8rem, 2.6vw, 2.4rem);
     line-height: 1.05;
   }

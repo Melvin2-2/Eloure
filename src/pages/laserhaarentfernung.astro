@@ -1,11 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
-import StickySteps from '../components/StickySteps.astro';
+import StepsCompact from '../components/StepsCompact.astro';
 import { Image } from 'astro:assets';
 import Lines from '../components/Lines.astro';
 import imgHero from '../assets/shoot/geraet.jpg';
-import imgWirk from '../assets/shoot/laser-achsel.jpg';
+import imgWirk from '../assets/shoot/gel-achsel.jpg';
 import CtaFinal from '../components/CtaFinal.astro';
 import Icon from '../components/Icon.astro';
 ---
@@ -41,8 +41,8 @@ import Icon from '../components/Icon.astro';
       </p>
       <p class="muted small reveal">Fachbegriff: selektive Photothermolyse.</p>
     </div>
-    <div class="w-img" data-anim="img">
-      <Image src={imgWirk} alt="Laserbehandlung mit Diodenlaser an der Achsel" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 50vw, 100vw" />
+    <div class="w-img fade-l" data-anim="img">
+      <Image src={imgWirk} alt="Kühlgel wird vor der Laserbehandlung aufgetragen" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 50vw, 100vw" />
     </div>
   </section>
 
@@ -134,7 +134,7 @@ import Icon from '../components/Icon.astro';
   </section>
 
   <!-- Ablauf -->
-  <StickySteps title={['Dein Ablauf', 'bei uns.']} />
+  <StepsCompact title={['Dein Ablauf', 'bei uns.']} />
 
   <!-- Vorbereitung -->
   <section class="section bg-paper" id="vorbereitung">
@@ -395,7 +395,7 @@ import Icon from '../components/Icon.astro';
     display: inline-block;
     padding: 6px 12px;
     border-radius: 999px;
-    font-size: 0.85rem;
+    font-size: 0.94rem;
   }
 
   .badge.good {

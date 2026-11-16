@@ -6,7 +6,8 @@ export const site = {
   legalName: 'Eloure GmbH',
   claim: 'Laserhaarentfernung in Amriswil',
   url: 'https://www.elourethestudio.ch',
-  team: ['Caro', 'Sarah'], // Caro = Inhaberin, Sarah = Mitarbeiterin
+  team: ['Caro', 'Sarah'], // Caro (Carolin Wolf) = Gründerin & Hauptansprechpartnerin; Sarah nur auf der Team-Seite
+  owner: 'Carolin Wolf',
 
   address: {
     street: 'Bahnhofstrasse 20',

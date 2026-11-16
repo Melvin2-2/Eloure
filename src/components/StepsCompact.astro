@@ -1,0 +1,175 @@
+---
+// Ablauf auf einen Blick: ein Bild, Headline darüber, drei kurze Schritte.
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import Lines from './Lines.astro';
+import img from '../assets/shoot/caro-beratung.jpg';
+
+interface Props {
+  title?: string[];
+  ctaHref?: string;
+  ctaLabel?: string;
+}
+const { title = ['Dein Weg zu', 'glatter Haut.'], ctaHref = '/termin', ctaLabel = 'Ersten Termin buchen' } = Astro.props;
+const steps = [
+  { t: 'Kennenlernen & Beratung', d: 'Wir prüfen Haut- und Haartyp und planen ehrlich mit dir. Bei jedem ersten Termin inklusive.' },
+  { t: 'Deine erste Session', d: 'Jeder Schritt wird vorher erklärt, Pausen sind jederzeit okay. Kleine Zonen dauern 15 bis 30 Minuten.' },
+  { t: 'Begleitung bis zum Ziel', d: 'Folgetermine nach deinem Haarzyklus – Einstellungen passen wir laufend an. Bezahlt wird jeweils vor Ort.' },
+];
+---
+
+<section class="steps bg-dark">
+  <div class="pic" data-anim="img">
+    <Image src={img} alt="Caro im Beratungsgespräch mit einer Kundin" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 50vw, 100vw" />
+    <div class="shade"></div>
+  </div>
+  <div class="title-wrap">
+    <Lines lines={title} class="s-title" />
+  </div>
+  <div class="content">
+    <ol>
+      {
+        steps.map((s, i) => (
+          <li class="reveal">
+            <span class="no">0{i + 1}</span>
+            <div>
+              <h3>{s.t}</h3>
+              <p>{s.d}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+    <div class="btn-row reveal">
+      <a class="btn btn-primary" href={ctaHref}>{ctaLabel}<span class="arrow"><Icon name="arrow" size={16} /></span></a>
+      <a class="text-link" href="/laserhaarentfernung">Wie der Laser wirkt</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .steps {
+    position: relative;
+    display: grid;
+  }
+
+  @media (min-width: 1000px) {
+    .steps {
+      grid-template-columns: 1fr 1fr;
+      min-height: min(100vh, 900px);
+    }
+  }
+
+  .pic {
+    position: relative;
+    overflow: hidden;
+    min-height: 90vw;
+  }
+
+  @media (min-width: 1000px) {
+    .pic {
+      grid-row: 1;
+      grid-column: 1;
+      min-height: 0;
+    }
+  }
+
+  .pic :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+  }
+
+  .shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(43, 31, 26, 0.9) 0%, rgba(43, 31, 26, 0.35) 38%, rgba(43, 31, 26, 0) 60%),
+      linear-gradient(270deg, rgba(43, 31, 26, 0.55) 0%, rgba(43, 31, 26, 0) 35%);
+  }
+
+  .title-wrap {
+    position: relative;
+    z-index: 2;
+    padding: 0 var(--gutter);
+    margin-top: -26vw;
+  }
+
+  @media (min-width: 1000px) {
+    .title-wrap {
+      grid-row: 1;
+      grid-column: 1 / 3;
+      align-self: end;
+      margin: 0;
+      padding-bottom: clamp(48px, 6vw, 88px);
+    }
+    .title-wrap :global(.s-title) {
+      width: max-content;
+      margin: 0;
+      font-size: clamp(3.4rem, 6.4vw, 6.4rem);
+    }
+  }
+
+  .title-wrap :global(.s-title) {
+    color: var(--cream);
+    text-shadow: 0 2px 30px rgba(20, 14, 11, 0.35);
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    padding: 32px var(--gutter) var(--section);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  @media (min-width: 1000px) {
+    .content {
+      grid-row: 1;
+      grid-column: 2;
+      padding: clamp(64px, 7vw, 104px) var(--gutter) clamp(160px, 16vw, 230px);
+      justify-content: flex-start;
+    }
+  }
+
+  ol {
+    list-style: none;
+    margin: 0 0 40px;
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 16px;
+    padding: 26px 0;
+    border-bottom: 1px solid var(--line-light);
+  }
+
+  li:first-child {
+    border-top: 1px solid var(--line-light);
+  }
+
+  .no {
+    font-size: 2.4rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--lime);
+    letter-spacing: -0.03em;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    margin-bottom: 6px;
+  }
+
+  li p {
+    margin: 0;
+    color: rgba(246, 241, 234, 0.8);
+  }
+</style>

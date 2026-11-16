@@ -1,11 +1,10 @@
-@import '@fontsource-variable/bodoni-moda/opsz.css';
 @import '@fontsource-variable/source-sans-3';
 
 /* ————————————————————————————————————————————————
    Eloure – Design-System
    Espresso · Mokka · Sand · Creme  +  Lime (etablierte Akzentfarbe)
-   Headlines: Bodoni Moda (Serif, gross, ohne Kursiv)
-   Text/UI:   Source Sans 3 (offene Schwester der Hausschrift Myriad Pro)
+   Schrift:   Source Sans 3 für alles (offene Schwester der Hausschrift Myriad Pro).
+              Headlines Semibold, gross und eng – klar lesbar.
    Keine Rundungen bei Bildern & Flächen. Glas-Flächen über Bildern.
    ———————————————————————————————————————————————— */
 :root {
@@ -36,7 +35,7 @@
   --deep: var(--espresso);
   --ok: #5c7a4f;
 
-  --serif: 'Bodoni Moda Variable', 'Bodoni 72', 'Didot', Georgia, serif;
+  --serif: 'Source Sans 3 Variable', 'Myriad Pro', 'Source Sans Pro', system-ui, sans-serif;
   --sans: 'Source Sans 3 Variable', 'Myriad Pro', 'Source Sans Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   --radius-s: 0px;
@@ -81,8 +80,8 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--sans);
-  font-size: 18px;
-  line-height: 1.62;
+  font-size: 19px;
+  line-height: 1.6;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -137,31 +136,34 @@ h2,
 .display,
 .serif {
   font-family: var(--serif);
-  font-weight: 400;
-  font-optical-sizing: auto;
-  letter-spacing: -0.02em;
-  line-height: 0.98;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1;
   margin: 0 0 0.4em;
   text-wrap: balance;
 }
 
 .display {
-  font-size: clamp(3.4rem, 9vw, 9.4rem);
-  line-height: 0.9;
+  font-size: clamp(3.2rem, 7.6vw, 7.6rem);
+  line-height: 0.95;
   letter-spacing: -0.035em;
 }
 
 h1 {
-  font-size: clamp(3rem, 7vw, 7rem);
+  font-size: clamp(2.9rem, 6.4vw, 6.2rem);
 }
 
 h2 {
-  font-size: clamp(2.5rem, 5.4vw, 5.4rem);
+  font-size: clamp(2.4rem, 4.8vw, 4.6rem);
+}
+
+blockquote {
+  font-weight: 400;
 }
 
 h3 {
   font-family: var(--sans);
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-weight: 600;
   line-height: 1.25;
   letter-spacing: -0.005em;
@@ -176,7 +178,7 @@ b {
 .label {
   display: inline-block;
   font-family: var(--sans);
-  font-size: 0.78rem;
+  font-size: 0.86rem;
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -195,7 +197,7 @@ b {
 }
 
 .small {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 /* ——— Flächen ———
@@ -328,9 +330,9 @@ b {
   background: var(--btn-bg);
   color: var(--btn-fg);
   font-family: var(--sans);
-  font-weight: 600;
-  font-size: 0.86rem;
-  letter-spacing: 0.16em;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
@@ -428,9 +430,9 @@ b {
 }
 
 .text-link {
-  font-weight: 600;
-  font-size: 0.86rem;
-  letter-spacing: 0.14em;
+  font-weight: 700;
+  font-size: 0.92rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   text-decoration: underline;
   text-decoration-color: currentColor;
@@ -480,7 +482,7 @@ b {
   padding: 8px 14px;
   background: var(--paper);
   border: 1px solid var(--line);
-  font-size: 0.86rem;
+  font-size: 0.95rem;
   font-weight: 600;
   line-height: 1.3;
 }
@@ -618,4 +620,42 @@ b {
   opacity: 1 !important;
   transform: none !important;
   clip-path: none !important;
+}
+
+/* ——— Lesbarkeit bei überlappenden Headlines ———
+   Bildkante läuft weich in die Flächenfarbe aus, damit Text auf dem Bild lesbar bleibt. */
+.bg-dark,
+.bg-ink {
+  --fade: var(--espresso);
+}
+.bg-mocha {
+  --fade: var(--mocha);
+}
+.bg-sand,
+.bg-linen {
+  --fade: var(--sand);
+}
+.bg-paper {
+  --fade: var(--paper);
+}
+
+@media (min-width: 1000px) {
+  .fade-r::after,
+  .fade-l::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 42%;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .fade-r::after {
+    right: 0;
+    background: linear-gradient(270deg, var(--fade, var(--espresso)) 0%, color-mix(in srgb, var(--fade, var(--espresso)) 55%, transparent) 40%, transparent 100%);
+  }
+  .fade-l::after {
+    left: 0;
+    background: linear-gradient(90deg, var(--fade, var(--espresso)) 0%, color-mix(in srgb, var(--fade, var(--espresso)) 55%, transparent) 40%, transparent 100%);
+  }
 }

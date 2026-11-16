@@ -3,12 +3,12 @@ import { Image } from 'astro:assets';
 import Icon from './Icon.astro';
 import Lines from './Lines.astro';
 import { site } from '../data/site';
-import i1 from '../assets/shoot/raum-weit.jpg';
-import i2 from '../assets/shoot/lounge.jpg';
-import i3 from '../assets/shoot/exhale-wand.jpg';
-import i4 from '../assets/shoot/liege-licht.jpg';
+import i1 from '../assets/shoot/liege-fenster.jpg';
+import i2 from '../assets/shoot/lounge-tuer.jpg';
+import i3 from '../assets/shoot/detail-buch.jpg';
+import i4 from '../assets/shoot/tuer-exhale.jpg';
 import i5 from '../assets/shoot/detail-objekte.jpg';
-import i6 from '../assets/shoot/sessel.jpg';
+import i6 from '../assets/shoot/detail-pflanze.jpg';
 import i7 from '../assets/shoot/detail-tuecher.jpg';
 
 interface Props {
@@ -17,12 +17,12 @@ interface Props {
 }
 const { title = ['Ein Ort zum', 'Durchatmen.'], text = 'Hell, ruhig und mit viel Liebe eingerichtet – mitten in Amriswil. Damit du dich vom ersten Moment an wohlfühlst und nicht wie in einer Klinik.' } = Astro.props;
 const imgs = [
-  { src: i1, alt: 'Heller Behandlungsraum mit Laserliege', w: 'wide' },
-  { src: i2, alt: 'Lounge mit weissen Möbeln', w: 'tall' },
-  { src: i3, alt: 'Wandschriftzug Exhale', w: 'wide' },
-  { src: i4, alt: 'Laserliege im warmen Licht', w: 'tall' },
+  { src: i1, alt: 'Laserliege am Fenster', w: 'tall' },
+  { src: i2, alt: 'Blick durch die Tür in die Lounge', w: 'tall' },
+  { src: i3, alt: 'Bildband im Sonnenlicht', w: 'wide' },
+  { src: i4, alt: 'Schriftzug Exhale the bullshit, durch die Tür gesehen', w: 'tall' },
   { src: i5, alt: 'Dekorative Details im Studio', w: 'wide' },
-  { src: i6, alt: 'Weisser Sessel in der Lounge', w: 'tall' },
+  { src: i6, alt: 'Pflanze im Studio', w: 'tall' },
   { src: i7, alt: 'Frische Tücher für die Behandlung', w: 'tall' },
 ];
 ---

@@ -1,0 +1,314 @@
+---
+// Kompakte Zonen-Übersicht: Kombis (hervorgehoben) + Topseller, Frauen/Männer umschaltbar.
+import Icon from './Icon.astro';
+import Lines from './Lines.astro';
+import { services, chf, discounted, duration, type Group } from '../data/services';
+import { site } from '../data/site';
+
+interface Props {
+  code?: string;
+  discount?: number;
+  title?: string[];
+}
+const { code, discount, title = ['Topseller', '& Kombis.'] } = Astro.props;
+const q = code ? `&code=${code}` : '';
+const groups: { id: Group; label: string }[] = [
+  { id: 'frauen', label: 'Frauen' },
+  { id: 'maenner', label: 'Männer' },
+];
+const of = (g: Group, tag: 'Kombi' | 'Topseller') => services.filter((s) => s.group === g && s.tag === tag);
+const price = (p: number) => (discount ? discounted(p, discount) : p);
+const kombiNote: Record<string, string> = {
+  'kombi-intim-achseln': 'Intim und Achseln in einer Sitzung',
+};
+---
+
+<section class="zh bg-mocha" id="zonen" data-zh>
+  <div class="wrap">
+    <div class="head">
+      <Lines lines={title} />
+      <div class="head-side reveal">
+        <p class="lead">
+          Die beliebtesten Zonen auf einen Blick – Preis pro Sitzung, bezahlt wird erst vor Ort.
+          {discount && <strong> Neukundenpreise mit Code {code}.</strong>}
+        </p>
+        <div class="seg" role="tablist" aria-label="Zonen für">
+          {groups.map((g, i) => <button type="button" role="tab" aria-selected={String(i === 0)} data-zh-tab={g.id}>{g.label}</button>)}
+        </div>
+      </div>
+    </div>
+
+    {
+      groups.map((g, gi) => (
+        <div class="panel" data-zh-panel={g.id} hidden={gi !== 0}>
+          <div class="row kombi">
+            {of(g.id, 'Kombi').map((s) => (
+              <a class="card k reveal" href={`/termin?behandlung=${s.id}${q}`}>
+                <span class="badge">Kombi</span>
+                <span class="name">{s.name}</span>
+                <span class="meta">
+                  {duration(s.minutes)}
+                  {(kombiNote[s.id] || s.note) && <> · {kombiNote[s.id] || s.note}</>}
+                </span>
+                <span class="foot">
+                  <span class="price">
+                    {discount && <s>{chf(s.price)}</s>}
+                    {chf(price(s.price!))}
+                  </span>
+                  <span class="go">
+                    Buchen <Icon name="arrow" size={16} />
+                  </span>
+                </span>
+              </a>
+            ))}
+          </div>
+          <div class="row top">
+            {of(g.id, 'Topseller').map((s) => (
+              <a class="card t reveal" href={`/termin?behandlung=${s.id}${q}`}>
+                <span class="badge">Topseller</span>
+                <span class="name">{s.name}</span>
+                <span class="meta">{duration(s.minutes)}</span>
+                <span class="foot">
+                  <span class="price">
+                    {discount && <s>{chf(s.price)}</s>}
+                    {chf(price(s.price!))}
+                  </span>
+                  <span class="go">
+                    Buchen <Icon name="arrow" size={16} />
+                  </span>
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))
+    }
+
+    <div class="more reveal">
+      <p>Gesicht, Arme, Rücken, Füsse und mehr – über 30 Zonen für Frauen und Männer.</p>
+      <div class="btn-row">
+        <a class="btn btn-ghost" href="/preise">Alle Zonen & Preise</a>
+        <span class="trust"><Icon name="check" size={16} /> Kostenlos absagen bis {site.cancellationHours} Std. vorher</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .zh {
+    padding-block: clamp(80px, 9vw, 128px);
+  }
+
+  .head {
+    display: grid;
+    gap: 20px 64px;
+    margin-bottom: 40px;
+  }
+
+  @media (min-width: 960px) {
+    .head {
+      grid-template-columns: 1fr 1fr;
+      align-items: end;
+    }
+  }
+
+  .head :global(h2) {
+    margin: 0;
+  }
+
+  .head-side .lead {
+    margin-bottom: 20px;
+  }
+
+  .seg {
+    display: inline-flex;
+    border: 1px solid var(--line-light);
+  }
+
+  .seg button {
+    border: 0;
+    background: transparent;
+    padding: 14px 32px;
+    cursor: pointer;
+    color: rgba(246, 241, 234, 0.75);
+    font-weight: 700;
+    font-size: 0.94rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .seg button[aria-selected='true'] {
+    background: var(--cream);
+    color: var(--espresso);
+  }
+
+  .row {
+    display: grid;
+    gap: 8px;
+  }
+
+  .row + .row {
+    margin-top: 8px;
+  }
+
+  @media (min-width: 700px) {
+    .kombi {
+      grid-template-columns: 1fr 1fr;
+    }
+    .top {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .kombi {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 24px 26px;
+    text-decoration: none;
+    transition:
+      transform 0.35s var(--ease),
+      background 0.3s;
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+  }
+
+  .k {
+    background: var(--lime);
+    color: var(--espresso);
+    min-height: 220px;
+  }
+
+  .t {
+    background: var(--cream);
+    color: var(--espresso);
+    min-height: 190px;
+  }
+
+  .badge {
+    align-self: flex-start;
+    padding: 5px 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: var(--espresso);
+    color: var(--lime);
+    margin-bottom: 8px;
+  }
+
+  .t .badge {
+    background: transparent;
+    color: var(--mocha);
+    border: 1px solid currentColor;
+  }
+
+  .name {
+    font-size: clamp(1.6rem, 2.2vw, 2.1rem);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  .meta {
+    font-size: 0.98rem;
+    opacity: 0.8;
+  }
+
+  .foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 18px;
+  }
+
+  .price {
+    display: flex;
+    flex-direction: column;
+    white-space: nowrap;
+    font-size: clamp(2rem, 2.8vw, 2.6rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .price s {
+    font-size: 1rem;
+    font-weight: 400;
+    opacity: 0.6;
+    margin-bottom: 4px;
+  }
+
+  .go {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    font-size: 0.94rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--espresso);
+    color: var(--cream);
+    transition: background 0.3s;
+  }
+
+  .t .go {
+    background: var(--lime);
+    color: var(--espresso);
+  }
+
+  .card:hover .go {
+    background: var(--mocha);
+    color: var(--cream);
+  }
+
+  .more {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px 32px;
+    margin-top: 36px;
+  }
+
+  .more p {
+    margin: 0;
+    font-size: 1.05rem;
+  }
+
+  .trust {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .trust :global(svg) {
+    color: var(--lime);
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-zh]').forEach((root) => {
+    const tabs = root.querySelectorAll<HTMLButtonElement>('[data-zh-tab]');
+    tabs.forEach((t) =>
+      t.addEventListener('click', () => {
+        tabs.forEach((x) => x.setAttribute('aria-selected', String(x === t)));
+        root.querySelectorAll<HTMLElement>('[data-zh-panel]').forEach((p) => {
+          p.hidden = p.dataset.zhPanel !== t.dataset.zhTab;
+          if (!p.hidden) p.querySelectorAll<HTMLElement>('.reveal').forEach((r) => ((r.style.opacity = '1'), (r.style.transform = 'none')));
+        });
+      }),
+    );
+  });
+</script>

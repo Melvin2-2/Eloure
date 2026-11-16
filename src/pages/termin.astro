@@ -2,8 +2,11 @@
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import { site, promo, BOOKING_DEMO } from '../data/site';
+import { googleRating } from '../data/reviews';
 import { services, firstVisit, byRegion, chf, duration, type Group } from '../data/services';
 
+const rating = googleRating.rating.toFixed(1).replace('.', ',');
+const quick = (g: Group) => services.filter((s) => s.group === g && s.tag);
 const groups: { id: Group; label: string }[] = [
   { id: 'frauen', label: 'Frauen' },
   { id: 'maenner', label: 'Männer' },
@@ -37,26 +40,36 @@ const data = {
   ctaLabel={`Fragen? ${site.phone}`}
 >
   <section class="booking" data-booking>
+    <div class="b-band bg-dark">
+      <div class="wrap">
+        {
+          BOOKING_DEMO && (
+            <p class="demo">
+              <Icon name="spark" size={16} /> Vorschau: Die Online-Buchung wird gerade angebunden – Anfragen werden noch nicht
+              übermittelt.
+            </p>
+          )
+        }
+        <header class="b-head">
+          <div>
+            <h1>Dein Termin bei Eloure.</h1>
+            <ul class="b-trust">
+              <li><span class="stars">★★★★★</span> <b>{rating}</b> aus {googleRating.count} Google-Bewertungen</li>
+              <li><Icon name="check" size={16} /> Bezahlt wird erst vor Ort</li>
+              <li><Icon name="check" size={16} /> Kostenlos absagen bis {site.cancellationHours} Std. vorher</li>
+            </ul>
+          </div>
+          <ol class="stepper" aria-label="Fortschritt">
+            <li data-stepper="1" class="is-current"><span>1</span> Behandlung</li>
+            <li data-stepper="2"><span>2</span> Termin</li>
+            <li data-stepper="3"><span>3</span> Angaben</li>
+            <li data-stepper="4"><span>4</span> Bestätigen</li>
+          </ol>
+        </header>
+      </div>
+    </div>
+
     <div class="wrap">
-      {
-        BOOKING_DEMO && (
-          <p class="demo">
-            <Icon name="spark" size={16} /> Vorschau: Die Online-Buchung wird gerade angebunden – Anfragen werden noch nicht
-            übermittelt.
-          </p>
-        )
-      }
-
-      <header class="b-head">
-        <h1>Termin buchen</h1>
-        <ol class="stepper" aria-label="Fortschritt">
-          <li data-stepper="1" class="is-current"><span>1</span> Behandlung</li>
-          <li data-stepper="2"><span>2</span> Termin</li>
-          <li data-stepper="3"><span>3</span> Angaben</li>
-          <li data-stepper="4"><span>4</span> Bestätigen</li>
-        </ol>
-      </header>
-
       <div class="b-grid">
         <div class="b-main">
           <!-- ——— Schritt 1: Behandlung ——— -->
@@ -80,6 +93,19 @@ const data = {
             {
               groups.map((g, gi) => (
                 <div class="group-panel" data-group-panel={g.id} hidden={gi !== 0}>
+                  <p class="quick-title">Topseller & Kombis</p>
+                  <div class="quick">
+                    {quick(g.id).map((s) => (
+                      <button type="button" class:list={['qk', s.tag === 'Kombi' ? 'qk-k' : 'qk-t']} data-quick={s.id}>
+                        <span class="qk-badge">{s.tag}</span>
+                        <span class="qk-name">{s.name}</span>
+                        <span class="qk-meta">{duration(s.minutes)}</span>
+                        <span class="qk-price">{chf(s.price)}</span>
+                        <span class="qk-check" aria-hidden="true"><Icon name="check" size={14} /></span>
+                      </button>
+                    ))}
+                  </div>
+                  <p class="quick-title">Alle Zonen</p>
                   <a class="unsure" href={`#erstbesuch-${g.id}`}>
                     <Icon name="chat" size={16} /> Noch unsicher? Starte mit einer kostenlosen Beratung
                   </a>
@@ -94,7 +120,10 @@ const data = {
                             <Icon name="check" size={13} />
                           </span>
                           <span class="o-name">
-                            {s.name}
+                            <span>
+                              {s.name}
+                              {s.tag && <em class:list={['o-tag', s.tag === 'Kombi' ? 'o-k' : 'o-t']}>{s.tag}</em>}
+                            </span>
                             <small>
                               {duration(s.minutes)}
                               {s.note && <> · {s.note}</>}
@@ -119,7 +148,7 @@ const data = {
                               <strong>{s.name}</strong>
                               <small>{s.note}</small>
                               <span class="fv-meta">
-                                {duration(s.minutes)} · {s.priceLabel ? <span>{s.priceLabel}</span> : <b>kostenlos</b>}
+                                {duration(s.minutes)} · {s.price === null ? <b>kostenlos</b> : <b>{chf(s.price)}</b>}
                               </span>
                             </span>
                             <span class="tick" aria-hidden="true">
@@ -264,6 +293,9 @@ const data = {
               <div class="sum-discount" data-sum-discount hidden><span data-sum-discount-label></span><span data-sum-discount-value></span></div>
               <div class="sum-total"><span>Total</span><span data-sum-total>CHF 0</span></div>
             </div>
+            <button type="button" class="btn btn-primary btn-block sum-cta" data-next-sum disabled>
+              <span data-sum-cta-label>Weiter</span><span class="arrow"><Icon name="arrow" size={16} /></span>
+            </button>
             <ul class="sum-trust">
               <li><Icon name="check" size={15} /> Bezahlt wird vor Ort – bar, TWINT oder Karte</li>
               <li><Icon name="check" size={15} /> Kostenlos absagen bis {site.cancellationHours} Std. vorher</li>
@@ -305,7 +337,7 @@ const data = {
     margin-bottom: 24px;
     border-radius: 0;
     background: var(--linen);
-    font-size: 0.86rem;
+    font-size: 0.94rem;
     color: var(--ink-2);
   }
 
@@ -329,7 +361,7 @@ const data = {
     gap: 6px;
     margin: 0;
     padding: 0;
-    font-size: 0.86rem;
+    font-size: 0.94rem;
     font-weight: 600;
     color: var(--muted);
   }
@@ -350,7 +382,7 @@ const data = {
     height: 24px;
     border-radius: 0;
     background: var(--paper);
-    font-size: 0.78rem;
+    font-size: 0.85rem;
   }
 
   .stepper .is-current {
@@ -375,7 +407,7 @@ const data = {
       padding: 6px;
     }
     .stepper li:not(.is-current) span {
-      font-size: 0.78rem;
+      font-size: 0.85rem;
     }
   }
 
@@ -530,12 +562,12 @@ const data = {
 
   .fv-body small {
     color: var(--muted);
-    font-size: 0.84rem;
+    font-size: 0.94rem;
     line-height: 1.4;
   }
 
   .fv-meta {
-    font-size: 0.86rem;
+    font-size: 0.94rem;
   }
 
   .fv-meta b {
@@ -576,7 +608,7 @@ const data = {
     gap: 8px;
     align-items: flex-start;
     margin: 14px 0 0;
-    font-size: 0.86rem;
+    font-size: 0.94rem;
     color: var(--ink-2);
   }
 
@@ -665,7 +697,7 @@ const data = {
   .o-name small {
     font-weight: 500;
     color: var(--muted);
-    font-size: 0.84rem;
+    font-size: 0.94rem;
   }
 
   .o-price {
@@ -753,7 +785,7 @@ const data = {
   }
 
   .cal-dow {
-    font-size: 0.78rem;
+    font-size: 0.85rem;
     font-weight: 500;
     color: var(--muted);
     margin-bottom: 6px;
@@ -818,7 +850,7 @@ const data = {
   }
 
   .slots :global(.slot-label) {
-    font-size: 0.78rem;
+    font-size: 0.85rem;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -917,7 +949,7 @@ const data = {
     display: grid;
     grid-template-columns: 20px 1fr;
     gap: 10px;
-    font-size: 0.88rem;
+    font-size: 0.94rem;
     color: var(--ink-2);
   }
 
@@ -962,7 +994,7 @@ const data = {
 
   .review :global(dt) {
     font-weight: 500;
-    font-size: 0.88rem;
+    font-size: 0.94rem;
     color: var(--muted);
   }
 
@@ -975,7 +1007,7 @@ const data = {
     border: 0;
     background: none;
     font-weight: 500;
-    font-size: 0.85rem;
+    font-size: 0.94rem;
     text-decoration: underline;
     cursor: pointer;
     padding: 0;
@@ -1165,7 +1197,7 @@ const data = {
     border-top: 1px solid var(--line);
     display: grid;
     gap: 6px;
-    font-size: 0.85rem;
+    font-size: 0.94rem;
     color: var(--ink-2);
   }
 
@@ -1181,7 +1213,7 @@ const data = {
 
   .sum-help {
     margin-top: 14px;
-    font-size: 0.88rem;
+    font-size: 0.94rem;
     color: var(--muted);
     text-align: center;
   }
@@ -1226,9 +1258,312 @@ const data = {
     }
     .m-sum-info small {
       color: var(--muted);
-      font-size: 0.8rem;
+      font-size: 0.94rem;
     }
     .m-sum[hidden] {
+      display: none;
+    }
+  }
+
+  /* ——— Verkaufsstarkes Redesign ——— */
+  .booking {
+    padding-top: 0;
+  }
+
+  .b-band {
+    padding-block: clamp(36px, 5vw, 64px);
+    margin-bottom: clamp(32px, 4vw, 56px);
+  }
+
+  .b-band .demo {
+    background: rgba(246, 241, 234, 0.08);
+    color: rgba(246, 241, 234, 0.8);
+  }
+
+  .b-band .b-head {
+    align-items: flex-end;
+    margin: 0;
+  }
+
+  .b-band h1 {
+    color: var(--cream);
+    font-size: clamp(2.6rem, 5vw, 4.6rem);
+    margin-bottom: 18px;
+  }
+
+  .b-trust {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 26px;
+    color: rgba(246, 241, 234, 0.85);
+    font-size: 1rem;
+  }
+
+  .b-trust li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .b-trust :global(svg),
+  .b-trust .stars {
+    color: var(--lime);
+  }
+
+  .b-trust .stars {
+    letter-spacing: 2px;
+  }
+
+  .b-band .stepper li {
+    background: rgba(246, 241, 234, 0.08);
+    color: rgba(246, 241, 234, 0.75);
+  }
+
+  .b-band .stepper span {
+    background: rgba(246, 241, 234, 0.15);
+    color: var(--cream);
+  }
+
+  .b-band .stepper .is-current {
+    background: var(--lime);
+    color: var(--espresso);
+  }
+
+  .b-band .stepper .is-current span {
+    background: var(--espresso);
+    color: var(--lime);
+  }
+
+  .b-band .stepper .is-done span {
+    background: var(--lime);
+    color: var(--espresso);
+  }
+
+  .stepper {
+    font-size: 0.94rem;
+  }
+
+  .step-head h2 {
+    font-size: clamp(2rem, 3.4vw, 3rem);
+  }
+
+  .quick-title {
+    margin: 4px 0 12px;
+    font-size: 0.94rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mocha);
+  }
+
+  .quick {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 36px;
+  }
+
+  @media (min-width: 640px) {
+    .quick {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .quick {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .qk {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2px 12px;
+    padding: 18px 18px 16px;
+    text-align: left;
+    border: 1.5px solid var(--line-strong);
+    background: var(--paper);
+    cursor: pointer;
+    transition:
+      background 0.25s,
+      border-color 0.25s,
+      transform 0.25s var(--ease);
+  }
+
+  .qk:hover {
+    transform: translateY(-2px);
+    border-color: var(--espresso);
+  }
+
+  .qk-k {
+    background: var(--lime);
+    border-color: var(--lime);
+  }
+
+  .qk-badge {
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin-bottom: 8px;
+    padding: 3px 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: 1px solid currentColor;
+    color: var(--mocha);
+  }
+
+  .qk-k .qk-badge {
+    background: var(--espresso);
+    border-color: var(--espresso);
+    color: var(--lime);
+  }
+
+  .qk-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.15;
+  }
+
+  .qk-meta {
+    grid-row: 3;
+    font-size: 0.94rem;
+    opacity: 0.75;
+  }
+
+  .qk-price {
+    grid-column: 2;
+    grid-row: 2 / 4;
+    align-self: end;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .qk-check {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border: 1.5px solid var(--line-strong);
+    color: transparent;
+  }
+
+  .qk.is-on {
+    background: var(--espresso);
+    border-color: var(--espresso);
+    color: var(--cream);
+  }
+
+  .qk.is-on .qk-badge {
+    background: var(--lime);
+    border-color: var(--lime);
+    color: var(--espresso);
+  }
+
+  .qk.is-on .qk-check {
+    background: var(--lime);
+    border-color: var(--lime);
+    color: var(--espresso);
+  }
+
+  .o-tag {
+    margin-left: 8px;
+    padding: 2px 7px;
+    font-style: normal;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    vertical-align: middle;
+  }
+
+  .o-k {
+    background: var(--lime);
+    color: var(--espresso);
+  }
+
+  .o-t {
+    border: 1px solid currentColor;
+    color: var(--mocha);
+  }
+
+  .o-name {
+    font-size: 1.1rem;
+  }
+
+  .o-price {
+    font-size: 1.15rem;
+  }
+
+  .opt:has(input:checked) {
+    background: rgba(237, 255, 99, 0.35);
+    border-color: var(--espresso);
+  }
+
+  .sum-card {
+    background: var(--espresso);
+    color: var(--cream);
+    border: 0;
+    box-shadow: var(--shadow-l);
+  }
+
+  .sum-title {
+    color: var(--cream);
+  }
+
+  .sum-list :global(li) {
+    border-color: var(--line-light);
+  }
+
+  .sum-list :global(.sum-empty) {
+    color: rgba(246, 241, 234, 0.6);
+  }
+
+  .sum-when {
+    background: rgba(246, 241, 234, 0.1);
+  }
+
+  .sum-totals div {
+    color: rgba(246, 241, 234, 0.85);
+  }
+
+  .sum-discount {
+    color: var(--lime) !important;
+  }
+
+  .sum-total {
+    border-color: var(--line-light) !important;
+    color: var(--cream) !important;
+    font-size: 1.4rem !important;
+  }
+
+  .sum-total span:last-child {
+    color: var(--lime);
+  }
+
+  .sum-cta {
+    margin-top: 20px;
+    --btn-border: var(--lime);
+  }
+
+  .sum-trust {
+    border-color: var(--line-light);
+    color: rgba(246, 241, 234, 0.82);
+  }
+
+  .sum-trust :global(svg) {
+    color: var(--lime);
+  }
+
+  @media (max-width: 999px) {
+    .sum-cta {
       display: none;
     }
   }
@@ -1539,6 +1874,15 @@ const data = {
 
   $('[data-next]').addEventListener('click', next);
   $('[data-m-next]').addEventListener('click', next);
+  $('[data-next-sum]').addEventListener('click', next);
+  root.querySelectorAll<HTMLButtonElement>('[data-quick]').forEach((b) =>
+    b.addEventListener('click', () => {
+      const input = root.querySelector<HTMLInputElement>(`[data-group-panel="${state.group}"] input[data-service][value="${b.dataset.quick}"]`);
+      if (!input || input.disabled) return;
+      input.checked = !input.checked;
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    }),
+  );
   $('[data-back]').addEventListener('click', () => go(Math.max(1, state.step - 1)));
 
   function whenText() {
@@ -1620,6 +1964,9 @@ const data = {
     const enabled = canProceed();
     $<HTMLButtonElement>('[data-next]').disabled = !enabled;
     $<HTMLButtonElement>('[data-m-next]').disabled = !enabled;
+    $<HTMLButtonElement>('[data-next-sum]').disabled = !enabled;
+    $('[data-sum-cta-label]').textContent = nextLabel();
+    root.querySelectorAll<HTMLElement>('[data-quick]').forEach((b) => b.classList.toggle('is-on', state.selected.has(b.dataset.quick!)));
     $('[data-next-label]').textContent = nextLabel();
     $('[data-m-next-label]').textContent = nextLabel();
   }

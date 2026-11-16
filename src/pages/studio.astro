@@ -9,12 +9,12 @@ import CtaFinal from '../components/CtaFinal.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
 
-import imgHero from '../assets/shoot/raum-fenster.jpg';
+import imgHero from '../assets/shoot/lounge-tuer.jpg';
 import imgCaro from '../assets/shoot/caro-sw.jpg';
 import imgCaro2 from '../assets/shoot/caro-lacht.jpg';
 import imgCaro3 from '../assets/shoot/caro-sessel.jpg';
-import imgRoom from '../assets/shoot/raum-weit.jpg';
-import imgV1 from '../assets/shoot/detail-relief.jpg';
+import imgRoom from '../assets/shoot/detail-buch.jpg';
+import imgV1 from '../assets/shoot/detail-objekte.jpg';
 import imgV2 from '../assets/shoot/detail-pflanze.jpg';
 ---
 
@@ -26,7 +26,7 @@ import imgV2 from '../assets/shoot/detail-pflanze.jpg';
     title={['Grüezi.', 'Schön bist du da.']}
     sub="Studio & Team in Amriswil"
     image={imgHero}
-    alt="Heller Behandlungsraum mit grossem Fenster"
+    alt="Blick durch die Tür in die Lounge des Studios"
     lead="Wir sind Eloure – zertifizierte Expertinnen für Laserhaarentfernung im Herzen von Amriswil. Und wir haben uns ganz bewusst auf genau eine Sache spezialisiert."
   >
     <div class="btn-row">
@@ -37,9 +37,9 @@ import imgV2 from '../assets/shoot/detail-pflanze.jpg';
 
   <!-- Team -->
   <section class="team bg-sand" id="team">
-    <div class="t-img" data-anim="img">
+    <div class="t-img fade-r" data-anim="img">
       <Image src={imgCaro} alt="Caro, Gründerin und Inhaberin von Eloure" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 46vw, 100vw" />
-      <span class="t-cap glass">Caro · Gründerin & Inhaberin</span>
+      <span class="t-cap glass">Caro · Gründerin & Hauptansprechpartnerin</span>
     </div>
     <div class="t-content">
       <Lines lines={['Hey, wir sind', 'Caro & Sarah.']} class="t-title" />
@@ -48,8 +48,9 @@ import imgV2 from '../assets/shoot/detail-pflanze.jpg';
         rundum wohlfühlst.
       </p>
       <p class="reveal">
-        Caro hat Eloure gegründet und führt das Studio als Inhaberin, Sarah ist an ihrer Seite. Seit drei Jahren gibt es unser
-        eigenes Studio in Amriswil – Erfahrung in der Laserhaarentfernung bringen wir schon zwei Jahre länger mit.
+        <strong>Caro</strong> hat Eloure gegründet und ist deine Hauptansprechpartnerin – von der ersten Frage bis zum
+        Ergebnis. <strong>Sarah</strong> ergänzt das Team an ihrer Seite. Seit drei Jahren gibt es unser eigenes Studio in
+        Amriswil – Erfahrung in der Laserhaarentfernung bringen wir schon zwei Jahre länger mit.
       </p>
       <p class="reveal">
         Unser Anspruch: faire Preise und beste Qualität. Und eine offene, vertrauensvolle Atmosphäre bei jeder einzelnen
@@ -91,7 +92,7 @@ import imgV2 from '../assets/shoot/detail-pflanze.jpg';
         </li>
       </ul>
       <div class="v-pics">
-        <div class="vp" data-anim="img"><Image src={imgV1} alt="Strukturierte Wanddekoration im Studio" widths={[500, 900]} sizes="(min-width: 900px) 50vw, 100vw" /></div>
+        <div class="vp" data-anim="img"><Image src={imgV1} alt="Dekorative Objekte im Studio" widths={[500, 900]} sizes="(min-width: 900px) 50vw, 100vw" /></div>
         <div class="vp" data-anim="img"><Image src={imgV2} alt="Pflanze im Studio" widths={[500, 900]} sizes="(min-width: 900px) 50vw, 100vw" /></div>
       </div>
     </div>
@@ -99,7 +100,7 @@ import imgV2 from '../assets/shoot/detail-pflanze.jpg';
 
   <ImageExpand
     image={imgRoom}
-    alt="Behandlungsraum mit Laserliege und Pflanzen"
+    alt="Bildband im Sonnenlicht in der Studio-Lounge"
     word="Ruhe."
     title="Kein Klinik-Gefühl."
     text="Neu, hell und mit viel Liebe eingerichtet: Bei uns wartest du nicht im Neonlicht, sondern kommst in einer ruhigen Lounge an."
@@ -257,7 +258,7 @@ import imgV2 from '../assets/shoot/detail-pflanze.jpg';
 
   .v-list h3 {
     font-family: var(--serif);
-    font-weight: 400;
+    font-weight: 600;
     font-size: 1.8rem;
     line-height: 1.08;
   }
