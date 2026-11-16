@@ -7,6 +7,7 @@ import CtaFinal from '../components/CtaFinal.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
 import imgLegs from '../assets/img/treatment-closeup.jpg';
+import imgHero from '../assets/img/treatment-session.jpg';
 ---
 
 <Base
@@ -14,11 +15,18 @@ import imgLegs from '../assets/img/treatment-closeup.jpg';
   description="Alle Preise für Laserhaarentfernung bei Eloure in Amriswil: über 30 Zonen für Frauen und Männer, ab CHF 29 pro Sitzung. Kostenloses Beratungsgespräch möglich."
 >
   <PageHero
-    title="Behandlungen & Preise"
+    title="Preise, die du verstehst."
+    image={imgHero}
+    alt="Laserbehandlung am Bein im Eloure Studio"
     lead="Transparent, pro Sitzung und ohne Vorauszahlung. Wähle deine Zone, und wir kümmern uns um den Rest."
-  />
+  >
+    <div class="btn-row">
+      <a class="btn btn-primary" href="#liste">Zur Preisliste<span class="arrow"><Icon name="arrow" size={18} /></span></a>
+      <a class="btn btn-ghost" href="/termin">Direkt buchen</a>
+    </div>
+  </PageHero>
 
-  <section class="section-tight" style="padding-top:0">
+  <section class="section-tight" id="liste">
     <div class="wrap">
       <ul class="facts">
         <li><Icon name="check" size={18} /> Bezahlt wird erst vor Ort: bar, TWINT oder Karte</li>

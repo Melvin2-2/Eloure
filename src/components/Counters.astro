@@ -1,0 +1,61 @@
+---
+interface Props {
+  items: { value: number; suffix?: string; label: string }[];
+}
+const { items } = Astro.props;
+---
+
+<section class="counters bg-ink">
+  <div class="wrap grid">
+    {
+      items.map((c, i) => (
+        <div class="c reveal" style={`--d:${i * 90}ms`}>
+          <span class="v">
+            <span data-count={c.value}>{c.value}</span>
+            {c.suffix}
+          </span>
+          <span class="l">{c.label}</span>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .counters {
+    padding-block: clamp(56px, 8vw, 96px);
+  }
+
+  .grid {
+    display: grid;
+    gap: 32px 24px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 900px) {
+    .grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .c {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(251, 248, 244, 0.2);
+  }
+
+  .v {
+    font-size: clamp(3rem, 6vw, 5.2rem);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .l {
+    color: rgba(251, 248, 244, 0.72);
+    max-width: 16em;
+  }
+</style>

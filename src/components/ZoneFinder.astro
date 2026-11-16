@@ -1,0 +1,365 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { services, byRegion, chf, duration } from '../data/services';
+import { site } from '../data/site';
+import imgZone from '../assets/img/treatment-closeup.jpg';
+
+const initial = 'beine-komplett';
+const data = services.map((s) => ({ id: s.id, name: s.name, group: s.group, price: chf(s.price), dur: duration(s.minutes), note: s.note ?? '' }));
+const first = services.find((s) => s.id === initial)!;
+---
+
+<section class="section zf bg-paper" id="zonen" data-zf>
+  <div class="wrap grid">
+    <div class="left">
+      <h2 class="reveal">Welche Zone darf es sein?</h2>
+      <p class="lead reveal">Tippe auf eine Zone und sieh sofort Preis und Dauer. Über 30 Zonen für Frauen und Männer.</p>
+
+      <div class="seg reveal" role="tablist" aria-label="Zonen für">
+        <button type="button" role="tab" aria-selected="true" data-zf-group="frauen">Frauen</button>
+        <button type="button" role="tab" aria-selected="false" data-zf-group="maenner">Männer</button>
+      </div>
+
+      {
+        (['frauen', 'maenner'] as const).map((g) => (
+          <div class="groups" data-zf-panel={g} hidden={g !== 'frauen'}>
+            {byRegion(g).map(([region, list]) => (
+              <div class="region">
+                <span class="r-label">{region}</span>
+                <div class="pills">
+                  {list.map((s) => (
+                    <button type="button" class:list={['pill', { 'is-active': s.id === initial }]} data-zf-id={s.id}>
+                      {s.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="right">
+      <div class="card" aria-live="polite">
+        <div class="pic">
+          <Image src={imgZone} alt="Laserbehandlung am Unterschenkel" widths={[480, 760]} sizes="(min-width: 900px) 34vw, 100vw" />
+        </div>
+        <div class="body">
+          <span class="z-name" data-zf-name>{first.name}</span>
+          <span class="z-meta"><Icon name="clock" size={16} /> <span data-zf-dur>{duration(first.minutes)}</span> pro Sitzung</span>
+          <span class="z-note" data-zf-note>{first.note}</span>
+          <div class="z-foot">
+            <span class="z-price" data-zf-price>{chf(first.price)}</span>
+            <a class="btn btn-primary" href={`/termin?behandlung=${initial}`} data-zf-cta>
+              <span class="long">Diese Zone buchen</span><span class="short">Buchen</span><span class="arrow"><Icon name="arrow" size={18} /></span>
+            </a>
+          </div>
+          <ul class="z-trust">
+            <li><Icon name="check" size={15} /> Bezahlt wird vor Ort</li>
+            <li><Icon name="check" size={15} /> Kostenlos absagen bis {site.cancellationHours} Std. vorher</li>
+          </ul>
+        </div>
+      </div>
+      <a class="text-link all" href="/preise">Alle Preise in der Übersicht</a>
+    </div>
+  </div>
+  <script type="application/json" data-zf-data set:html={JSON.stringify(data)} />
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 48px clamp(40px, 6vw, 96px);
+  }
+
+  @media (min-width: 960px) {
+    .grid {
+      grid-template-columns: 1.1fr 0.9fr;
+      align-items: start;
+    }
+    .right {
+      position: sticky;
+      top: calc(var(--header-h) + 32px);
+    }
+  }
+
+  .seg {
+    display: inline-flex;
+    padding: 5px;
+    border-radius: 999px;
+    background: var(--linen);
+    margin: 16px 0 36px;
+  }
+
+  .seg button {
+    border: 0;
+    background: transparent;
+    padding: 11px 28px;
+    border-radius: 999px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--muted);
+  }
+
+  .seg button[aria-selected='true'] {
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 4px 12px -4px rgba(0, 0, 0, 0.14);
+  }
+
+  .region + .region {
+    margin-top: 22px;
+  }
+
+  .r-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pill {
+    padding: 11px 18px;
+    border-radius: 999px;
+    border: 1.5px solid var(--line-strong);
+    background: transparent;
+    font-size: 1rem;
+    cursor: pointer;
+    transition:
+      background 0.2s,
+      color 0.2s,
+      border-color 0.2s,
+      transform 0.2s var(--ease);
+  }
+
+  .pill:hover {
+    border-color: var(--ink);
+    transform: translateY(-1px);
+  }
+
+  .pill.is-active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  .card {
+    border-radius: var(--radius-l);
+    background: var(--bg);
+    overflow: hidden;
+    box-shadow: var(--shadow-l);
+  }
+
+  .pic {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+  }
+
+  .pic :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: clamp(22px, 3vw, 34px);
+  }
+
+  .z-name {
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+
+  .z-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--muted);
+  }
+
+  .z-note {
+    font-size: 0.92rem;
+    color: var(--ink-2);
+    min-height: 1.4em;
+  }
+
+  .z-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 14px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+
+  .z-price {
+    font-size: clamp(2rem, 3.4vw, 2.8rem);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+  }
+
+  .z-trust {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    font-size: 0.88rem;
+    color: var(--ink-2);
+  }
+
+  .z-trust li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .z-trust :global(svg) {
+    color: var(--ok);
+  }
+
+  .all {
+    display: inline-block;
+    margin-top: 20px;
+  }
+
+  /* Mobile: Preiskarte kompakt und klebend über der Zonenliste */
+  @media (max-width: 959px) {
+    .grid {
+      gap: 0;
+    }
+    .left {
+      display: contents;
+    }
+    .left h2 {
+      order: 1;
+    }
+    .left .lead {
+      order: 2;
+    }
+    .seg {
+      order: 3;
+      margin-bottom: 20px;
+    }
+    .right {
+      order: 4;
+      position: sticky;
+      top: calc(var(--header-h) + 8px);
+      z-index: 5;
+      margin-bottom: 24px;
+    }
+    .groups {
+      order: 5;
+    }
+    .pic,
+    .z-note,
+    .z-trust,
+    .all {
+      display: none;
+    }
+    .body {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2px 12px;
+      padding: 14px 16px;
+    }
+    .z-name {
+      font-size: 1.3rem;
+    }
+    .z-meta {
+      grid-row: 2;
+      font-size: 0.85rem;
+    }
+    .z-foot {
+      grid-column: 2;
+      grid-row: 1 / 3;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+    .z-price {
+      font-size: 1.4rem;
+    }
+    .long {
+      display: none;
+    }
+    .short {
+      display: inline;
+    }
+    .z-foot :global(.btn) {
+      min-height: 40px;
+      padding: 0 14px;
+      font-size: 0.85rem;
+    }
+  }
+
+  .short {
+    display: none;
+  }
+
+  .flash {
+    animation: flash 0.5s var(--ease);
+  }
+
+  @keyframes flash {
+    from {
+      opacity: 0.2;
+      transform: translateY(6px);
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-zf]').forEach((root) => {
+    type Z = { id: string; name: string; group: string; price: string; dur: string; note: string };
+    const data: Z[] = JSON.parse(root.querySelector('[data-zf-data]')!.textContent!);
+    const $ = (s: string) => root.querySelector<HTMLElement>(s)!;
+    const pills = root.querySelectorAll<HTMLButtonElement>('[data-zf-id]');
+    const show = (id: string) => {
+      const z = data.find((d) => d.id === id);
+      if (!z) return;
+      pills.forEach((p) => p.classList.toggle('is-active', p.dataset.zfId === id));
+      $('[data-zf-name]').textContent = z.name;
+      $('[data-zf-dur]').textContent = z.dur;
+      $('[data-zf-note]').textContent = z.note;
+      $('[data-zf-price]').textContent = z.price;
+      const cta = $('[data-zf-cta]') as HTMLAnchorElement;
+      cta.href = cta.href.replace(/behandlung=[^&]*/, `behandlung=${z.id}`);
+      for (const s of ['[data-zf-name]', '[data-zf-price]']) {
+        const el = $(s);
+        el.classList.remove('flash');
+        void el.offsetWidth;
+        el.classList.add('flash');
+      }
+    };
+    pills.forEach((p) => p.addEventListener('click', () => show(p.dataset.zfId!)));
+    root.querySelectorAll<HTMLButtonElement>('[data-zf-group]').forEach((b) =>
+      b.addEventListener('click', () => {
+        const g = b.dataset.zfGroup!;
+        root.querySelectorAll<HTMLButtonElement>('[data-zf-group]').forEach((x) => x.setAttribute('aria-selected', String(x === b)));
+        root.querySelectorAll<HTMLElement>('[data-zf-panel]').forEach((p) => (p.hidden = p.dataset.zfPanel !== g));
+        show(g === 'frauen' ? 'beine-komplett' : 'ruecken-inkl-nacken');
+      }),
+    );
+  });
+</script>

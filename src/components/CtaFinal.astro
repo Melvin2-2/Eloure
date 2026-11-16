@@ -2,85 +2,92 @@
 import { Image } from 'astro:assets';
 import Icon from './Icon.astro';
 import { site } from '../data/site';
-import img from '../assets/img/lounge-chairs.jpg';
+import img from '../assets/img/team-duo.jpg';
 
 interface Props {
   title?: string;
   code?: string;
 }
-const { title = 'Bereit für den ersten Schritt?', code } = Astro.props;
+const { title = 'Bereit für dein erstes Mal ohne Rasierer?', code } = Astro.props;
 const q = code ? `?code=${code}` : '';
 ---
 
-<section class="section cta-final">
-  <div class="wrap">
-    <div class="card">
-      <div class="text">
-        <h2 set:html={title} />
-        <p class="lead">Such dir aus, was sich für dich gerade richtig anfühlt. Beides ist bei uns willkommen.</p>
+<section class="cta-final bg-ink">
+  <div class="bg">
+    <Image src={img} alt="" widths={[800, 1400, 2000]} sizes="100vw" data-parallax="0.06" />
+  </div>
+  <div class="wrap inner on-dark">
+    <h2 class="reveal" set:html={title} />
+    <p class="lead reveal">Such dir aus, was sich für dich gerade richtig anfühlt. Beides ist bei uns willkommen.</p>
 
-        <div class="paths">
-          <a class="path main" href={`/termin${q}`}>
-            <span class="label">Ich weiss, was ich möchte</span>
-            <span class="title">Behandlung buchen</span>
-            <span class="sub">Inklusive persönlicher Beratung vor der ersten Session.</span>
-            <span class="go"><Icon name="arrow" size={18} /></span>
-          </a>
-          <a class="path" href={`/termin?behandlung=beratungsgespraech${code ? `&code=${code}` : ''}`}>
-            <span class="label">Ich bin noch unsicher</span>
-            <span class="title">Kostenlos beraten lassen</span>
-            <span class="sub">25 Minuten, unverbindlich, alle Fragen erlaubt.</span>
-            <span class="go"><Icon name="arrow" size={18} /></span>
-          </a>
-        </div>
+    <div class="paths">
+      <a class="path main reveal" href={`/termin${q}`}>
+        <span class="label">Ich weiss, was ich möchte</span>
+        <span class="title">Behandlung buchen</span>
+        <span class="sub">Inklusive persönlicher Beratung vor der ersten Session.</span>
+        <span class="go"><Icon name="arrow" size={20} /></span>
+      </a>
+      <a class="path reveal" style="--d:90ms" href={`/termin?behandlung=beratungsgespraech${code ? `&code=${code}` : ''}`}>
+        <span class="label">Ich bin noch unsicher</span>
+        <span class="title">Kostenlos beraten lassen</span>
+        <span class="sub">25 Minuten, unverbindlich, alle Fragen erlaubt.</span>
+        <span class="go"><Icon name="arrow" size={20} /></span>
+      </a>
+    </div>
 
-        <p class="contact muted small">
-          Lieber kurz schreiben? <a href={site.whatsappHref} target="_blank" rel="noopener">WhatsApp</a>{' oder '}
-          <a href={site.phoneHref}>{site.phone}</a> – wir melden uns persönlich.
-        </p>
-      </div>
-      <div class="pic media">
-        <Image src={img} alt="Gemütliche Lounge im Eloure Studio mit weissen Sesseln und Pflanzen" widths={[480, 800]} sizes="(min-width: 900px) 40vw, 100vw" />
-      </div>
+    <div class="contact reveal">
+      <a href={site.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" size={18} /> WhatsApp</a>
+      <a href={site.phoneHref}><Icon name="phone" size={18} /> {site.phone}</a>
+      <span><Icon name="clock" size={18} /> Mo–Fr 10–20 Uhr · Sa 10–16 Uhr</span>
     </div>
   </div>
 </section>
 
 <style>
-  .card {
-    display: grid;
-    gap: 32px;
-    padding: clamp(24px, 5vw, 64px);
-    border-radius: var(--radius-l);
-    background: var(--linen);
-    overflow: hidden;
-  }
-
-  @media (min-width: 900px) {
-    .card {
-      grid-template-columns: 1.25fr 0.75fr;
-      align-items: stretch;
-    }
-  }
-
-  .pic {
+  .cta-final {
     position: relative;
-    min-height: 300px;
-    border-radius: var(--radius);
+    overflow: hidden;
+    padding-block: clamp(96px, 13vw, 180px);
   }
 
-  .pic :global(img) {
+  .bg {
     position: absolute;
     inset: 0;
+    opacity: 0.32;
+  }
+
+  .bg :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    transform: scale(1.12);
+  }
+
+  .bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.1), color-mix(in srgb, var(--deep) 85%, transparent));
+  }
+
+  .inner {
+    position: relative;
+  }
+
+  h2 {
+    font-size: clamp(2.6rem, 6vw, 5.4rem);
+    max-width: 12em;
   }
 
   .paths {
     display: grid;
-    gap: 12px;
-    margin: 28px 0 22px;
+    gap: 14px;
+    margin: 44px 0 36px;
+    max-width: 980px;
   }
 
-  @media (min-width: 640px) {
+  @media (min-width: 720px) {
     .paths {
       grid-template-columns: 1.1fr 0.9fr;
     }
@@ -90,68 +97,87 @@ const q = code ? `?code=${code}` : '';
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    padding: 22px 64px 22px 22px;
-    border-radius: var(--radius);
-    background: var(--paper);
-    border: 1px solid var(--line);
+    gap: 6px;
+    padding: 28px 84px 28px 28px;
+    border-radius: var(--radius-l);
+    background: rgba(251, 248, 244, 0.08);
+    border: 1px solid rgba(251, 248, 244, 0.22);
+    backdrop-filter: blur(8px);
     text-decoration: none;
     transition:
-      transform 0.25s,
-      box-shadow 0.25s;
+      transform 0.3s var(--ease),
+      background 0.3s;
   }
 
   .path:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow);
+    transform: translateY(-3px);
+    background: rgba(251, 248, 244, 0.14);
   }
 
   .path.main {
-    background: var(--ink);
-    color: var(--paper);
-    border-color: var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    border-color: var(--paper);
   }
 
   .label {
-    font-size: 0.82rem;
-    font-weight: 600;
+    font-size: 0.9rem;
     opacity: 0.7;
   }
 
   .title {
-    font-family: var(--sans);
-    line-height: 1.25;
-    font-size: 1.3rem;
+    font-size: clamp(1.6rem, 2.6vw, 2.1rem);
     font-weight: 500;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
   }
 
   .sub {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     opacity: 0.8;
-    line-height: 1.45;
   }
 
   .go {
     position: absolute;
-    right: 18px;
+    right: 24px;
     top: 50%;
     transform: translateY(-50%);
     display: grid;
     place-items: center;
-    width: 38px;
-    height: 38px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    background: var(--linen);
-    color: var(--ink);
+    background: var(--accent);
+    color: var(--accent-ink);
+    transition: transform 0.3s var(--ease);
+  }
+
+  .path:hover .go {
+    transform: translateY(-50%) translateX(4px);
   }
 
   .path:not(.main) .go {
-    background: var(--linen);
+    background: rgba(251, 248, 244, 0.16);
+    color: var(--paper);
   }
 
-  .contact a {
-    color: var(--ink);
-    font-weight: 500;
+  .contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 28px;
+    color: rgba(251, 248, 244, 0.8);
+  }
+
+  .contact a,
+  .contact span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+
+  .contact a:hover {
+    color: var(--paper);
+    text-decoration: underline;
   }
 </style>

@@ -3,7 +3,8 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import Steps from '../components/Steps.astro';
+import StickySteps from '../components/StickySteps.astro';
+import Marquee from '../components/Marquee.astro';
 import FaqList from '../components/FaqList.astro';
 import Reviews from '../components/Reviews.astro';
 import CtaFinal from '../components/CtaFinal.astro';
@@ -51,16 +52,16 @@ const faqs = [
   <section class="lp-hero">
     <div class="wrap hero-grid">
       <div class="hero-text">
-        <p class="offer-pill"><span class="dot"></span> Neukundenangebot · nur für kurze Zeit</p>
-        <h1>Glatte Haut ohne Rasieren. Jetzt {promo.percent} % günstiger starten.</h1>
-        <p class="lead">
-          Laserhaarentfernung in Amriswil – mit medizinischem Diodenlaser, ehrlicher Beratung und viel Zeit für dich. Ohne Rasieren,
-          ohne Pickel, ohne Stress.
+        <p class="offer-pill reveal"><span class="dot"></span> Neukundenangebot · nur für kurze Zeit</p>
+        <h1 class="display reveal">{promo.percent}&nbsp;% auf deine erste Laser&shy;behandlung.</h1>
+        <p class="lead reveal" style="--d:100ms">
+          Dauerhaft glatte Haut in Amriswil – mit medizinischem Diodenlaser, ehrlicher Beratung und viel Zeit für dich. Ohne
+          Rasieren, ohne Pickel, ohne Stress.
         </p>
 
-        <div class="code-box">
+        <div class="code-box reveal" style="--d:160ms">
           <div>
-            <small>Dein Code für {promo.percent} % auf die erste Behandlung</small>
+            <small>Dein Code – einfach im Checkout eingeben</small>
             <strong data-code>{promo.code}</strong>
           </div>
           <button type="button" class="copy" data-copy={promo.code}>
@@ -68,34 +69,34 @@ const faqs = [
           </button>
         </div>
 
-        <div class="btn-row">
-          <a class="btn btn-primary" href={`/termin?${q}`}>{promo.percent} % Rabatt sichern<span class="arrow"><Icon name="arrow" size={15} /></span></a>
-          <span class="muted small">Bezahlt wird erst vor Ort.</span>
+        <div class="btn-row reveal" style="--d:220ms">
+          <a class="btn btn-primary" href={`/termin?${q}`}>{promo.percent}&nbsp;% Rabatt sichern<span class="arrow"><Icon name="arrow" size={18} /></span></a>
+          <a class="btn btn-ghost" href="#preise">Preise ansehen</a>
         </div>
 
-        <ul class="trust">
-          <li><Icon name="shield" size={18} /> V‑NISSG-zertifiziert</li>
-          <li><Icon name="spark" size={18} /> Medizinischer Diodenlaser</li>
-          <li><Icon name="heart" size={18} /> {site.experience}</li>
+        <ul class="trust reveal" style="--d:280ms">
+          <li><strong>Vor Ort</strong><span>bezahlen</span></li>
+          <li><strong>V‑NISSG</strong><span>zertifiziert</span></li>
+          <li><strong>5 Jahre</strong><span>Erfahrung</span></li>
+          <li><a href={site.googleReviewsUrl} target="_blank" rel="noopener"><strong>★★★★★</strong><span>Google-Bewertungen</span></a></li>
         </ul>
       </div>
+    </div>
 
-      <div class="hero-visual">
-        <div class="media v-main">
-          <video autoplay muted loop playsinline preload="metadata" poster="/videos/behandlung-beine.jpg" aria-label="Laserbehandlung an den Beinen im Eloure Studio">
-            <source src="/videos/behandlung-beine.mp4" type="video/mp4" />
-          </video>
-        </div>
-        <div class="media v-side">
-          <Image src={imgDuo} alt="Caro und Sarah von Eloure" widths={[360, 600]} sizes="(min-width: 900px) 18vw, 40vw" loading="eager" />
-        </div>
-        <div class="v-tag">
-          <strong>Caro & Sarah</strong>
-          <span>freuen sich auf dich</span>
-        </div>
+    <div class="hero-visual">
+      <div class="v-main">
+        <video autoplay muted loop playsinline preload="metadata" poster="/videos/behandlung-beine.jpg" aria-label="Laserbehandlung an den Beinen im Eloure Studio">
+          <source src="/videos/behandlung-beine.mp4" type="video/mp4" />
+        </video>
+      </div>
+      <div class="v-side">
+        <Image src={imgDuo} alt="Caro und Sarah von Eloure" widths={[360, 600]} sizes="(min-width: 960px) 16vw, 40vw" loading="eager" />
+        <span><strong>Caro & Sarah</strong> freuen sich auf dich</span>
       </div>
     </div>
   </section>
+
+  <Marquee items={[`${promo.percent}\u00a0% auf die erste Behandlung`, `Code ${promo.code}`, 'Bezahlt wird vor Ort', 'Medizinischer Diodenlaser', 'Amriswil']} tone="dark" />
 
   <!-- ——— Preise ——— -->
   <section class="section bg-paper" id="preise">
@@ -195,19 +196,7 @@ const faqs = [
   </section>
 
   <!-- ——— Ablauf ——— -->
-  <section class="section">
-    <div class="wrap">
-      <div class="section-head">
-        <h2>So läuft dein erster Termin ab</h2>
-        <p class="lead">Klar, transparent und so, dass du dich von Anfang an sicher fühlst.</p>
-      </div>
-      <Steps />
-      <div class="mid-cta">
-        <a class="btn btn-primary" href={`/termin?${q}`}>Ersten Termin buchen<span class="arrow"><Icon name="arrow" size={15} /></span></a>
-        <span class="muted small">Code <strong>{promo.code}</strong> im Checkout eingeben</span>
-      </div>
-    </div>
-  </section>
+  <StickySteps title="So läuft dein erster Termin ab" ctaHref={`/termin?${q}`} ctaLabel={`Ersten Termin mit ${promo.percent}\u00a0% buchen`} />
 
   <!-- ——— Sicherheit + Studio ——— -->
   <section class="section bg-linen">
@@ -251,137 +240,193 @@ const faqs = [
 
 <style>
   .lp-hero {
-    padding-block: clamp(24px, 4vw, 56px) clamp(56px, 8vw, 104px);
+    position: relative;
+    min-height: min(92vh, 920px);
+    display: flex;
+    align-items: center;
+    padding-block: clamp(32px, 6vw, 80px);
   }
 
   .hero-grid {
     display: grid;
-    gap: 40px;
-    align-items: center;
   }
 
-  @media (min-width: 900px) {
-    .hero-grid {
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 64px;
-    }
+  .hero-text {
+    position: relative;
+    z-index: 2;
   }
 
   .offer-pill {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 7px 14px;
+    gap: 10px;
+    padding: 8px 16px;
     border-radius: 999px;
     background: var(--paper);
     border: 1px solid var(--line);
-    font-size: 0.86rem;
+    font-size: 0.9rem;
     font-weight: 500;
-    margin-bottom: 22px;
+    margin-bottom: 28px;
   }
-
 
   .code-box {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    max-width: 460px;
-    margin: 28px 0 24px;
-    padding: 14px 14px 14px 20px;
+    max-width: 480px;
+    margin: 32px 0 28px;
+    padding: 16px 16px 16px 22px;
     border-radius: var(--radius);
     background: var(--lime);
-    border: 1.5px dashed rgba(46, 45, 43, 0.4);
+    border: 1.5px dashed rgba(43, 36, 32, 0.4);
   }
 
   .code-box small {
     display: block;
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: 0.85rem;
+    font-weight: 500;
   }
 
   .code-box strong {
-    font-family: var(--sans);
-    line-height: 1.05;
-    letter-spacing: 0.06em;
-    font-size: 1.7rem;
+    font-size: 2rem;
     font-weight: 600;
-    letter-spacing: -0.01em;
+    line-height: 1.1;
+    letter-spacing: 0.08em;
   }
 
   .copy {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 10px 14px;
+    padding: 11px 16px;
     border-radius: 999px;
     border: 0;
     background: var(--ink);
     color: var(--paper);
     font-weight: 500;
-    font-size: 0.86rem;
+    font-size: 0.9rem;
     cursor: pointer;
     flex: none;
   }
 
   .trust {
     list-style: none;
-    padding: 24px 0 0;
-    margin: 28px 0 0;
+    margin: 40px 0 0;
+    padding: 22px 0 0;
     border-top: 1px solid var(--line);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 24px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--ink-2);
-  }
-
-  .trust li {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .hero-visual {
-    position: relative;
     display: grid;
-    grid-template-columns: 1.35fr 1fr;
-    gap: 12px;
-    align-items: end;
+    grid-template-columns: repeat(4, auto);
+    justify-content: start;
+    gap: 16px 32px;
+  }
+
+  .trust li,
+  .trust a {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+    text-decoration: none;
+  }
+
+  .trust strong {
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+
+  .trust span {
+    font-size: 0.86rem;
+    color: var(--muted);
   }
 
   .v-main {
-    aspect-ratio: 3 / 4;
-    border-radius: var(--radius-l);
+    background: var(--stone);
+    overflow: hidden;
+  }
+
+  .v-main video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .v-side {
-    aspect-ratio: 4 / 5;
-    border-radius: var(--radius-l);
-    margin-bottom: 56px;
-  }
-
-  .v-side img {
-    object-position: 30% center;
-  }
-
-  .v-tag {
     position: absolute;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    flex-direction: column;
-    padding: 12px 16px;
-    border-radius: 14px;
+    left: -72px;
+    bottom: 56px;
+    width: clamp(170px, 15vw, 240px);
+    padding: 8px 8px 14px;
+    border-radius: var(--radius);
     background: var(--paper);
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-l);
     font-size: 0.85rem;
-    line-height: 1.3;
+    line-height: 1.35;
+    z-index: 3;
   }
 
-  .v-tag span {
+  .v-side :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+
+  .v-side span {
+    display: block;
+    padding-inline: 6px;
     color: var(--muted);
+  }
+
+  .v-side strong {
+    display: block;
+    color: var(--ink);
+  }
+
+  @media (min-width: 960px) {
+    .hero-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .hero-text {
+      padding-right: 48px;
+    }
+    .hero-visual {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 46%;
+    }
+    .v-main {
+      position: absolute;
+      inset: 0;
+      border-bottom-left-radius: 40px;
+    }
+  }
+
+  @media (max-width: 959px) {
+    .lp-hero {
+      flex-direction: column;
+      align-items: stretch;
+      min-height: 0;
+      padding-bottom: 0;
+    }
+    .trust {
+      grid-template-columns: repeat(2, auto);
+    }
+    .hero-visual {
+      position: relative;
+      margin-top: 40px;
+    }
+    .v-main {
+      height: 120vw;
+      max-height: 640px;
+    }
+    .v-side {
+      left: var(--gutter);
+      bottom: -32px;
+      width: 160px;
+    }
   }
 
   /* Preisbeispiele */

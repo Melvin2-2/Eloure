@@ -55,3 +55,6 @@ export const promo = {
 // Solange die Buchung noch nicht an ein echtes Buchungssystem angebunden ist,
 // zeigt /termin einen dezenten Hinweis. Vor dem Livegang auf false setzen.
 export const BOOKING_DEMO = true;
+
+// Zeigt unten links einen Umschalter für die Farbwelten (nur zur Abstimmung, vor Livegang auf false).
+export const SHOW_PALETTE_SWITCHER = true;

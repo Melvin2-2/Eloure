@@ -1,0 +1,159 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+import i1 from '../assets/img/room-window.jpg';
+import i2 from '../assets/img/lounge-chairs.jpg';
+import i3 from '../assets/img/wall-exhale.jpg';
+import i4 from '../assets/img/lounge-sofa.jpg';
+import i5 from '../assets/img/treatment-room.jpg';
+import i6 from '../assets/img/lounge-detail.jpg';
+
+interface Props {
+  title?: string;
+  text?: string;
+}
+const {
+  title = 'Ein Ort zum Durchatmen',
+  text = 'Hell, ruhig und bewusst gemütlich – mitten in Amriswil. Damit du dich vom ersten Moment an wohlfühlst und nicht wie in einer Klinik.',
+} = Astro.props;
+const imgs = [
+  { src: i1, alt: 'Behandlungsraum mit grossem Fenster und Laserliege', w: 'wide' },
+  { src: i2, alt: 'Lounge mit weissen Sesseln und Pflanze', w: 'tall' },
+  { src: i3, alt: 'Wandschriftzug «Exhale the bullshit»', w: 'tall' },
+  { src: i4, alt: 'Weisses Sofa in der Lounge', w: 'square' },
+  { src: i5, alt: 'Laserliege und Gerät im Behandlungsraum', w: 'tall' },
+  { src: i6, alt: 'Detail der Lounge', w: 'tall' },
+];
+---
+
+<section class="section gallery" data-rail>
+  <div class="wrap head">
+    <div>
+      <h2 class="reveal">{title}</h2>
+      <p class="lead reveal">{text}</p>
+    </div>
+    <div class="ctrl">
+      <button type="button" class="nav" data-rail-btn="prev" aria-label="Zurück"><Icon name="arrow" size={20} class="flip" /></button>
+      <button type="button" class="nav" data-rail-btn="next" aria-label="Weiter"><Icon name="arrow" size={20} /></button>
+    </div>
+  </div>
+  <div class="track" data-rail-track>
+    {
+      imgs.map((im) => (
+        <figure class:list={['shot', im.w, 'zoom']}>
+          <Image src={im.src} alt={im.alt} widths={[480, 800, 1200]} sizes="(min-width: 900px) 40vw, 80vw" />
+        </figure>
+      ))
+    }
+  </div>
+  <div class="wrap foot">
+    <span><Icon name="pin" size={18} /> {site.address.street}, {site.address.zip} {site.address.city} · {site.parking}</span>
+    <a class="text-link" href={site.mapsUrl} target="_blank" rel="noopener">Route planen</a>
+  </div>
+</section>
+
+<style>
+  .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  .head .lead {
+    margin: 0;
+  }
+
+  .ctrl {
+    display: flex;
+    gap: 8px;
+    flex: none;
+  }
+
+  .nav {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 1.5px solid var(--line-strong);
+    background: transparent;
+    cursor: pointer;
+    transition:
+      background 0.2s,
+      border-color 0.2s;
+  }
+
+  .nav:hover {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  .nav :global(.flip) {
+    transform: rotate(180deg);
+  }
+
+  @media (max-width: 700px) {
+    .ctrl {
+      display: none;
+    }
+  }
+
+  .track {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-inline: max(var(--gutter), calc((100vw - var(--wrap)) / 2 + var(--gutter)));
+    scroll-padding-inline: max(var(--gutter), calc((100vw - var(--wrap)) / 2 + var(--gutter)));
+    scrollbar-width: none;
+  }
+
+  .track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .shot {
+    flex: none;
+    margin: 0;
+    height: clamp(340px, 52vw, 620px);
+    border-radius: var(--radius-l);
+    overflow: hidden;
+    scroll-snap-align: start;
+    background: var(--stone);
+  }
+
+  .shot.wide {
+    aspect-ratio: 1.05;
+  }
+  .shot.tall {
+    aspect-ratio: 0.72;
+  }
+  .shot.square {
+    aspect-ratio: 1;
+  }
+
+  .shot :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+    align-items: center;
+    margin-top: 28px;
+    font-weight: 500;
+  }
+
+  .foot span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+</style>

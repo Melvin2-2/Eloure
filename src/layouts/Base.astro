@@ -3,6 +3,8 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import MobileBar from '../components/MobileBar.astro';
+import PaletteSwitcher from '../components/PaletteSwitcher.astro';
+import { SHOW_PALETTE_SWITCHER } from '../data/site';
 import { site } from '../data/site';
 
 interface Props {
@@ -64,7 +66,7 @@ const localBusiness = {
 ---
 
 <!doctype html>
-<html lang="de-CH" class="no-js">
+<html lang="de-CH">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -72,7 +74,7 @@ const localBusiness = {
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
-    <meta name="theme-color" content="#f6f2ee" />
+    <meta name="theme-color" content="#f3eee8" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.png" type="image/png" sizes="64x64" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -88,7 +90,16 @@ const localBusiness = {
 
     <script type="application/ld+json" set:html={JSON.stringify([localBusiness, ...schema])} />
     <script is:inline>
-      document.documentElement.classList.remove('no-js');
+      (function () {
+        var d = document.documentElement;
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('motion');
+        try {
+          var q = new URLSearchParams(location.search).get('farbe');
+          if (q) localStorage.setItem('eloure-palette', q);
+          var p = q || localStorage.getItem('eloure-palette');
+          if (p) d.setAttribute('data-palette', p);
+        } catch (e) {}
+      })();
     </script>
   </head>
   <body data-variant={variant}>
@@ -100,25 +111,9 @@ const localBusiness = {
     <Footer variant={variant} />
     {mobileBar && <MobileBar href={ctaHref} label={ctaLabel} note={mobileNote} />}
 
+    {SHOW_PALETTE_SWITCHER && <PaletteSwitcher />}
     <script>
-      // Dezente Scroll-Animationen
-      const els = document.querySelectorAll<HTMLElement>('.reveal');
-      if ('IntersectionObserver' in window && els.length) {
-        const io = new IntersectionObserver(
-          (entries) => {
-            for (const e of entries) {
-              if (e.isIntersecting) {
-                e.target.classList.add('is-in');
-                io.unobserve(e.target);
-              }
-            }
-          },
-          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
-        );
-        els.forEach((el) => io.observe(el));
-      } else {
-        els.forEach((el) => el.classList.add('is-in'));
-      }
+      import '../scripts/motion.ts';
     </script>
   </body>
 </html>
