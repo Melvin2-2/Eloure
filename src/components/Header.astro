@@ -1,17 +1,20 @@
 ---
 import Icon from './Icon.astro';
+import Logo from './Logo.astro';
 import { site } from '../data/site';
 
 interface Props {
   variant: 'full' | 'minimal';
   ctaHref: string;
   ctaLabel: string;
+  /** dark: liegt transparent über dem Hero (helle Schrift); light: feste dunkle Leiste */
+  tone?: 'dark' | 'light';
 }
-const { variant, ctaHref, ctaLabel } = Astro.props;
+const { variant, ctaHref, ctaLabel, tone = 'dark' } = Astro.props;
 
 const nav = [
-  { href: '/preise', label: 'Behandlungen & Preise' },
-  { href: '/laserhaarentfernung', label: 'So funktioniert’s' },
+  { href: '/preise', label: 'Preise' },
+  { href: '/laserhaarentfernung', label: 'Behandlung' },
   { href: '/studio', label: 'Studio & Team' },
   { href: '/faq', label: 'FAQ' },
   { href: '/kontakt', label: 'Kontakt' },
@@ -19,10 +22,10 @@ const nav = [
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---
 
-<header class="site-header" data-header>
-  <div class="wrap bar">
+<header class:list={['site-header', tone === 'dark' ? 'is-over' : 'is-solid']} data-header>
+  <div class="bar">
     <a href="/" class="logo" aria-label={`${site.name} – Startseite`}>
-      <img src="/brand/logo-dark.png" alt="Eloure The Studio" width="368" height="116" />
+      <Logo />
     </a>
 
     {
@@ -44,18 +47,17 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     <div class="actions">
       {
         variant === 'full' && (
-          <a class="icon-btn hide-s" href={site.phoneHref} aria-label={`Anrufen: ${site.phone}`}>
-            <Icon name="phone" size={19} />
+          <a class="tel hide-s" href={site.phoneHref} aria-label={`Anrufen: ${site.phone}`}>
+            <Icon name="phone" size={17} /> <span>{site.phone}</span>
           </a>
         )
       }
-      <a class="btn btn-primary btn-sm hide-xs" href={ctaHref}>{ctaLabel}<span class="arrow"><Icon name="arrow" size={15} /></span></a>
+      <a class="btn btn-primary btn-sm hide-xs" href={ctaHref}>{ctaLabel}</a>
       {
         variant === 'full' && (
-          <button class="icon-btn menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" data-menu-toggle>
+          <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" data-menu-toggle>
             <span class="sr-only">Menü öffnen</span>
-            <Icon name="menu" size={22} class="i-open" />
-            <Icon name="close" size={22} class="i-close" />
+            <span class="burger" aria-hidden="true" />
           </button>
         )
       }
@@ -65,22 +67,17 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   {
     variant === 'full' && (
       <div class="mobile-nav" id="mobile-nav" hidden data-menu>
-        <nav class="wrap" aria-label="Mobile Navigation">
+        <nav aria-label="Mobile Navigation">
           <ul>
             <li><a href="/">Start</a></li>
             {nav.map((n) => (
               <li>
-                <a href={n.href} aria-current={path === n.href ? 'page' : undefined}>
-                  {n.label}
-                </a>
+                <a href={n.href}>{n.label}</a>
               </li>
             ))}
           </ul>
           <a class="btn btn-primary btn-block" href={ctaHref}>
             {ctaLabel}
-            <span class="arrow">
-              <Icon name="arrow" size={15} />
-            </span>
           </a>
           <div class="mobile-contact">
             <a href={site.phoneHref}>
@@ -98,25 +95,47 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 
 <style>
   .site-header {
-    position: sticky;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 50;
-    background: rgba(246, 242, 238, 0.86);
-    backdrop-filter: saturate(1.4) blur(14px);
-    -webkit-backdrop-filter: saturate(1.4) blur(14px);
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.3s ease;
+    color: var(--cream);
+    transition:
+      background 0.4s ease,
+      box-shadow 0.4s ease;
   }
 
-  .site-header.is-scrolled {
-    border-bottom-color: var(--line);
+  .is-over {
+    position: fixed;
+    top: auto;
+  }
+
+  .is-solid {
+    position: sticky;
+    background: var(--espresso);
+  }
+
+  .site-header:global(.is-scrolled) {
+    background: rgba(43, 31, 26, 0.88);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+
+  .is-over:global(.is-scrolled) {
+    position: fixed;
+    top: 0;
+  }
+
+  .is-over:not(:global(.is-scrolled)) {
+    background: linear-gradient(180deg, rgba(20, 14, 11, 0.45), rgba(20, 14, 11, 0));
   }
 
   .bar {
     height: var(--header-h);
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 28px;
+    padding-inline: var(--gutter);
   }
 
   .logo {
@@ -124,8 +143,8 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     display: block;
   }
 
-  .logo img {
-    height: 36px;
+  .logo :global(svg) {
+    height: 34px;
     width: auto;
   }
 
@@ -136,122 +155,147 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   .nav ul {
     list-style: none;
     display: flex;
-    gap: 4px;
+    gap: 6px;
     margin: 0;
     padding: 0;
   }
 
   .nav a {
+    position: relative;
     display: block;
     padding: 8px 12px;
-    border-radius: 999px;
     text-decoration: none;
-    font-size: 0.93rem;
+    font-size: 0.8rem;
     font-weight: 600;
-    color: var(--ink-2);
-    transition:
-      background 0.2s,
-      color 0.2s;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
   }
 
-  .nav a:hover {
-    color: var(--ink);
-    background: rgba(46, 45, 43, 0.05);
+  .nav a::after {
+    content: '';
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 2px;
+    height: 1px;
+    background: var(--lime);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s var(--ease);
   }
 
-  .nav a[aria-current='page'] {
-    color: var(--ink);
-    background: var(--paper);
-    box-shadow: inset 0 0 0 1px var(--line);
+  .nav a:hover::after,
+  .nav a[aria-current='page']::after {
+    transform: scaleX(1);
   }
 
   .actions {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 18px;
     margin-left: auto;
   }
 
   .nav + .actions {
-    margin-left: 8px;
+    margin-left: 12px;
+  }
+
+  .tel {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
   }
 
   .btn-sm {
     min-height: 46px;
     padding: 0 20px;
-    font-size: 0.92rem;
-  }
-
-  .icon-btn {
-    display: grid;
-    place-items: center;
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    border: 1px solid var(--line-strong);
-    background: transparent;
-    color: var(--ink);
-    cursor: pointer;
-    transition:
-      border-color 0.2s,
-      background 0.2s;
-  }
-
-  .icon-btn:hover {
-    border-color: var(--ink);
-    background: var(--paper);
+    font-size: 0.76rem;
+    --btn-border: var(--lime);
   }
 
   .menu-btn {
     display: none;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border: 1px solid rgba(246, 241, 234, 0.4);
+    background: transparent;
+    cursor: pointer;
   }
 
-  .menu-btn :global(.i-close) {
-    display: none;
-  }
-
-  .menu-btn[aria-expanded='true'] :global(.i-close) {
+  .burger,
+  .burger::before,
+  .burger::after {
     display: block;
+    width: 20px;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform 0.3s var(--ease);
   }
 
-  .menu-btn[aria-expanded='true'] :global(.i-open) {
-    display: none;
+  .burger {
+    position: relative;
+  }
+
+  .burger::before,
+  .burger::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+
+  .burger::before {
+    top: -6px;
+  }
+
+  .burger::after {
+    top: 6px;
+  }
+
+  .menu-btn[aria-expanded='true'] .burger {
+    background: transparent;
+  }
+
+  .menu-btn[aria-expanded='true'] .burger::before {
+    transform: translateY(6px) rotate(45deg);
+  }
+
+  .menu-btn[aria-expanded='true'] .burger::after {
+    transform: translateY(-6px) rotate(-45deg);
   }
 
   .mobile-nav {
     position: fixed;
     inset: var(--header-h) 0 0 0;
-    background: var(--bg);
+    background: var(--espresso);
     overflow-y: auto;
-    padding-block: 16px 40px;
+    padding: 24px var(--gutter) 48px;
   }
 
   .mobile-nav ul {
     list-style: none;
-    margin: 0 0 28px;
+    margin: 0 0 32px;
     padding: 0;
   }
 
   .mobile-nav li a {
     display: block;
     padding: 14px 0;
-    border-bottom: 1px solid var(--line);
-    font-family: var(--sans);
+    border-bottom: 1px solid var(--line-light);
+    font-family: var(--serif);
+    font-size: 2.2rem;
     line-height: 1.1;
     text-decoration: none;
-    font-size: 1.6rem;
-    font-weight: 400;
-    letter-spacing: -0.01em;
-  }
-
-  .mobile-nav li a[aria-current='page'] {
   }
 
   .mobile-contact {
     display: flex;
     flex-wrap: wrap;
     gap: 12px 24px;
-    margin-top: 24px;
+    margin-top: 28px;
     font-weight: 600;
   }
 
@@ -262,8 +306,9 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     text-decoration: none;
   }
 
-  @media (max-width: 1120px) {
-    .nav {
+  @media (max-width: 1180px) {
+    .nav,
+    .tel {
       display: none;
     }
     .menu-btn {
@@ -272,23 +317,15 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   }
 
   @media (max-width: 640px) {
-    .hide-s {
-      display: none;
+    .logo :global(svg) {
+      height: 26px;
     }
-    .logo img {
-      height: 30px;
-    }
-    .btn-sm {
-      padding: 0 14px;
-      min-height: 44px;
-      font-size: 0.88rem;
-    }
-    .btn-sm :global(.arrow) {
-      display: none;
+    .actions {
+      gap: 10px;
     }
   }
 
-  @media (max-width: 359px) {
+  @media (max-width: 380px) {
     body[data-variant='full'] .hide-xs {
       display: none;
     }
@@ -296,17 +333,14 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 </style>
 
 <script>
-  const header = document.querySelector<HTMLElement>('[data-header]');
-  const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 8);
-  onScroll();
-  window.addEventListener('scroll', onScroll, { passive: true });
-
   const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
   const menu = document.querySelector<HTMLElement>('[data-menu]');
+  const header = document.querySelector<HTMLElement>('[data-header]');
   toggle?.addEventListener('click', () => {
     const open = toggle.getAttribute('aria-expanded') === 'true';
     toggle.setAttribute('aria-expanded', String(!open));
     if (menu) menu.hidden = open;
+    header?.classList.toggle('menu-open', !open);
     document.body.style.overflow = open ? '' : 'hidden';
   });
 </script>

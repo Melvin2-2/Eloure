@@ -2,19 +2,20 @@
 import { Image } from 'astro:assets';
 import Icon from './Icon.astro';
 import { site } from '../data/site';
-import img from '../assets/img/team-duo.jpg';
+import img from '../assets/shoot/raum-fenster.jpg';
 
 interface Props {
   title?: string;
   code?: string;
 }
 const { title = 'Bereit für dein erstes Mal ohne Rasierer?', code } = Astro.props;
+
 const q = code ? `?code=${code}` : '';
 ---
 
 <section class="cta-final bg-ink">
   <div class="bg">
-    <Image src={img} alt="" widths={[800, 1400, 2000]} sizes="100vw" data-parallax="0.06" />
+    <Image src={img} alt="" widths={[900, 1400, 2000, 2400]} sizes="100vw" data-parallax="14" />
   </div>
   <div class="wrap inner on-dark">
     <h2 class="reveal" set:html={title} />
@@ -52,16 +53,15 @@ const q = code ? `?code=${code}` : '';
 
   .bg {
     position: absolute;
-    inset: 0;
-    opacity: 0.32;
+    inset: -8% 0;
+    opacity: 0.55;
   }
 
   .bg :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 30%;
-    transform: scale(1.12);
+    object-position: center 40%;
   }
 
   .bg::after {
@@ -76,8 +76,8 @@ const q = code ? `?code=${code}` : '';
   }
 
   h2 {
-    font-size: clamp(2.6rem, 6vw, 5.4rem);
-    max-width: 12em;
+    font-size: clamp(3rem, 7vw, 6.6rem);
+    max-width: 11em;
   }
 
   .paths {
@@ -99,7 +99,6 @@ const q = code ? `?code=${code}` : '';
     flex-direction: column;
     gap: 6px;
     padding: 28px 84px 28px 28px;
-    border-radius: var(--radius-l);
     background: rgba(251, 248, 244, 0.08);
     border: 1px solid rgba(251, 248, 244, 0.22);
     backdrop-filter: blur(8px);
@@ -115,9 +114,9 @@ const q = code ? `?code=${code}` : '';
   }
 
   .path.main {
-    background: var(--paper);
-    color: var(--ink);
-    border-color: var(--paper);
+    background: var(--lime);
+    color: var(--espresso);
+    border-color: var(--lime);
   }
 
   .label {
@@ -126,10 +125,10 @@ const q = code ? `?code=${code}` : '';
   }
 
   .title {
-    font-size: clamp(1.6rem, 2.6vw, 2.1rem);
-    font-weight: 500;
-    letter-spacing: -0.025em;
-    line-height: 1.1;
+    font-family: var(--serif);
+    font-size: clamp(1.9rem, 2.8vw, 2.5rem);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
   }
 
   .sub {
@@ -146,9 +145,8 @@ const q = code ? `?code=${code}` : '';
     place-items: center;
     width: 48px;
     height: 48px;
-    border-radius: 50%;
-    background: var(--accent);
-    color: var(--accent-ink);
+    background: var(--espresso);
+    color: var(--lime);
     transition: transform 0.3s var(--ease);
   }
 

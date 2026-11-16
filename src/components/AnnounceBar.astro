@@ -1,0 +1,47 @@
+---
+import Icon from './Icon.astro';
+interface Props {
+  text: string;
+  href: string;
+  cta: string;
+}
+const { text, href, cta } = Astro.props;
+---
+
+<div class="announce">
+  <span>{text}</span>
+  <a href={href}>{cta} <Icon name="arrow" size={14} /></a>
+</div>
+
+<style>
+  .announce {
+    position: relative;
+    z-index: 60;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+    padding: 9px var(--gutter);
+    background: var(--lime);
+    color: var(--espresso);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-underline-offset: 4px;
+  }
+
+  @media (max-width: 600px) {
+    span {
+      display: none;
+    }
+  }
+</style>

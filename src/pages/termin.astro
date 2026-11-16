@@ -27,7 +27,7 @@ const data = {
 };
 ---
 
-<Base
+<Base headerTone="light" announce={false}
   title="Termin buchen | Eloure The Studio Amriswil"
   description="Buche deine Laserhaarentfernung bei Eloure in Amriswil online – in wenigen Schritten. Bezahlt wird erst vor Ort."
   variant="minimal"
@@ -303,7 +303,7 @@ const data = {
     gap: 8px;
     padding: 10px 16px;
     margin-bottom: 24px;
-    border-radius: 12px;
+    border-radius: 0;
     background: var(--linen);
     font-size: 0.86rem;
     color: var(--ink-2);
@@ -339,7 +339,7 @@ const data = {
     align-items: center;
     gap: 8px;
     padding: 6px 12px 6px 6px;
-    border-radius: 999px;
+    border-radius: 0;
     background: var(--linen);
   }
 
@@ -348,7 +348,7 @@ const data = {
     place-items: center;
     width: 24px;
     height: 24px;
-    border-radius: 50%;
+    border-radius: 0;
     background: var(--paper);
     font-size: 0.78rem;
   }
@@ -410,7 +410,7 @@ const data = {
     display: inline-flex;
     flex-wrap: wrap;
     padding: 5px;
-    border-radius: 999px;
+    border-radius: 0;
     background: var(--linen);
     margin-bottom: 28px;
   }
@@ -428,7 +428,7 @@ const data = {
   .seg span {
     display: block;
     padding: 10px 24px;
-    border-radius: 999px;
+    border-radius: 0;
     font-weight: 500;
     color: var(--muted);
     cursor: pointer;
@@ -447,20 +447,20 @@ const data = {
   }
 
   .seg.small {
-    border-radius: 16px;
+    border-radius: 0;
     margin: 0;
   }
 
   .seg.small span {
     padding: 10px 16px;
     font-size: 0.92rem;
-    border-radius: 12px;
+    border-radius: 0;
   }
 
   /* Erster Besuch */
   .first-visit {
     padding: 20px;
-    border-radius: var(--radius);
+    border-radius: 0;
     background: var(--linen);
     margin: 8px 0 28px;
     scroll-margin-top: calc(var(--header-h) + 24px);
@@ -510,7 +510,7 @@ const data = {
     display: flex;
     gap: 12px;
     padding: 16px 48px 16px 16px;
-    border-radius: 14px;
+    border-radius: 0;
     border: 1.5px solid transparent;
     background: var(--paper);
     cursor: pointer;
@@ -550,7 +550,7 @@ const data = {
     place-items: center;
     width: 24px;
     height: 24px;
-    border-radius: 50%;
+    border-radius: 0;
     border: 1.5px solid var(--line-strong);
     color: transparent;
   }
@@ -609,7 +609,7 @@ const data = {
     align-items: center;
     padding: 14px 16px;
     margin-bottom: 6px;
-    border-radius: 14px;
+    border-radius: 0;
     background: var(--paper);
     border: 1.5px solid transparent;
     cursor: pointer;
@@ -630,7 +630,7 @@ const data = {
     place-items: center;
     width: 24px;
     height: 24px;
-    border-radius: 7px;
+    border-radius: 0;
     border: 1.5px solid var(--line-strong);
     color: transparent;
     transition: background 0.2s;
@@ -705,7 +705,7 @@ const data = {
 
   .cal {
     padding: 20px;
-    border-radius: var(--radius);
+    border-radius: 0;
     background: var(--paper);
     border: 1px solid var(--line);
   }
@@ -729,7 +729,7 @@ const data = {
     place-items: center;
     width: 40px;
     height: 40px;
-    border-radius: 50%;
+    border-radius: 0;
     border: 1px solid var(--line-strong);
     background: transparent;
     cursor: pointer;
@@ -762,7 +762,7 @@ const data = {
   .cal-days :global(button) {
     aspect-ratio: 1;
     border: 0;
-    border-radius: 12px;
+    border-radius: 0;
     background: transparent;
     font-weight: 600;
     cursor: pointer;
@@ -786,7 +786,7 @@ const data = {
     bottom: 6px;
     width: 5px;
     height: 5px;
-    border-radius: 50%;
+    border-radius: 0;
     background: var(--ok);
     transform: translateX(-50%);
   }
@@ -802,7 +802,7 @@ const data = {
 
   .slots {
     padding: 20px;
-    border-radius: var(--radius);
+    border-radius: 0;
     background: var(--paper);
     border: 1px solid var(--line);
     min-height: 200px;
@@ -834,7 +834,7 @@ const data = {
 
   .slots :global(.slot-grid button) {
     padding: 10px 0;
-    border-radius: 10px;
+    border-radius: 0;
     border: 1.5px solid var(--line-strong);
     background: transparent;
     font-weight: 500;
@@ -881,7 +881,7 @@ const data = {
   .code input {
     width: 100%;
     padding: 14px 16px;
-    border-radius: 12px;
+    border-radius: 0;
     border: 1px solid var(--line-strong);
     background: var(--paper);
     font-weight: 500;
@@ -941,7 +941,7 @@ const data = {
   /* Review */
   .review {
     margin: 0 0 24px;
-    border-radius: var(--radius);
+    border-radius: 0;
     background: var(--paper);
     border: 1px solid var(--line);
     padding: 8px 20px;
@@ -1029,7 +1029,7 @@ const data = {
   /* Erfolg */
   .success {
     padding: clamp(24px, 4vw, 48px);
-    border-radius: var(--radius-l);
+    border-radius: 0;
     background: var(--paper);
     border: 1px solid var(--line);
   }
@@ -1039,7 +1039,7 @@ const data = {
     place-items: center;
     width: 64px;
     height: 64px;
-    border-radius: 50%;
+    border-radius: 0;
     background: var(--linen);
     margin-bottom: 24px;
   }
@@ -1051,7 +1051,7 @@ const data = {
   .prep {
     margin: 28px 0;
     padding: 24px;
-    border-radius: var(--radius);
+    border-radius: 0;
     background: var(--bg);
   }
 
@@ -1083,7 +1083,7 @@ const data = {
 
   .sum-card {
     padding: 24px;
-    border-radius: var(--radius);
+    border-radius: 0;
     background: var(--paper);
     border: 1px solid var(--line);
     box-shadow: var(--shadow);
@@ -1121,7 +1121,7 @@ const data = {
     font-weight: 600;
     font-size: 0.92rem;
     padding: 10px 12px;
-    border-radius: 10px;
+    border-radius: 0;
     background: var(--linen);
   }
 

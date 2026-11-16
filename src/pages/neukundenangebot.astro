@@ -1,271 +1,264 @@
 ---
-// Paid-Ads-Landingpage. Nicht in Navigation, Sitemap oder Suchmaschinen (noindex).
+// Paid-Ads-Landingpage (Verkaufsseite). Nicht in Navigation, Sitemap oder Suchmaschinen.
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
+import Lines from '../components/Lines.astro';
+import ZoneFinder from '../components/ZoneFinder.astro';
 import StickySteps from '../components/StickySteps.astro';
-import Marquee from '../components/Marquee.astro';
 import FaqList from '../components/FaqList.astro';
 import Reviews from '../components/Reviews.astro';
 import CtaFinal from '../components/CtaFinal.astro';
 import { site, promo } from '../data/site';
-import { services, chf, discounted, duration } from '../data/services';
+import { services, chf, discounted } from '../data/services';
 import { pickFaqs } from '../data/faq';
+import { googleRating } from '../data/reviews';
 
-import imgDuo from '../assets/img/team-duo.jpg';
-import imgConsult from '../assets/img/consultation.jpg';
-import imgRoom from '../assets/img/room-window.jpg';
-import imgSofa from '../assets/img/lounge-sofa.jpg';
+import imgHero from '../assets/shoot/kundin-brille.jpg';
+import imgDevice from '../assets/shoot/geraet.jpg';
+import uRoom from '../assets/shoot/liege-fenster.jpg';
+import uCaro from '../assets/shoot/caro-beratung-2.jpg';
+import uDisplay from '../assets/shoot/display.jpg';
+import uLounge from '../assets/shoot/lounge-tuer.jpg';
 
 const q = `code=${promo.code}`;
-const examples = {
-  Frauen: ['ganzkoerper', 'kombi-intim-achseln', 'beine-komplett', 'unterschenkel'],
-  Männer: ['brust-bauch', 'ruecken-inkl-nacken'],
-};
-const svc = (id: string) => services.find((s) => s.id === id)!;
+const pct = `${promo.percent} %`;
+const top = ['ganzkoerper', 'kombi-intim-achseln', 'beine-komplett', 'brust-bauch'].map((id) => services.find((s) => s.id === id)!);
+
+const usps = [
+  { img: imgDevice, alt: 'Medizinischer Diodenlaser im Studio', title: 'Medizinischer Diodenlaser', text: 'Schonend, präzise und für verschiedene Haut- und Haartypen geeignet.' },
+  { img: uCaro, alt: 'Caro berät eine Kundin', title: 'Ehrliche Beratung', text: 'Keine Standard-Versprechen. Wir sagen dir, was bei dir realistisch ist.' },
+  { img: uDisplay, alt: 'Display des Lasergeräts', title: '100 % spezialisiert', text: 'Keine Allround-Behandlungen, sondern volle Expertise in einem Bereich.' },
+  { img: uLounge, alt: 'Lounge im Eloure Studio', title: 'Ruhe statt Klinik', text: 'Ein heller, privater Ort. Du gibst das Tempo vor – jede Frage ist willkommen.' },
+];
 
 const faqs = [
   {
     id: 'code',
     q: `Wie löse ich den Code ${promo.code} ein?`,
-    a: `<p>Wähle deine Behandlung und deinen Wunschtermin aus. Im letzten Schritt gibst du den Code <strong>${promo.code}</strong> ein – der Rabatt wird sofort abgezogen. Bezahlt wird erst vor Ort, nach deinem Termin.</p>`,
+    a: `<p>Wähle deine Zone und deinen Wunschtermin. Im letzten Schritt gibst du <strong>${promo.code}</strong> ein – der Rabatt wird sofort abgezogen. Bezahlt wird erst vor Ort, nach deinem Termin.</p>`,
   },
   {
     id: 'gilt',
     q: 'Für welche Behandlungen gilt der Rabatt?',
-    a: `<p>Für <strong>jede Zone bei deinem ersten Besuch</strong> bei uns – egal ob Achseln, Beine oder Ganzkörper, für Frauen und Männer.</p>`,
+    a: `<p>Für <strong>jede Zone bei deinem ersten Besuch</strong> – ob Achseln, Beine oder Ganzkörper, für Frauen und Männer.</p>`,
   },
-  ...pickFaqs(['schmerz', 'sitzungen', 'geeignet']),
+  ...pickFaqs(['schmerz', 'sitzungen', 'geeignet', 'bezahlen']),
 ];
 ---
 
 <Base
-  title={`${promo.percent} % Neukundenrabatt – Laserhaarentfernung Amriswil | Eloure`}
-  description={`Dauerhaft glatte Haut mit medizinischem Diodenlaser in Amriswil. Als Neukund:in ${promo.percent} % auf deine erste Behandlung mit dem Code ${promo.code}. Bezahlt wird erst vor Ort.`}
+  title={`${pct} auf deine erste Laserbehandlung | Eloure Amriswil`}
+  description={`Dauerhaft glatte Haut mit medizinischem Diodenlaser in Amriswil. Als Neukund:in ${pct} auf deine erste Behandlung mit dem Code ${promo.code}. Bezahlt wird erst vor Ort.`}
   variant="minimal"
   noindex
   ctaHref={`/termin?${q}`}
-  ctaLabel={`${promo.percent} % sichern`}
+  ctaLabel={`${pct} sichern`}
   mobileNote={`Code ${promo.code}`}
+  announce={{ text: `Neukundenangebot: ${pct} auf deine erste Behandlung · Code ${promo.code}`, href: `/termin?${q}`, cta: 'Jetzt einlösen' }}
 >
-  <!-- ——— Hero ——— -->
-  <section class="lp-hero">
-    <div class="wrap hero-grid">
-      <div class="hero-text">
-        <p class="offer-pill reveal"><span class="dot"></span> Neukundenangebot · nur für kurze Zeit</p>
-        <h1 class="display reveal">{promo.percent}&nbsp;% auf deine erste Laser&shy;behandlung.</h1>
-        <p class="lead reveal" style="--d:100ms">
-          Dauerhaft glatte Haut in Amriswil – mit medizinischem Diodenlaser, ehrlicher Beratung und viel Zeit für dich. Ohne
-          Rasieren, ohne Pickel, ohne Stress.
-        </p>
-
-        <div class="code-box reveal" style="--d:160ms">
-          <div>
-            <small>Dein Code – einfach im Checkout eingeben</small>
-            <strong data-code>{promo.code}</strong>
-          </div>
-          <button type="button" class="copy" data-copy={promo.code}>
-            <Icon name="copy" size={16} /> <span>Kopieren</span>
-          </button>
-        </div>
-
-        <div class="btn-row reveal" style="--d:220ms">
-          <a class="btn btn-primary" href={`/termin?${q}`}>{promo.percent}&nbsp;% Rabatt sichern<span class="arrow"><Icon name="arrow" size={18} /></span></a>
-          <a class="btn btn-ghost" href="#preise">Preise ansehen</a>
-        </div>
-
-        <ul class="trust reveal" style="--d:280ms">
-          <li><strong>Vor Ort</strong><span>bezahlen</span></li>
-          <li><strong>V‑NISSG</strong><span>zertifiziert</span></li>
-          <li><strong>5 Jahre</strong><span>Erfahrung</span></li>
-          <li><a href={site.googleReviewsUrl} target="_blank" rel="noopener"><strong>★★★★★</strong><span>Google-Bewertungen</span></a></li>
-        </ul>
-      </div>
+  <!-- HERO -->
+  <section class="hero bg-dark">
+    <div class="hero-img">
+      <Image src={imgHero} alt="Kundin mit Schutzbrille während der Laserbehandlung" widths={[700, 1100, 1600, 2000]} sizes="(min-width: 1000px) 52vw, 100vw" loading="eager" fetchpriority="high" data-parallax="10" />
+      <div class="hero-shade"></div>
     </div>
 
-    <div class="hero-visual">
-      <div class="v-main">
-        <video autoplay muted loop playsinline preload="metadata" poster="/videos/behandlung-beine.jpg" aria-label="Laserbehandlung an den Beinen im Eloure Studio">
-          <source src="/videos/behandlung-beine.mp4" type="video/mp4" />
-        </video>
-      </div>
-      <div class="v-side">
-        <Image src={imgDuo} alt="Caro und Sarah von Eloure" widths={[360, 600]} sizes="(min-width: 960px) 16vw, 40vw" loading="eager" />
-        <span><strong>Caro & Sarah</strong> freuen sich auf dich</span>
-      </div>
-    </div>
-  </section>
-
-  <Marquee items={[`${promo.percent}\u00a0% auf die erste Behandlung`, `Code ${promo.code}`, 'Bezahlt wird vor Ort', 'Medizinischer Diodenlaser', 'Amriswil']} tone="dark" />
-
-  <!-- ——— Preise ——— -->
-  <section class="section bg-paper" id="preise">
-    <div class="wrap">
-      <div class="section-head">
-        <h2>Dein Neukunden-Vorteil: {promo.percent} % auf jede erste Behandlung</h2>
-        <p class="lead">Ein paar Beispiele. Der Rabatt gilt für alle Zonen – für Frauen und Männer.</p>
-      </div>
-
-      {
-        Object.entries(examples).map(([label, ids]) => (
-          <div class="ex-group">
-            <h3>{label}</h3>
-            <ul class="ex">
-              {ids.map(svc).map((s) => (
-                <li>
-                  <a href={`/termin?behandlung=${s.id}&${q}`}>
-                    <span class="ex-name">{s.name}</span>
-                    <span class="ex-meta">{duration(s.minutes)}</span>
-                    <span class="ex-prices">
-                      <s>{chf(s.price)}</s>
-                      <strong>{chf(discounted(s.price!, promo.percent))}</strong>
-                    </span>
-                    <span class="ex-go">
-                      Buchen <Icon name="arrow" size={15} />
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))
-      }
-      <p class="ex-foot muted small">
-        Preise pro Sitzung, bezahlt wird vor Ort. <a class="text-link" href="/preise">Alle Zonen & Preise ansehen</a>
+    <div class="hero-content">
+      <Lines as="h1" class="display hero-title" lines={[`${pct} auf deine`, 'erste Behandlung.']}>
+        <span class="hero-sub" data-anim="up">Laserhaarentfernung in Amriswil</span>
+      </Lines>
+      <p class="lead" data-anim="up">
+        Dauerhaft glatte Haut mit medizinischem Diodenlaser. Ohne Rasieren, ohne Pickel, ohne Stress – und ohne Vorauszahlung.
       </p>
+
+      <div class="code-box" data-anim="up">
+        <div>
+          <small>Dein Code – im Checkout eingeben</small>
+          <strong>{promo.code}</strong>
+        </div>
+        <button type="button" class="copy" data-copy={promo.code}><Icon name="copy" size={16} /> <span>Kopieren</span></button>
+      </div>
+
+      <div class="btn-row" data-anim="up">
+        <a class="btn btn-primary" href={`/termin?${q}`}>{pct} Rabatt sichern<span class="arrow"><Icon name="arrow" size={16} /></span></a>
+        <a class="btn btn-ghost" href="#zonen">Alle Preise</a>
+      </div>
+    </div>
+
+    <div class="hero-card glass" data-anim="up">
+      <span class="label">So einfach geht’s</span>
+      <ol>
+        <li><b>1</b> Zone & Termin wählen</li>
+        <li><b>2</b> Code {promo.code} eingeben</li>
+        <li><b>3</b> Vor Ort bezahlen</li>
+      </ol>
+      <a href={site.googleReviewsUrl} target="_blank" rel="noopener" class="g"><span class="stars">★★★★★</span> <b>{googleRating.rating.toFixed(1).replace('.', ',')}</b> · {googleRating.count} Google-Bewertungen</a>
     </div>
   </section>
 
-  <!-- ——— USPs ——— -->
-  <section class="section">
+  <!-- BELIEBTE ZONEN mit Rabatt -->
+  <section class="top bg-lime">
     <div class="wrap">
-      <div class="section-head">
-        <h2>Warum Eloure?</h2>
-        <p class="lead">
-          Wir sind kein Beauty-Allrounder, sondern ein Studio, das sich zu 100 % auf Laserhaarentfernung konzentriert. Präzise
-          Behandlungen, hochwertige medizinische Technologie und echte Expertise – für Ergebnisse, die bleiben.
-        </p>
+      <div class="top-head">
+        <Lines lines={['Beliebt bei', 'Neukundinnen.']} />
+        <a class="btn btn-dark reveal" href={`/termin?${q}`}>Jetzt {pct} sichern<span class="arrow"><Icon name="arrow" size={16} /></span></a>
       </div>
-      <ul class="usps">
-        <li class="reveal">
-          <Icon name="spark" size={26} />
-          <h3>Modernste Laser-Technologie</h3>
-          <p>Medizinischer Diodenlaser: schonend, präzise und für verschiedene Haut- und Haartypen geeignet.</p>
-        </li>
-        <li class="reveal">
-          <Icon name="shield" size={26} />
-          <h3>Offiziell geschultes Team</h3>
-          <p>Ausbildung und Sachkundenachweis nach V‑NISSG. Sicher und effektiv.</p>
-        </li>
-        <li class="reveal">
-          <Icon name="heart" size={26} />
-          <h3>100 % auf Laser spezialisiert</h3>
-          <p>Keine Allround-Behandlungen, sondern volle Expertise in einem Bereich.</p>
-        </li>
-        <li class="reveal">
-          <Icon name="leaf" size={26} />
-          <h3>Sichtbare Ergebnisse</h3>
-          <p>Schon nach wenigen Sitzungen merkbar glattere und feinere Haut.</p>
-        </li>
+      <ul class="top-list">
+        {
+          top.map((s) => (
+            <li class="reveal">
+              <a href={`/termin?behandlung=${s.id}&${q}`}>
+                <span class="t-name serif">{s.name}</span>
+                <span class="t-prices">
+                  <s>{chf(s.price)}</s>
+                  <strong class="serif">{chf(discounted(s.price!, promo.percent))}</strong>
+                </span>
+                <span class="t-go label">
+                  Buchen <Icon name="arrow" size={14} />
+                </span>
+              </a>
+            </li>
+          ))
+        }
       </ul>
     </div>
   </section>
 
-  <!-- ——— Ehrlich ——— -->
-  <section class="section bg-ink">
-    <div class="wrap split">
-      <div class="media honest-img">
-        <Image src={imgConsult} alt="Persönliches Beratungsgespräch in der Studio-Lounge" widths={[480, 800]} sizes="(min-width: 900px) 44vw, 100vw" />
+  <!-- ALLE ZONEN mit Rabatt -->
+  <ZoneFinder code={promo.code} discount={promo.percent} />
+
+  <!-- WARUM ELOURE: Bildkacheln mit Glas-Text -->
+  <section class="why bg-dark">
+    <div class="wrap why-head">
+      <Lines lines={['Warum so viele', 'bei uns bleiben.']} />
+      <p class="lead reveal">
+        Wir sind kein Beauty-Allrounder, sondern ein Studio, das sich zu 100&nbsp;% auf Laserhaarentfernung konzentriert.
+      </p>
+    </div>
+    <div class="tiles">
+      {
+        usps.map((u) => (
+          <div class="tile zoom" data-anim="img">
+            <Image src={u.img} alt={u.alt} widths={[600, 900, 1200]} sizes="(min-width: 900px) 50vw, 100vw" />
+            <div class="tile-card glass">
+              <h3 class="serif">{u.title}</h3>
+              <p>{u.text}</p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+    <div class="wrap why-cta">
+      <a class="btn btn-primary reveal" href={`/termin?${q}`}>Ersten Termin mit {pct} buchen<span class="arrow"><Icon name="arrow" size={16} /></span></a>
+    </div>
+  </section>
+
+  <!-- ABLAUF -->
+  <StickySteps title={['So läuft dein', 'erster Termin.']} ctaHref={`/termin?${q}`} ctaLabel={`Mit ${pct} starten`} />
+
+  <!-- SICHERHEIT -->
+  <section class="safe bg-mocha">
+    <div class="safe-img" data-anim="img">
+      <Image src={uRoom} alt="Behandlungsraum mit Laserliege am Fenster" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 50vw, 100vw" />
+    </div>
+    <div class="safe-content">
+      <Lines lines={['Sicherheit', 'zuerst.']} />
+      <p class="lead reveal">
+        5 Jahre Erfahrung – ausschliesslich in der Laserhaarentfernung, seit 3 Jahren im eigenen Studio in Amriswil.
+      </p>
+      <ul class="check-list reveal">
+        <li>Medizinischer Diodenlaser</li>
+        <li>Ausbildung & Sachkundenachweis nach V‑NISSG</li>
+        <li>Ehrliche Einschätzung vor der ersten Session</li>
+        <li>Bezahlt wird vor Ort – bar, TWINT oder Karte</li>
+      </ul>
+      <div class="btn-row reveal">
+        <a class="btn btn-primary" href={`/termin?${q}`}>{pct} Rabatt sichern<span class="arrow"><Icon name="arrow" size={16} /></span></a>
+        <a class="btn btn-ghost" href={`/termin?behandlung=beratungsgespraech&${q}`}>Erst kostenlos beraten</a>
       </div>
+    </div>
+  </section>
+
+  <Reviews title={['Ø 5,0 aus', '126 Bewertungen.']} ctaHref={`/termin?${q}`} ctaLabel={`${pct} Rabatt sichern`} />
+
+  <!-- FAQ -->
+  <section class="section bg-paper">
+    <div class="wrap faq-grid">
       <div>
-        <h2>Wie wirkt Laserhaarentfernung wirklich?</h2>
-        <p class="lead">
-          Das Licht des Lasers wird vom Farbstoff im Haar aufgenommen, in Wärme umgewandelt und zerstört gezielt die
-          Haarwurzel – ohne die Haut stark zu belasten.
-        </p>
-        <p class="muted">
-          Weil nur Haare in der Wachstumsphase wirksam behandelt werden können, braucht es mehrere Sitzungen in regelmässigen
-          Abständen. Wie viele es bei dir sind, ist <strong style="color:var(--paper)">sehr individuell</strong> – das besprechen wir ehrlich mit dir.
-        </p>
-        <p class="promise">
-          Wir arbeiten nicht mit Standard-Versprechen wie «8 Behandlungen für alle», sondern passen deinen Plan an deinen Körper
-          und deine Ziele an.
-        </p>
+        <Lines lines={['Kurz &', 'ehrlich.']} />
+        <p class="lead reveal">Was Neukundinnen am häufigsten fragen.</p>
+        <a class="btn btn-dark reveal" href={`/termin?${q}`}>Termin buchen<span class="arrow"><Icon name="arrow" size={16} /></span></a>
       </div>
+      <div class="reveal"><FaqList items={faqs} open="code" /></div>
     </div>
   </section>
 
-  <!-- ——— Ablauf ——— -->
-  <StickySteps title="So läuft dein erster Termin ab" ctaHref={`/termin?${q}`} ctaLabel={`Ersten Termin mit ${promo.percent}\u00a0% buchen`} />
-
-  <!-- ——— Sicherheit + Studio ——— -->
-  <section class="section bg-linen">
-    <div class="wrap">
-      <div class="split">
-        <div>
-          <h2>Sicherheit und Qualität an erster Stelle</h2>
-          <p class="lead">
-            Wir arbeiten mit einem medizinischen Diodenlaser und haben 5 Jahre Erfahrung – ausschliesslich in der
-            Laserhaarentfernung. Jede Behandlung wird verantwortungsvoll, präzise und nach aktuellen Standards durchgeführt.
-          </p>
-          <ul class="check-list">
-            <li>Medizinischer Diodenlaser</li>
-            <li>Ausbildung & Sachkundenachweis nach V‑NISSG</li>
-            <li>5 Jahre Erfahrung, davon 3 im eigenen Studio</li>
-            <li>Ruhiges, privates Studio in Amriswil</li>
-          </ul>
-        </div>
-        <div class="studio-pics">
-          <div class="media sp1"><Image src={imgRoom} alt="Heller Behandlungsraum im Eloure Studio" widths={[480, 800]} sizes="(min-width: 900px) 26vw, 60vw" /></div>
-          <div class="media sp2"><Image src={imgSofa} alt="Lounge im Eloure Studio" widths={[360, 600]} sizes="(min-width: 900px) 18vw, 40vw" /></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <Reviews />
-
-  <!-- ——— FAQ ——— -->
-  <section class="section">
-    <div class="wrap wrap-narrow">
-      <div class="section-head">
-        <h2>Kurz und ehrlich beantwortet</h2>
-      </div>
-      <FaqList items={faqs} open="code" />
-    </div>
-  </section>
-
-  <CtaFinal title={`Dein erster Schritt – ${promo.percent} % günstiger`} code={promo.code} />
+  <CtaFinal title={`Dein erster Schritt – ${pct} günstiger.`} code={promo.code} />
 </Base>
 
 <style>
-  .lp-hero {
+  /* Hero */
+  .hero {
     position: relative;
-    min-height: min(92vh, 920px);
-    display: flex;
-    align-items: center;
-    padding-block: clamp(32px, 6vw, 80px);
-  }
-
-  .hero-grid {
+    min-height: 100svh;
     display: grid;
+    align-items: end;
+    overflow: hidden;
   }
 
-  .hero-text {
+  .hero-img {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 52%;
+    overflow: hidden;
+  }
+
+  .hero-img :global(img) {
+    position: absolute;
+    inset: -6% 0;
+    width: 100%;
+    height: 112%;
+    object-fit: cover;
+    object-position: center 35%;
+  }
+
+  .hero-shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(43, 31, 26, 0.85) 0%, rgba(43, 31, 26, 0.1) 45%, rgba(43, 31, 26, 0) 70%),
+      linear-gradient(0deg, rgba(43, 31, 26, 0.6), rgba(43, 31, 26, 0) 40%);
+  }
+
+  .hero-content {
     position: relative;
     z-index: 2;
+    padding: calc(var(--header-h) + 56px) var(--gutter) clamp(48px, 6vw, 88px);
+    max-width: 920px;
   }
 
-  .offer-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 16px;
-    border-radius: 999px;
-    background: var(--paper);
-    border: 1px solid var(--line);
-    font-size: 0.9rem;
-    font-weight: 500;
+  .hero-content :global(.hero-title) {
+    width: max-content;
+    max-width: 92vw;
+    margin-bottom: 24px;
+    font-size: clamp(3.2rem, 8vw, 8.4rem);
+  }
+
+  .hero-sub {
+    display: block;
+    margin-top: 20px;
+    font-family: var(--sans);
+    font-size: clamp(0.9rem, 1.2vw, 1.05rem);
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--lime);
+  }
+
+  .hero-content .lead {
+    max-width: 30em;
     margin-bottom: 28px;
   }
 
@@ -275,334 +268,320 @@ const faqs = [
     justify-content: space-between;
     gap: 16px;
     max-width: 480px;
-    margin: 32px 0 28px;
+    margin-bottom: 28px;
     padding: 16px 16px 16px 22px;
-    border-radius: var(--radius);
     background: var(--lime);
-    border: 1.5px dashed rgba(43, 36, 32, 0.4);
+    color: var(--espresso);
+    border: 1.5px dashed var(--espresso);
   }
 
   .code-box small {
     display: block;
-    font-size: 0.85rem;
-    font-weight: 500;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
 
   .code-box strong {
-    font-size: 2rem;
-    font-weight: 600;
-    line-height: 1.1;
-    letter-spacing: 0.08em;
+    font-family: var(--serif);
+    font-size: 2.4rem;
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: 0.06em;
   }
 
   .copy {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 11px 16px;
-    border-radius: 999px;
+    gap: 8px;
+    padding: 12px 16px;
     border: 0;
-    background: var(--ink);
-    color: var(--paper);
-    font-weight: 500;
-    font-size: 0.9rem;
+    background: var(--espresso);
+    color: var(--cream);
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     cursor: pointer;
     flex: none;
   }
 
-  .trust {
-    list-style: none;
-    margin: 40px 0 0;
-    padding: 22px 0 0;
-    border-top: 1px solid var(--line);
-    display: grid;
-    grid-template-columns: repeat(4, auto);
-    justify-content: start;
-    gap: 16px 32px;
+  .hero-card {
+    position: absolute;
+    right: var(--gutter);
+    bottom: clamp(48px, 6vw, 88px);
+    z-index: 3;
+    padding: 24px 26px;
+    min-width: 280px;
   }
 
-  .trust li,
-  .trust a {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.3;
+  .hero-card ol {
+    list-style: none;
+    margin: 14px 0 16px;
+    padding: 0 0 16px;
+    display: grid;
+    gap: 10px;
+    border-bottom: 1px solid var(--line-light);
+    font-weight: 600;
+  }
+
+  .hero-card b {
+    display: inline-grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    margin-right: 10px;
+    background: var(--lime);
+    color: var(--espresso);
+    font-size: 0.85rem;
+  }
+
+  .hero-card .g {
+    font-size: 0.92rem;
     text-decoration: none;
   }
 
-  .trust strong {
-    font-size: 1.1rem;
-    font-weight: 500;
+  .stars {
+    color: var(--lime);
+    letter-spacing: 2px;
   }
 
-  .trust span {
-    font-size: 0.86rem;
-    color: var(--muted);
+  @media (max-width: 999px) {
+    .hero {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .hero-img {
+      position: relative;
+      width: 100%;
+      height: 92vw;
+      max-height: 680px;
+    }
+    .hero-shade {
+      background: linear-gradient(0deg, rgba(43, 31, 26, 1) 0%, rgba(43, 31, 26, 0) 55%);
+    }
+    .hero-content {
+      margin-top: -32vw;
+      padding-top: 0;
+    }
+    .hero-card {
+      position: relative;
+      right: auto;
+      bottom: auto;
+      margin: 0 var(--gutter) 48px;
+    }
   }
 
-  .v-main {
-    background: var(--stone);
+  /* Beliebte Zonen */
+  .top {
+    padding-block: clamp(72px, 10vw, 128px);
+  }
+
+  .top-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .top-head :global(h2) {
+    margin: 0;
+  }
+
+  .top-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    border-top: 1px solid var(--espresso);
+  }
+
+  @media (min-width: 900px) {
+    .top-list {
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 0;
+    }
+  }
+
+  .top-list li a {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    height: 100%;
+    padding: 28px 24px;
+    border-bottom: 1px solid var(--espresso);
+    text-decoration: none;
+    transition: background 0.3s;
+  }
+
+  @media (min-width: 900px) {
+    .top-list li a {
+      border: 1px solid var(--espresso);
+      border-right: 0;
+    }
+    .top-list li:last-child a {
+      border-right: 1px solid var(--espresso);
+    }
+  }
+
+  .top-list li a:hover {
+    background: var(--espresso);
+    color: var(--lime);
+  }
+
+  .t-name {
+    font-size: clamp(1.8rem, 2.4vw, 2.3rem);
+    line-height: 1.05;
+  }
+
+  .t-prices {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-top: auto;
+  }
+
+  .t-prices strong {
+    font-size: clamp(2.4rem, 3.4vw, 3.2rem);
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  .t-go {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Warum */
+  .why {
+    padding-block: var(--section);
+  }
+
+  .why-head {
+    display: grid;
+    gap: 24px 64px;
+    margin-bottom: 56px;
+  }
+
+  @media (min-width: 900px) {
+    .why-head {
+      grid-template-columns: 1.2fr 0.8fr;
+      align-items: end;
+    }
+  }
+
+  .tiles {
+    display: grid;
+    gap: 6px;
+  }
+
+  @media (min-width: 900px) {
+    .tiles {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .tile {
+    position: relative;
     overflow: hidden;
+    height: clamp(420px, 70vh, 760px);
   }
 
-  .v-main video {
+  .tile :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 
-  .v-side {
+  .tile-card {
     position: absolute;
-    left: -72px;
-    bottom: 56px;
-    width: clamp(170px, 15vw, 240px);
-    padding: 8px 8px 14px;
-    border-radius: var(--radius);
-    background: var(--paper);
-    box-shadow: var(--shadow-l);
-    font-size: 0.85rem;
-    line-height: 1.35;
-    z-index: 3;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: var(--gutter);
+    max-width: 440px;
+    padding: 24px 26px;
   }
 
-  .v-side :global(img) {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    border-radius: 10px;
-    margin-bottom: 10px;
+  .tile-card h3 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(1.8rem, 2.6vw, 2.4rem);
+    line-height: 1.05;
   }
 
-  .v-side span {
-    display: block;
-    padding-inline: 6px;
-    color: var(--muted);
+  .tile-card p {
+    opacity: 0.85;
   }
 
-  .v-side strong {
-    display: block;
-    color: var(--ink);
+  .why-cta {
+    margin-top: 56px;
   }
 
-  @media (min-width: 960px) {
-    .hero-grid {
-      grid-template-columns: 1fr 1fr;
-    }
-    .hero-text {
-      padding-right: 48px;
-    }
-    .hero-visual {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      width: 46%;
-    }
-    .v-main {
-      position: absolute;
-      inset: 0;
-      border-bottom-left-radius: 40px;
-    }
-  }
-
-  @media (max-width: 959px) {
-    .lp-hero {
-      flex-direction: column;
-      align-items: stretch;
-      min-height: 0;
-      padding-bottom: 0;
-    }
-    .trust {
-      grid-template-columns: repeat(2, auto);
-    }
-    .hero-visual {
-      position: relative;
-      margin-top: 40px;
-    }
-    .v-main {
-      height: 120vw;
-      max-height: 640px;
-    }
-    .v-side {
-      left: var(--gutter);
-      bottom: -32px;
-      width: 160px;
-    }
-  }
-
-  /* Preisbeispiele */
-  .ex-group + .ex-group {
-    margin-top: 32px;
-  }
-
-  .ex-group h3 {
-    font-family: var(--sans);
-    margin-bottom: 12px;
-    font-size: 1.3rem;
-    font-weight: 500;
-    letter-spacing: -0.01em;
-  }
-
-  .ex {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  /* Sicherheit */
+  .safe {
     display: grid;
-    gap: 10px;
-  }
-
-  @media (min-width: 640px) {
-    .ex {
-      grid-template-columns: repeat(2, 1fr);
-    }
   }
 
   @media (min-width: 1000px) {
-    .ex {
-      grid-template-columns: repeat(4, 1fr);
+    .safe {
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
     }
   }
 
-  .ex a {
+  .safe-img {
+    position: relative;
+    overflow: hidden;
+    min-height: 80vw;
+  }
+
+  @media (min-width: 1000px) {
+    .safe-img {
+      min-height: 0;
+    }
+  }
+
+  .safe-img :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .safe-content {
+    padding: var(--section) var(--gutter);
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    height: 100%;
-    padding: 22px;
-    border-radius: var(--radius);
-    background: var(--bg);
-    text-decoration: none;
-    border: 1px solid transparent;
-    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    justify-content: center;
+    max-width: 760px;
   }
 
-  .ex a:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow);
-    border-color: var(--line);
-  }
-
-  .ex-name {
-    font-family: var(--sans);
-    line-height: 1.25;
-    font-size: 1.3rem;
-    font-weight: 500;
-    letter-spacing: -0.01em;
-  }
-
-  .ex-meta {
-    font-size: 0.85rem;
-    color: var(--muted);
-  }
-
-  .ex-prices {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    margin-top: 18px;
-  }
-
-  .ex-prices s {
-    color: var(--muted);
-    font-size: 0.95rem;
-  }
-
-  .ex-prices strong {
-    font-size: 1.35rem;
+  .safe-content .check-list {
+    margin: 12px 0 40px;
     font-weight: 600;
-    color: var(--ink);
   }
 
-  .ex-go {
-    margin-top: 14px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 500;
-    font-size: 0.88rem;
-  }
-
-  .ex-foot {
-    margin-top: 24px;
-  }
-
-  /* USPs */
-  .usps {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  /* FAQ */
+  .faq-grid {
     display: grid;
-    gap: 12px;
+    gap: 40px 80px;
   }
 
-  @media (min-width: 700px) {
-    .usps {
-      grid-template-columns: 1fr 1fr;
+  @media (min-width: 960px) {
+    .faq-grid {
+      grid-template-columns: 0.8fr 1.2fr;
     }
-  }
-
-  @media (min-width: 1100px) {
-    .usps {
-      grid-template-columns: repeat(4, 1fr);
+    .faq-grid > div:first-child {
+      position: sticky;
+      top: calc(var(--header-h) + 32px);
+      align-self: start;
     }
-  }
-
-  .usps li {
-    padding: 28px;
-    border-radius: var(--radius);
-    background: var(--paper);
-    border: 1px solid var(--line);
-  }
-
-  .usps :global(svg) {
-    margin-bottom: 28px;
-  }
-
-  .usps p {
-    color: var(--ink-2);
-    font-size: 0.97rem;
-  }
-
-  .honest-img {
-    aspect-ratio: 4 / 5;
-    max-height: 640px;
-  }
-
-  .promise {
-    margin-top: 24px;
-    padding: 18px 20px;
-    border-radius: var(--radius);
-    background: var(--linen);
-    color: var(--ink);
-    font-weight: 600;
-  }
-
-  .mid-cta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 12px 20px;
-    margin-top: 36px;
-  }
-
-  .studio-pics {
-    display: grid;
-    grid-template-columns: 1.3fr 1fr;
-    gap: 12px;
-    align-items: end;
-  }
-
-  .sp1 {
-    aspect-ratio: 4 / 5;
-  }
-
-  .sp2 {
-    aspect-ratio: 1;
-    margin-bottom: 40px;
-  }
-
-  .bg-linen .check-list {
-    margin-top: 24px;
-    font-weight: 600;
   }
 </style>
 

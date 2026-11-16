@@ -5,12 +5,12 @@ interface Props {
 const { items } = Astro.props;
 ---
 
-<section class="counters bg-ink">
+<section class="counters bg-lime">
   <div class="wrap grid">
     {
-      items.map((c, i) => (
-        <div class="c reveal" style={`--d:${i * 90}ms`}>
-          <span class="v">
+      items.map((c) => (
+        <div class="c reveal">
+          <span class="v serif">
             <span data-count={c.value}>{c.value}</span>
             {c.suffix}
           </span>
@@ -23,12 +23,12 @@ const { items } = Astro.props;
 
 <style>
   .counters {
-    padding-block: clamp(56px, 8vw, 96px);
+    padding-block: clamp(64px, 9vw, 120px);
   }
 
   .grid {
     display: grid;
-    gap: 32px 24px;
+    gap: 40px 24px;
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -41,21 +41,20 @@ const { items } = Astro.props;
   .c {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(251, 248, 244, 0.2);
+    gap: 10px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(43, 31, 26, 0.35);
   }
 
   .v {
-    font-size: clamp(3rem, 6vw, 5.2rem);
-    font-weight: 500;
-    line-height: 1;
+    font-size: clamp(3.6rem, 7.5vw, 7rem);
+    line-height: 0.9;
     letter-spacing: -0.04em;
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: lining-nums tabular-nums;
   }
 
   .l {
-    color: rgba(251, 248, 244, 0.72);
+    font-weight: 600;
     max-width: 16em;
   }
 </style>

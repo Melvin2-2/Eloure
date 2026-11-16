@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
-import imgHero from '../assets/img/lounge-sofa.jpg';
+import imgHero from '../assets/shoot/lounge.jpg';
 import FaqList from '../components/FaqList.astro';
 import CtaFinal from '../components/CtaFinal.astro';
 import Icon from '../components/Icon.astro';
@@ -28,13 +28,14 @@ const slug = (t: string) =>
   ]}
 >
   <PageHero
-    title="Deine Fragen, ehrlich beantwortet."
+    title={['Deine Fragen.', 'Ehrlich beantwortet.']}
+    sub="Häufige Fragen"
     image={imgHero}
     alt="Lounge im Eloure Studio"
     lead="Es gibt keine dummen Fragen – schon gar nicht vor einer Behandlung, die so persönlich ist. Hier findest du alles, was uns am häufigsten gefragt wird."
   />
 
-  <section class="section-tight" style="padding-top:0">
+  <section class="section bg-paper">
     <div class="wrap layout">
       <nav class="toc" aria-label="Themen">
         <ul>

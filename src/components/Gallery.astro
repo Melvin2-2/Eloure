@@ -1,36 +1,36 @@
 ---
 import { Image } from 'astro:assets';
 import Icon from './Icon.astro';
+import Lines from './Lines.astro';
 import { site } from '../data/site';
-import i1 from '../assets/img/room-window.jpg';
-import i2 from '../assets/img/lounge-chairs.jpg';
-import i3 from '../assets/img/wall-exhale.jpg';
-import i4 from '../assets/img/lounge-sofa.jpg';
-import i5 from '../assets/img/treatment-room.jpg';
-import i6 from '../assets/img/lounge-detail.jpg';
+import i1 from '../assets/shoot/raum-weit.jpg';
+import i2 from '../assets/shoot/lounge.jpg';
+import i3 from '../assets/shoot/exhale-wand.jpg';
+import i4 from '../assets/shoot/liege-licht.jpg';
+import i5 from '../assets/shoot/detail-objekte.jpg';
+import i6 from '../assets/shoot/sessel.jpg';
+import i7 from '../assets/shoot/detail-tuecher.jpg';
 
 interface Props {
-  title?: string;
+  title?: string[];
   text?: string;
 }
-const {
-  title = 'Ein Ort zum Durchatmen',
-  text = 'Hell, ruhig und bewusst gemütlich – mitten in Amriswil. Damit du dich vom ersten Moment an wohlfühlst und nicht wie in einer Klinik.',
-} = Astro.props;
+const { title = ['Ein Ort zum', 'Durchatmen.'], text = 'Hell, ruhig und mit viel Liebe eingerichtet – mitten in Amriswil. Damit du dich vom ersten Moment an wohlfühlst und nicht wie in einer Klinik.' } = Astro.props;
 const imgs = [
-  { src: i1, alt: 'Behandlungsraum mit grossem Fenster und Laserliege', w: 'wide' },
-  { src: i2, alt: 'Lounge mit weissen Sesseln und Pflanze', w: 'tall' },
-  { src: i3, alt: 'Wandschriftzug «Exhale the bullshit»', w: 'tall' },
-  { src: i4, alt: 'Weisses Sofa in der Lounge', w: 'square' },
-  { src: i5, alt: 'Laserliege und Gerät im Behandlungsraum', w: 'tall' },
-  { src: i6, alt: 'Detail der Lounge', w: 'tall' },
+  { src: i1, alt: 'Heller Behandlungsraum mit Laserliege', w: 'wide' },
+  { src: i2, alt: 'Lounge mit weissen Möbeln', w: 'tall' },
+  { src: i3, alt: 'Wandschriftzug Exhale', w: 'wide' },
+  { src: i4, alt: 'Laserliege im warmen Licht', w: 'tall' },
+  { src: i5, alt: 'Dekorative Details im Studio', w: 'wide' },
+  { src: i6, alt: 'Weisser Sessel in der Lounge', w: 'tall' },
+  { src: i7, alt: 'Frische Tücher für die Behandlung', w: 'tall' },
 ];
 ---
 
-<section class="section gallery" data-rail>
+<section class="gallery bg-dark" data-rail>
   <div class="wrap head">
     <div>
-      <h2 class="reveal">{title}</h2>
+      <Lines lines={title} />
       <p class="lead reveal">{text}</p>
     </div>
     <div class="ctrl">
@@ -42,7 +42,7 @@ const imgs = [
     {
       imgs.map((im) => (
         <figure class:list={['shot', im.w, 'zoom']}>
-          <Image src={im.src} alt={im.alt} widths={[480, 800, 1200]} sizes="(min-width: 900px) 40vw, 80vw" />
+          <Image src={im.src} alt={im.alt} widths={[600, 1000, 1500]} sizes="(min-width: 900px) 45vw, 85vw" />
         </figure>
       ))
     }
@@ -54,12 +54,16 @@ const imgs = [
 </section>
 
 <style>
+  .gallery {
+    padding-block: var(--section);
+  }
+
   .head {
     display: flex;
     justify-content: space-between;
     align-items: end;
     gap: 24px;
-    margin-bottom: 40px;
+    margin-bottom: 48px;
   }
 
   .head .lead {
@@ -75,21 +79,21 @@ const imgs = [
   .nav {
     display: grid;
     place-items: center;
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    border: 1.5px solid var(--line-strong);
+    width: 60px;
+    height: 60px;
+    border: 1px solid var(--line-light);
     background: transparent;
+    color: var(--cream);
     cursor: pointer;
     transition:
-      background 0.2s,
-      border-color 0.2s;
+      background 0.25s,
+      color 0.25s;
   }
 
   .nav:hover {
-    background: var(--ink);
-    color: var(--paper);
-    border-color: var(--ink);
+    background: var(--lime);
+    color: var(--espresso);
+    border-color: var(--lime);
   }
 
   .nav :global(.flip) {
@@ -104,11 +108,9 @@ const imgs = [
 
   .track {
     display: flex;
-    gap: 16px;
+    gap: 6px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    padding-inline: max(var(--gutter), calc((100vw - var(--wrap)) / 2 + var(--gutter)));
-    scroll-padding-inline: max(var(--gutter), calc((100vw - var(--wrap)) / 2 + var(--gutter)));
     scrollbar-width: none;
   }
 
@@ -119,21 +121,17 @@ const imgs = [
   .shot {
     flex: none;
     margin: 0;
-    height: clamp(340px, 52vw, 620px);
-    border-radius: var(--radius-l);
+    height: clamp(380px, 62vh, 760px);
     overflow: hidden;
     scroll-snap-align: start;
-    background: var(--stone);
+    background: var(--cocoa);
   }
 
   .shot.wide {
-    aspect-ratio: 1.05;
+    aspect-ratio: 1.5;
   }
   .shot.tall {
-    aspect-ratio: 0.72;
-  }
-  .shot.square {
-    aspect-ratio: 1;
+    aspect-ratio: 0.68;
   }
 
   .shot :global(img) {
@@ -145,10 +143,9 @@ const imgs = [
   .foot {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px 20px;
+    gap: 10px 24px;
     align-items: center;
-    margin-top: 28px;
-    font-weight: 500;
+    margin-top: 32px;
   }
 
   .foot span {

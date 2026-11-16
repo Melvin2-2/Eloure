@@ -1,5 +1,6 @@
 ---
 import Icon from './Icon.astro';
+import Logo from './Logo.astro';
 import { site } from '../data/site';
 
 interface Props {
@@ -15,7 +16,7 @@ const year = new Date().getFullYear();
       variant === 'full' && (
         <div class="grid">
           <div class="brand">
-            <img src="/brand/logo-light.png" alt="Eloure The Studio" width="368" height="116" loading="lazy" />
+            <Logo class="flogo" />
             <p class="muted">
               Dein Studio für Laserhaarentfernung in Amriswil. Persönlich, ehrlich und mit Zeit für dich.
             </p>
@@ -111,10 +112,10 @@ const year = new Date().getFullYear();
     }
   }
 
-  .brand img {
-    height: 38px;
+  .brand :global(.flogo) {
+    height: 40px;
     width: auto;
-    margin-bottom: 18px;
+    margin-bottom: 22px;
   }
 
   .brand p {
@@ -180,9 +181,8 @@ const year = new Date().getFullYear();
   .social a {
     display: grid;
     place-items: center;
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
+    width: 44px;
+    height: 44px;
     border: 1px solid rgba(252, 250, 248, 0.25);
     transition:
       background 0.2s,
@@ -190,9 +190,9 @@ const year = new Date().getFullYear();
   }
 
   .social a:hover {
-    background: var(--paper);
-    color: var(--ink);
-    border-color: var(--paper);
+    background: var(--lime);
+    color: var(--espresso);
+    border-color: var(--lime);
   }
 
   .legal {

@@ -1,105 +1,147 @@
 ---
+// Unterseiten-Hero: dunkle Fläche, randloses Bild, Headline läuft über die Bildkante.
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import Lines from './Lines.astro';
 
 interface Props {
-  title: string;
+  title: string[];
+  sub?: string;
   lead?: string;
-  center?: boolean;
-  image?: ImageMetadata;
+  image: ImageMetadata;
   alt?: string;
+  tone?: 'dark' | 'mocha';
+  position?: string;
 }
-const { title, lead, center = false, image, alt = '' } = Astro.props;
+const { title, sub, lead, image, alt = '', tone = 'dark', position = 'center' } = Astro.props;
 ---
 
-<section class:list={['page-hero', { center, 'has-img': !!image }]}>
-  <div class="wrap grid">
-    <div class="text">
-      <h1 class="reveal" set:html={title} />
-      {lead && <p class="lead reveal" style="--d:80ms">{lead}</p>}
-      <div class="reveal" style="--d:160ms"><slot /></div>
-    </div>
+<section class:list={['page-hero', tone === 'mocha' ? 'bg-mocha' : 'bg-dark']}>
+  <div class="ph-img">
+    <Image src={image} alt={alt} widths={[700, 1100, 1600, 2000]} sizes="(min-width: 1000px) 55vw, 100vw" loading="eager" fetchpriority="high" data-parallax="10" style={`object-position:${position}`} />
+    <div class="ph-shade"></div>
   </div>
-  {
-    image && (
-      <div class="pic">
-        <Image src={image} alt={alt} widths={[600, 900, 1300, 1800]} sizes="(min-width: 960px) 50vw, 100vw" loading="eager" fetchpriority="high" data-parallax="0.05" />
-      </div>
-    )
-  }
+  <div class="ph-content">
+    <Lines as="h1" class="ph-title" lines={title}>
+      {sub && <span class="ph-sub" data-anim="up">{sub}</span>}
+    </Lines>
+    {lead && <p class="lead" data-anim="up">{lead}</p>}
+    <div data-anim="up"><slot /></div>
+  </div>
+  <div class="ph-card" data-anim="up"><slot name="card" /></div>
 </section>
 
 <style>
   .page-hero {
     position: relative;
-    padding-block: clamp(56px, 9vw, 128px) clamp(40px, 6vw, 88px);
+    min-height: min(92svh, 920px);
+    display: grid;
+    align-items: end;
+    overflow: hidden;
   }
 
-  .page-hero h1 {
-    max-width: 11em;
+  .ph-img {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 55%;
+    overflow: hidden;
   }
 
-  .center {
-    text-align: center;
+  .ph-img :global(img) {
+    position: absolute;
+    inset: -6% 0;
+    width: 100%;
+    height: 112%;
+    object-fit: cover;
   }
 
-  .center h1,
-  .center .lead {
-    margin-inline: auto;
+  .ph-shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(43, 31, 26, 0.8) 0%, rgba(43, 31, 26, 0.1) 45%, rgba(43, 31, 26, 0) 70%),
+      linear-gradient(0deg, rgba(43, 31, 26, 0.5), rgba(43, 31, 26, 0) 40%);
   }
 
-  .text :global(.btn-row) {
+  .bg-mocha .ph-shade {
+    background: linear-gradient(90deg, rgba(90, 64, 51, 0.85) 0%, rgba(90, 64, 51, 0.1) 45%, rgba(90, 64, 51, 0) 70%);
+  }
+
+  .ph-content {
+    position: relative;
+    z-index: 2;
+    padding: calc(var(--header-h) + 72px) var(--gutter) clamp(48px, 7vw, 96px);
+    max-width: 900px;
+  }
+
+  .ph-content :global(.ph-title) {
+    width: max-content;
+    max-width: 92vw;
+    font-size: clamp(3rem, 7.6vw, 7.8rem);
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+    margin-bottom: 26px;
+  }
+
+  .ph-sub {
+    display: block;
+    margin-top: 20px;
+    font-family: var(--sans);
+    font-size: clamp(0.85rem, 1.1vw, 1rem);
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--lime);
+  }
+
+  .ph-content .lead {
+    max-width: 32em;
+  }
+
+  .ph-content :global(.btn-row) {
     margin-top: 32px;
   }
 
-  .center :global(.btn-row) {
-    justify-content: center;
+  .ph-card {
+    position: absolute;
+    right: var(--gutter);
+    bottom: clamp(48px, 7vw, 96px);
+    z-index: 3;
   }
 
-  .pic {
-    overflow: hidden;
-    background: var(--stone);
+  .ph-card:empty {
+    display: none;
   }
 
-  .pic :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transform: scale(1.12);
-  }
-
-  @media (max-width: 959px) {
-    .has-img {
-      padding-bottom: 0;
-    }
-    .pic {
-      margin-top: 40px;
-      height: 62vw;
-      max-height: 480px;
-    }
-  }
-
-  @media (min-width: 960px) {
-    .has-img {
-      min-height: min(78vh, 760px);
+  @media (max-width: 999px) {
+    .page-hero {
       display: flex;
-      align-items: center;
-      padding-block: 64px;
+      flex-direction: column;
+      min-height: 0;
     }
-    .has-img .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+    .ph-img {
+      position: relative;
+      width: 100%;
+      height: 80vw;
+      max-height: 600px;
     }
-    .has-img .text {
-      padding-right: 48px;
+    .ph-shade,
+    .bg-mocha .ph-shade {
+      background: linear-gradient(0deg, var(--espresso) 0%, rgba(43, 31, 26, 0) 55%);
     }
-    .has-img .pic {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      width: 50%;
-      border-bottom-left-radius: var(--radius-l);
+    .bg-mocha .ph-shade {
+      background: linear-gradient(0deg, var(--mocha) 0%, rgba(90, 64, 51, 0) 55%);
+    }
+    .ph-content {
+      margin-top: -26vw;
+      padding-top: 0;
+    }
+    .ph-card {
+      position: relative;
+      right: auto;
+      bottom: auto;
+      margin: 0 var(--gutter) 48px;
     }
   }
 </style>

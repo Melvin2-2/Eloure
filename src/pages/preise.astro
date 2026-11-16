@@ -3,61 +3,74 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import PriceTable from '../components/PriceTable.astro';
+import Lines from '../components/Lines.astro';
+import Counters from '../components/Counters.astro';
 import CtaFinal from '../components/CtaFinal.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
-import imgLegs from '../assets/img/treatment-closeup.jpg';
-import imgHero from '../assets/img/treatment-session.jpg';
+import imgHero from '../assets/shoot/laser-achsel-quer.jpg';
+import imgCost from '../assets/shoot/caro-telefon.jpg';
 ---
 
 <Base
   title="Preise Laserhaarentfernung Amriswil | Eloure The Studio"
-  description="Alle Preise für Laserhaarentfernung bei Eloure in Amriswil: über 30 Zonen für Frauen und Männer, ab CHF 29 pro Sitzung. Kostenloses Beratungsgespräch möglich."
+  description="Alle Preise für Laserhaarentfernung bei Eloure in Amriswil: über 30 Zonen für Frauen und Männer, ab CHF 29 pro Sitzung. Bezahlt wird erst vor Ort."
 >
   <PageHero
-    title="Preise, die du verstehst."
+    title={['Preise, die', 'du verstehst.']}
+    sub="Ab CHF 29 pro Zone"
     image={imgHero}
-    alt="Laserbehandlung am Bein im Eloure Studio"
-    lead="Transparent, pro Sitzung und ohne Vorauszahlung. Wähle deine Zone, und wir kümmern uns um den Rest."
+    alt="Laserbehandlung an der Achsel"
+    lead="Transparent, pro Sitzung und ohne Vorauszahlung. Wähle deine Zone – um den Rest kümmern wir uns."
   >
     <div class="btn-row">
-      <a class="btn btn-primary" href="#liste">Zur Preisliste<span class="arrow"><Icon name="arrow" size={18} /></span></a>
+      <a class="btn btn-primary" href="#liste">Zur Preisliste<span class="arrow"><Icon name="arrow" size={16} /></span></a>
       <a class="btn btn-ghost" href="/termin">Direkt buchen</a>
     </div>
   </PageHero>
 
-  <section class="section-tight" id="liste">
+  <section class="list bg-sand" id="liste">
     <div class="wrap">
-      <ul class="facts">
-        <li><Icon name="check" size={18} /> Bezahlt wird erst vor Ort: bar, TWINT oder Karte</li>
-        <li><Icon name="check" size={18} /> Persönliche Beratung bei jedem ersten Termin inklusive</li>
-        <li><Icon name="check" size={18} /> Kostenlos verschieben bis {site.cancellationHours} Std. vorher</li>
-      </ul>
-      <PriceTable />
+      <div class="list-head">
+        <Lines lines={['Alle Zonen.', 'Ein Blick.']} />
+        <ul class="facts reveal">
+          <li><Icon name="check" size={18} /> Bezahlt wird vor Ort: bar, TWINT oder Karte</li>
+          <li><Icon name="check" size={18} /> Beratung bei jedem ersten Termin inklusive</li>
+          <li><Icon name="check" size={18} /> Kostenlos absagen bis {site.cancellationHours} Std. vorher</li>
+        </ul>
+      </div>
+      <div class="reveal"><PriceTable /></div>
     </div>
   </section>
 
-  <section class="section bg-paper">
-    <div class="wrap split wide-left">
-      <div>
-        <h2>Was kostet mich das insgesamt?</h2>
-        <p class="lead">Eine ehrliche Frage, die eine ehrliche Antwort verdient.</p>
-        <p>
-          Damit möglichst alle Haarwurzeln in ihrer Wachstumsphase erwischt werden, braucht es mehrere Sitzungen. Wie viele,
-          ist <strong>sehr individuell</strong> – Zone, Haardichte, Hauttyp und Hormone spielen mit. Am Anfang liegen meist 4
-          bis 8 Wochen dazwischen, später werden die Abstände grösser.
-        </p>
-        <p>
-          Du bezahlst immer nur die Sitzung, die du gerade machst. Bei deinem ersten Termin schauen wir uns deine Haut und Haare
-          genau an und sagen dir, womit du rechnen kannst. Ohne Schönreden.
-        </p>
-        <div class="btn-row" style="margin-top:28px">
-          <a class="btn btn-primary" href="/termin">Termin buchen<span class="arrow"><Icon name="arrow" size={15} /></span></a>
-          <a class="text-link" href="/laserhaarentfernung">Wie die Behandlung wirkt</a>
-        </div>
-      </div>
-      <div class="media pic">
-        <Image src={imgLegs} alt="Laserbehandlung am Unterschenkel mit Kühlgel" widths={[480, 800]} sizes="(min-width: 900px) 40vw, 100vw" />
+  <Counters
+    items={[
+      { value: 29, label: 'CHF – kleinste Zone pro Sitzung' },
+      { value: 15, label: 'Minuten dauern viele Zonen' },
+      { value: 0, label: 'CHF Vorauszahlung' },
+      { value: 24, label: 'Std. vorher kostenlos absagen' },
+    ]}
+  />
+
+  <section class="cost bg-mocha">
+    <div class="cost-img" data-anim="img">
+      <Image src={imgCost} alt="Caro am Telefon in der Studio-Lounge" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 50vw, 100vw" />
+    </div>
+    <div class="cost-content">
+      <Lines lines={['Und was kostet', 'es insgesamt?']} class="cost-title" />
+      <p class="lead reveal">Eine ehrliche Frage, die eine ehrliche Antwort verdient.</p>
+      <p class="reveal">
+        Damit möglichst alle Haarwurzeln in ihrer Wachstumsphase erwischt werden, braucht es mehrere Sitzungen. Wie viele, ist
+        <strong>sehr individuell</strong> – Zone, Haardichte, Hauttyp und Hormone spielen mit. Am Anfang liegen meist 4 bis 8
+        Wochen dazwischen, später werden die Abstände grösser.
+      </p>
+      <p class="reveal">
+        Du bezahlst immer nur die Sitzung, die du gerade machst. Bei deinem ersten Termin schauen wir uns deine Haut und Haare
+        genau an und sagen dir, womit du rechnen kannst. Ohne Schönreden.
+      </p>
+      <div class="btn-row reveal">
+        <a class="btn btn-primary" href="/termin">Termin buchen<span class="arrow"><Icon name="arrow" size={16} /></span></a>
+        <a class="btn btn-ghost" href="/termin?behandlung=beratungsgespraech">Kostenlos beraten lassen</a>
       </div>
     </div>
   </section>
@@ -66,32 +79,99 @@ import imgHero from '../assets/img/treatment-session.jpg';
 </Base>
 
 <style>
-  .facts {
-    list-style: none;
-    margin: 0 0 48px;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+  .list {
+    padding-block: var(--section);
   }
 
-  .facts li {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    border-radius: 999px;
-    background: var(--paper);
-    border: 1px solid var(--line);
-    font-size: 0.9rem;
+  .list-head {
+    display: grid;
+    gap: 24px 64px;
+    margin-bottom: 56px;
+  }
+
+  @media (min-width: 960px) {
+    .list-head {
+      grid-template-columns: 1fr 1fr;
+      align-items: end;
+    }
+  }
+
+  .list-head :global(h2) {
+    margin: 0;
+  }
+
+  .facts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
     font-weight: 600;
   }
 
-  .facts :global(svg) {
-    color: var(--ok);
+  .facts li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 
-  .pic {
-    aspect-ratio: 4 / 5;
+  .facts :global(svg) {
+    color: var(--mocha);
+  }
+
+  .cost {
+    display: grid;
+  }
+
+  @media (min-width: 1000px) {
+    .cost {
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+    }
+  }
+
+  .cost-img {
+    position: relative;
+    overflow: hidden;
+    min-height: 90vw;
+  }
+
+  @media (min-width: 1000px) {
+    .cost-img {
+      min-height: 0;
+    }
+  }
+
+  .cost-img :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cost-content {
+    position: relative;
+    z-index: 2;
+    padding: var(--section) var(--gutter);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 780px;
+  }
+
+  @media (min-width: 1000px) {
+    .cost-content :global(.cost-title) {
+      width: max-content;
+      margin-left: calc(-4vw - var(--gutter));
+    }
+  }
+
+  .cost-content p:not(.lead) {
+    color: rgba(246, 241, 234, 0.82);
+  }
+
+  .cost-content .btn-row {
+    margin-top: 24px;
   }
 </style>

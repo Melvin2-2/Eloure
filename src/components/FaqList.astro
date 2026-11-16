@@ -4,11 +4,12 @@ import type { Faq } from '../data/faq';
 interface Props {
   items: Faq[];
   open?: string; // id, die initial geöffnet ist
+  tone?: 'light' | 'dark';
 }
-const { items, open } = Astro.props;
+const { items, open, tone = 'light' } = Astro.props;
 ---
 
-<div class="faq">
+<div class:list={['faq', tone]}>
   {
     items.map((f) => (
       <details id={`faq-${f.id}`} open={open === f.id}>
@@ -39,8 +40,8 @@ const { items, open } = Astro.props;
     gap: 24px;
     padding: 22px 0;
     cursor: pointer;
-    font-weight: 500;
-    font-size: 1.08rem;
+    font-weight: 600;
+    font-size: 1.12rem;
     line-height: 1.35;
   }
 
@@ -53,7 +54,6 @@ const { items, open } = Astro.props;
     flex: none;
     width: 34px;
     height: 34px;
-    border-radius: 50%;
     border: 1px solid var(--line-strong);
     transition:
       background 0.25s,
@@ -105,6 +105,32 @@ const { items, open } = Astro.props;
 
   .answer :global(li) {
     margin-bottom: 0.35em;
+  }
+
+  .dark {
+    border-color: var(--line-light);
+  }
+
+  .dark details {
+    border-color: var(--line-light);
+  }
+
+  .dark .pm {
+    border-color: rgba(246, 241, 234, 0.4);
+  }
+
+  .dark summary:hover .pm {
+    border-color: var(--cream);
+  }
+
+  .dark details[open] .pm {
+    background: var(--lime);
+    border-color: var(--lime);
+    color: var(--espresso);
+  }
+
+  .dark .answer {
+    color: rgba(246, 241, 234, 0.8);
   }
 
   .answer :global(a) {

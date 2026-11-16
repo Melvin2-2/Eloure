@@ -4,8 +4,8 @@ import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
-import imgLounge from '../assets/img/lounge-sofa.jpg';
-import imgHero from '../assets/img/lounge-chairs.jpg';
+import imgLounge from '../assets/shoot/sessel.jpg';
+import imgHero from '../assets/shoot/lounge-tuer.jpg';
 ---
 
 <Base
@@ -13,13 +13,14 @@ import imgHero from '../assets/img/lounge-chairs.jpg';
   description="Eloure The Studio, Bahnhofstrasse 20, 8580 Amriswil. Mo–Fr 10–20 Uhr, Sa 10–16 Uhr. Erreiche uns per Telefon, WhatsApp, E-Mail oder buche direkt online."
 >
   <PageHero
-    title="Meld dich. Wir freuen uns auf dich."
+    title={['Meld dich.', 'Wir freuen uns.']}
+    sub="Kontakt & Anfahrt"
     image={imgHero}
     alt="Lounge mit weissen Sesseln im Eloure Studio"
     lead="Ob kurze Frage oder erster Termin: Schreib uns, wie es dir am liebsten ist. Wir antworten persönlich."
   />
 
-  <section class="section-tight" style="padding-top:0">
+  <section class="section bg-sand">
     <div class="wrap grid">
       <div class="channels">
         <a class="ch main" href="/termin">
@@ -70,10 +71,10 @@ import imgHero from '../assets/img/lounge-chairs.jpg';
     </div>
   </section>
 
-  <section class="section bg-paper">
+  <section class="section bg-dark">
     <div class="wrap split">
       <div>
-        <h2>So findest du zu uns</h2>
+        <h2 class="reveal">So findest du zu uns.</h2>
         <address class="lead">
           {site.name}<br />
           {site.address.street}<br />
@@ -85,7 +86,7 @@ import imgHero from '../assets/img/lounge-chairs.jpg';
         </dl>
         <a class="btn btn-ghost" href={site.mapsUrl} target="_blank" rel="noopener"><Icon name="pin" size={18} /> Route in Google Maps</a>
       </div>
-      <div class="media pic">
+      <div class="media pic" data-anim="img">
         <Image src={imgLounge} alt="Lounge im Eloure Studio in Amriswil" widths={[500, 800]} sizes="(min-width: 900px) 46vw, 100vw" />
       </div>
     </div>
@@ -116,7 +117,7 @@ import imgHero from '../assets/img/lounge-chairs.jpg';
     align-items: center;
     gap: 16px;
     padding: 18px 20px;
-    border-radius: var(--radius);
+    border-radius: 0;
     background: var(--paper);
     border: 1px solid var(--line);
     text-decoration: none;
@@ -157,7 +158,7 @@ import imgHero from '../assets/img/lounge-chairs.jpg';
     display: grid;
     gap: 16px;
     padding: clamp(24px, 4vw, 44px);
-    border-radius: var(--radius-l);
+    border-radius: 0;
     background: var(--paper);
     border: 1px solid var(--line);
   }
@@ -194,7 +195,7 @@ import imgHero from '../assets/img/lounge-chairs.jpg';
   textarea {
     width: 100%;
     padding: 14px 16px;
-    border-radius: 12px;
+    border-radius: 0;
     border: 1px solid var(--line-strong);
     background: var(--bg);
     font-weight: 500;
@@ -234,7 +235,7 @@ import imgHero from '../assets/img/lounge-chairs.jpg';
     gap: 10px;
     align-items: center;
     padding: 14px 16px;
-    border-radius: 12px;
+    border-radius: 0;
     background: var(--linen);
     font-weight: 600;
   }
@@ -259,7 +260,7 @@ import imgHero from '../assets/img/lounge-chairs.jpg';
     display: flex;
     justify-content: space-between;
     padding-bottom: 6px;
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid var(--line-light);
   }
 
   .hours dd {
@@ -268,7 +269,7 @@ import imgHero from '../assets/img/lounge-chairs.jpg';
   }
 
   .pic {
-    aspect-ratio: 1;
+    aspect-ratio: 4 / 5;
   }
 
   .park {

@@ -1,110 +1,152 @@
-// Dezente, scroll-basierte Dynamik. Ohne JavaScript ist alles sichtbar.
+// Scroll-Dynamik mit GSAP + ScrollTrigger.
+// Prinzip: Elemente blenden einmal ein und bleiben stehen. Dazu wenige,
+// gezielte Scroll-Effekte (Parallaxe, wachsende Bilder, wandernde Typo).
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+const root = document.documentElement;
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// 1) Einblenden beim Scrollen
-const revealEls = document.querySelectorAll<HTMLElement>('.reveal, .reveal-img');
-if ('IntersectionObserver' in window && !reduce) {
-  const io = new IntersectionObserver(
-    (entries) => {
-      for (const e of entries) {
-        if (e.isIntersecting) {
-          e.target.classList.add('is-in');
-          io.unobserve(e.target);
-        }
-      }
-    },
-    { rootMargin: '0px 0px -10% 0px', threshold: 0.05 },
-  );
-  revealEls.forEach((el) => io.observe(el));
+function showAll() {
+  root.classList.remove('motion');
+  root.classList.add('no-motion');
+}
+
+if (reduce) {
+  showAll();
 } else {
-  revealEls.forEach((el) => el.classList.add('is-in'));
+  try {
+    gsap.registerPlugin(ScrollTrigger);
+    init();
+  } catch (e) {
+    showAll();
+  }
 }
 
-// 2) Zahlen hochzählen: <span data-count="34">34</span>
-const counters = document.querySelectorAll<HTMLElement>('[data-count]');
-const countIO = new IntersectionObserver(
-  (entries) => {
-    for (const e of entries) {
-      if (!e.isIntersecting) continue;
-      const el = e.target as HTMLElement;
-      countIO.unobserve(el);
-      const to = Number(el.dataset.count);
-      if (reduce || !to) continue;
-      const start = performance.now();
-      const dur = 1400;
-      const tick = (t: number) => {
-        const p = Math.min(1, (t - start) / dur);
-        el.textContent = String(Math.round(to * (1 - Math.pow(1 - p, 3))));
-        if (p < 1) requestAnimationFrame(tick);
-      };
-      el.textContent = '0';
-      requestAnimationFrame(tick);
-    }
-  },
-  { threshold: 0.6 },
-);
-counters.forEach((el) => countIO.observe(el));
+function init() {
+  const ease = 'power3.out';
 
-// 3) Text, der sich beim Scrollen „einfärbt“: <p data-words>…</p>
-const wordBlocks = document.querySelectorAll<HTMLElement>('[data-words]');
-wordBlocks.forEach((block) => {
-  if (reduce) return;
-  const words = block.textContent!.trim().split(/\s+/);
-  block.innerHTML = words.map((w) => `<span class="w">${w}</span>`).join(' ');
-});
-
-// 4) Leichte Parallaxe: <img data-parallax="0.08">
-const parallax = [...document.querySelectorAll<HTMLElement>('[data-parallax]')];
-
-// 5) Ablauf mit mitlaufendem Bild: [data-steps] enthält [data-step-item] und [data-step-img]
-const stepRoots = [...document.querySelectorAll<HTMLElement>('[data-steps]')];
-stepRoots.forEach((root) => {
-  const items = [...root.querySelectorAll<HTMLElement>('[data-step-item]')];
-  const imgs = [...root.querySelectorAll<HTMLElement>('[data-step-img]')];
-  const io = new IntersectionObserver(
-    (entries) => {
-      for (const e of entries) {
-        if (!e.isIntersecting) continue;
-        const i = items.indexOf(e.target as HTMLElement);
-        items.forEach((it, j) => it.classList.toggle('is-active', j === i));
-        imgs.forEach((im, j) => im.classList.toggle('is-active', j === i));
-      }
-    },
-    { rootMargin: '-45% 0px -45% 0px' },
-  );
-  items.forEach((it) => io.observe(it));
-});
-
-let ticking = false;
-function onScroll() {
-  if (ticking) return;
-  ticking = true;
-  requestAnimationFrame(() => {
-    const vh = window.innerHeight;
-    if (!reduce) {
-      for (const el of parallax) {
-        const r = el.parentElement!.getBoundingClientRect();
-        if (r.bottom < 0 || r.top > vh) continue;
-        const f = Number(el.dataset.parallax || 0.08);
-        const offset = (r.top + r.height / 2 - vh / 2) * f;
-        el.style.transform = `translate3d(0, ${offset.toFixed(1)}px, 0) scale(1.12)`;
-      }
-      wordBlocks.forEach((block) => {
-        const r = block.getBoundingClientRect();
-        const p = Math.min(1, Math.max(0, (vh * 0.85 - r.top) / (r.height + vh * 0.35)));
-        const spans = block.querySelectorAll<HTMLElement>('.w');
-        const lit = Math.round(p * spans.length);
-        spans.forEach((s, i) => s.classList.toggle('on', i < lit));
-      });
-    }
-    ticking = false;
+  // 1) Einblenden von unten (bleibt stehen)
+  ScrollTrigger.batch('.reveal, [data-anim="up"]', {
+    start: 'top 97%',
+    once: true,
+    onEnter: (els) =>
+      gsap.to(els, {
+        opacity: 1,
+        y: 0,
+        duration: 1.1,
+        ease,
+        stagger: 0.09,
+      }),
   });
-}
-window.addEventListener('scroll', onScroll, { passive: true });
-window.addEventListener('resize', onScroll);
-onScroll();
 
-// 6) Horizontale Galerie mit Pfeilen
+  // 2) Headlines zeilenweise aus einer Maske
+  gsap.utils.toArray<HTMLElement>('[data-anim="lines"]').forEach((el) => {
+    gsap.to(el.querySelectorAll('.line > span'), {
+      y: 0,
+      duration: 1.25,
+      ease: 'power4.out',
+      stagger: 0.1,
+      delay: Number(el.dataset.delay || 0),
+      scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+    });
+  });
+
+  // 3) Bilder öffnen sich (Clip) und das Motiv zoomt sanft zurück
+  gsap.utils.toArray<HTMLElement>('.reveal-img, [data-anim="img"]').forEach((el) => {
+    const img = el.querySelector('img, video');
+    const tl = gsap.timeline({ scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+    tl.to(el, { clipPath: 'inset(0% 0 0% 0)', duration: 1.4, ease: 'power3.inOut' });
+    if (img) tl.from(img, { scale: 1.18, duration: 1.8, ease: 'power3.out' }, 0);
+  });
+
+  // 4) Parallaxe (scrub)
+  gsap.utils.toArray<HTMLElement>('[data-parallax]').forEach((el) => {
+    const amt = Number(el.dataset.parallax || 12);
+    gsap.fromTo(
+      el,
+      { yPercent: -amt / 2 },
+      {
+        yPercent: amt / 2,
+        ease: 'none',
+        scrollTrigger: { trigger: el.parentElement || el, start: 'top bottom', end: 'bottom top', scrub: true },
+      },
+    );
+  });
+
+  // 5) Wandernde Typografie über Bildern (scrub)
+  gsap.utils.toArray<HTMLElement>('[data-drift]').forEach((el) => {
+    const d = Number(el.dataset.drift || 8);
+    gsap.fromTo(
+      el,
+      { xPercent: d },
+      { xPercent: -d, ease: 'none', scrollTrigger: { trigger: el.closest('section') || el, start: 'top bottom', end: 'bottom top', scrub: true } },
+    );
+  });
+
+  // 6) Fixierte Section: Bild wächst von gerahmt zu randlos
+  const mm = gsap.matchMedia();
+  mm.add('(min-width: 900px)', () => {
+    gsap.utils.toArray<HTMLElement>('[data-expand]').forEach((sec) => {
+      const frame = sec.querySelector<HTMLElement>('[data-expand-frame]');
+      const text = sec.querySelectorAll<HTMLElement>('[data-expand-text]');
+      if (!frame) return;
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: sec, start: 'top top', end: '+=120%', scrub: 0.6, pin: true },
+      });
+      tl.fromTo(frame, { clipPath: 'inset(16% 22% 16% 22%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none' })
+        .fromTo(frame.querySelector('img'), { scale: 1.25 }, { scale: 1, ease: 'none' }, 0)
+        .fromTo(text, { opacity: 0, y: 60 }, { opacity: 1, y: 0, stagger: 0.1, ease: 'power2.out' }, 0.45);
+    });
+  });
+  mm.add('(max-width: 899px)', () => {
+    gsap.utils.toArray<HTMLElement>('[data-expand-text]').forEach((t) => gsap.set(t, { opacity: 1, y: 0 }));
+  });
+
+  // 7) Zahlen hochzählen
+  gsap.utils.toArray<HTMLElement>('[data-count]').forEach((el) => {
+    const to = Number(el.dataset.count);
+    const obj = { v: 0 };
+    gsap.to(obj, {
+      v: to,
+      duration: 1.8,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 85%', once: true },
+      onUpdate: () => (el.textContent = String(Math.round(obj.v))),
+    });
+  });
+
+  // 8) Ablauf: mitlaufendes Bild wechselt mit dem aktiven Schritt
+  document.querySelectorAll<HTMLElement>('[data-steps]').forEach((sec) => {
+    const items = [...sec.querySelectorAll<HTMLElement>('[data-step-item]')];
+    const imgs = [...sec.querySelectorAll<HTMLElement>('[data-step-img]')];
+    const nums = [...sec.querySelectorAll<HTMLElement>('[data-step-num]')];
+    items.forEach((it, i) =>
+      ScrollTrigger.create({
+        trigger: it,
+        start: 'top 60%',
+        end: 'bottom 60%',
+        onToggle: (self) => {
+          if (!self.isActive) return;
+          items.forEach((x, j) => x.classList.toggle('is-active', j === i));
+          imgs.forEach((x, j) => x.classList.toggle('is-active', j === i));
+          nums.forEach((x, j) => x.classList.toggle('is-active', j === i));
+        },
+      }),
+    );
+  });
+
+  // Sicherheitsnetz: falls etwas nicht getriggert wurde, nach dem Laden sichtbar machen
+  window.addEventListener('load', () => ScrollTrigger.refresh());
+}
+
+// Header: transparent über dunklem Hero, fest beim Scrollen
+const header = document.querySelector<HTMLElement>('[data-header]');
+const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 24);
+onScroll();
+window.addEventListener('scroll', onScroll, { passive: true });
+
+// Horizontale Galerie mit Pfeilen
 document.querySelectorAll<HTMLElement>('[data-rail]').forEach((rail) => {
   const track = rail.querySelector<HTMLElement>('[data-rail-track]')!;
   rail.querySelectorAll<HTMLButtonElement>('[data-rail-btn]').forEach((b) =>
