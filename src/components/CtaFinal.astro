@@ -76,7 +76,7 @@ const q = code ? `?code=${code}` : '';
   }
 
   h2 {
-    font-size: clamp(3rem, 7vw, 6.6rem);
+    font-size: clamp(1.95rem, 5.6vw, 5.4rem);
     max-width: 11em;
   }
 
@@ -127,9 +127,10 @@ const q = code ? `?code=${code}` : '';
   .title {
     font-family: var(--serif);
     font-weight: var(--display-weight);
-    font-stretch: 75%;
+    font-stretch: var(--display-stretch);
+    text-transform: uppercase;
     font-size: clamp(1.9rem, 2.8vw, 2.5rem);
-    letter-spacing: -0.02em;
+    letter-spacing: var(--display-ls);
     line-height: 1.05;
   }
 

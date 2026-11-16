@@ -1,13 +1,13 @@
 @import '@fontsource-variable/source-sans-3';
 
-/* Überschriften: Mona Sans (SIL Open Font License), fest auf die schmale Breite (wdth 75) */
+/* Überschriften: Encode Sans (SIL Open Font License), halbschmal (wdth 87.5), in Grossbuchstaben */
 @font-face {
   font-family: 'Eloure Display';
   font-style: normal;
   font-display: swap;
-  font-weight: 200 900;
-  font-stretch: 75%;
-  src: url('../assets/fonts/mona-sans-latin-ext-wdth-normal.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-stretch: 75% 125%;
+  src: url('../assets/fonts/encode-sans-latin-ext-wdth-normal.woff2') format('woff2-variations');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
@@ -15,9 +15,9 @@
   font-family: 'Eloure Display';
   font-style: normal;
   font-display: swap;
-  font-weight: 200 900;
-  font-stretch: 75%;
-  src: url('../assets/fonts/mona-sans-latin-wdth-normal.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-stretch: 75% 125%;
+  src: url('../assets/fonts/encode-sans-latin-wdth-normal.woff2') format('woff2-variations');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
@@ -57,7 +57,9 @@
   --ok: #5c7a4f;
 
   --serif: 'Eloure Display', 'Source Sans 3 Variable', system-ui, sans-serif;
-  --display-weight: 800;
+  --display-weight: 700;
+  --display-stretch: 87.5%;
+  --display-ls: 0.005em;
   --sans: 'Source Sans 3 Variable', 'Myriad Pro', 'Source Sans Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   --radius-s: 0px;
@@ -159,25 +161,28 @@ h2,
 .serif {
   font-family: var(--serif);
   font-weight: var(--display-weight);
-  font-stretch: 75%;
-  letter-spacing: -0.02em;
+  font-stretch: var(--display-stretch);
+  letter-spacing: var(--display-ls);
+  text-transform: uppercase;
   line-height: 1;
+  overflow-wrap: break-word;
+  hyphens: auto;
   margin: 0 0 0.4em;
   text-wrap: balance;
 }
 
 .display {
-  font-size: clamp(3.2rem, 7.6vw, 7.6rem);
+  font-size: clamp(2.6rem, 6.2vw, 6.4rem);
   line-height: 0.95;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--display-ls);
 }
 
 h1 {
-  font-size: clamp(2.9rem, 6.4vw, 6.2rem);
+  font-size: clamp(2.4rem, 5.4vw, 5.2rem);
 }
 
 h2 {
-  font-size: clamp(2.4rem, 4.8vw, 4.6rem);
+  font-size: clamp(2.1rem, 4.2vw, 4rem);
 }
 
 blockquote {

@@ -94,10 +94,11 @@ import imgRight from '../assets/shoot/detail-tuecher.jpg';
     margin: 0;
     font-family: var(--serif);
     font-weight: var(--display-weight);
-    font-stretch: 75%;
-    font-size: clamp(4.4rem, 11.5vw, 12.5rem);
+    font-stretch: var(--display-stretch);
+    text-transform: uppercase;
+    font-size: clamp(3rem, 9vw, 9.6rem);
     line-height: 0.8;
-    letter-spacing: -0.05em;
+    letter-spacing: var(--display-ls);
     color: var(--cream);
     white-space: nowrap;
     pointer-events: none;
@@ -149,7 +150,7 @@ import imgRight from '../assets/shoot/detail-tuecher.jpg';
     .word {
       bottom: auto;
       top: calc(118vw - 0.95em);
-      font-size: 20vw;
+      font-size: 12.5vw;
     }
     .card {
       position: relative;

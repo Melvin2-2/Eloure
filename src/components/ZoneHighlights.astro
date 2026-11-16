@@ -102,7 +102,7 @@ const kombiSub: Record<string, string> = {
 
   .head :global(h2) {
     margin: 0;
-    font-size: clamp(2.8rem, 6vw, 5.6rem);
+    font-size: clamp(2.4rem, 5vw, 4.8rem);
     line-height: 0.95;
   }
 
@@ -186,14 +186,15 @@ const kombiSub: Record<string, string> = {
   .name {
     font-family: var(--serif);
     font-weight: var(--display-weight);
-    font-stretch: 75%;
-    font-size: clamp(1.9rem, 2.6vw, 2.6rem);
+    font-stretch: var(--display-stretch);
+    text-transform: uppercase;
+    font-size: clamp(1.6rem, 2.1vw, 2.1rem);
     line-height: 1.02;
-    letter-spacing: -0.015em;
+    letter-spacing: var(--display-ls);
   }
 
   .t .name {
-    font-size: clamp(1.6rem, 2vw, 2rem);
+    font-size: clamp(1.3rem, 1.6vw, 1.6rem);
   }
 
   .sub {
@@ -217,10 +218,11 @@ const kombiSub: Record<string, string> = {
     white-space: nowrap;
     font-family: var(--serif);
     font-weight: var(--display-weight);
-    font-stretch: 75%;
+    font-stretch: var(--display-stretch);
+    text-transform: uppercase;
     font-size: clamp(2rem, 2.8vw, 2.7rem);
     line-height: 1;
-    letter-spacing: -0.015em;
+    letter-spacing: var(--display-ls);
   }
 
   .price s {
