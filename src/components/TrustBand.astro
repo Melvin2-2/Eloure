@@ -18,9 +18,7 @@ const items = [
         const Tag = 'href' in it ? 'a' : 'div';
         return (
           <Tag class="item reveal" style={`--d:${i * 80}ms`} {...('href' in it ? { href: it.href, target: '_blank', rel: 'noopener' } : {})}>
-            <span class="ic">
-              <Icon name={it.icon} size={26} />
-            </span>
+            <Icon name={it.icon} size={44} stroke={1.15} class="ic" />
             <span class="txt">
               <strong>{it.value}</strong>
               <span>{it.text}</span>
@@ -57,23 +55,18 @@ const items = [
   .item {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 16px;
     text-decoration: none;
   }
 
-  .ic {
+  .item :global(.ic) {
     flex: none;
-    display: grid;
-    place-items: center;
-    width: 64px;
-    height: 64px;
-    background: var(--espresso);
-    color: var(--lime);
-    transition: transform 0.4s var(--ease);
+    color: var(--espresso);
+    transition: transform 0.5s var(--ease);
   }
 
-  .item:hover .ic {
-    transform: rotate(-6deg) scale(1.05);
+  .item:hover :global(.ic) {
+    transform: translateY(-3px);
   }
 
   .txt {

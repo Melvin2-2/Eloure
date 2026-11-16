@@ -37,7 +37,7 @@ const phases = [
 ---
 
 <section class="story bg-paper" data-steps>
-  <div class="visual">
+  <div class="visual ol-shade">
     <Image src={img} alt="Caro im persönlichen Beratungsgespräch mit einer Kundin" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 50vw, 100vw" />
     <div class="progress glass" aria-hidden="true">
       {
@@ -53,13 +53,12 @@ const phases = [
 
   <div class="content">
     <div class="intro">
-      <Lines lines={title} />
+      <Lines lines={title} class="ol story-title" />
       <p class="lead reveal">Klar, persönlich und in deinem Tempo – so sieht deine Zeit bei uns aus.</p>
     </div>
     {
       phases.map((p, i) => (
         <article class:list={['phase', { 'is-active': i === 0 }]} data-step-item>
-          <span class="p-label">{p.label}</span>
           <h3 class="p-head">{p.head}</h3>
           <p class="p-lead">{p.lead}</p>
           <p class="p-text">{p.text}</p>
@@ -99,8 +98,9 @@ const phases = [
 
   .progress {
     position: absolute;
+    z-index: 2;
     left: var(--gutter);
-    bottom: var(--gutter);
+    top: var(--gutter);
     display: flex;
     flex-wrap: wrap;
     gap: 6px 18px;
@@ -140,6 +140,11 @@ const phases = [
     max-width: 760px;
   }
 
+  .content :global(.story-title) {
+    font-size: clamp(3rem, 6.4vw, 6.4rem);
+    line-height: 0.95;
+  }
+
   .intro {
     margin-bottom: 24px;
   }
@@ -148,20 +153,8 @@ const phases = [
     padding: 40px 0;
   }
 
-  .p-label {
-    display: inline-block;
-    align-self: flex-start;
-    padding: 6px 12px;
-    background: var(--lime);
-    color: var(--ink);
-    font-size: 0.9rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-  }
-
   .p-head {
-    margin: 22px 0 14px;
+    margin: 0 0 14px;
     font-size: clamp(3rem, 6vw, 5.6rem);
     font-weight: 600;
     line-height: 0.95;
@@ -205,6 +198,10 @@ const phases = [
   @media (min-width: 1000px) {
     .story {
       grid-template-columns: 1fr 1fr;
+    }
+    .progress {
+      top: auto;
+      bottom: var(--gutter);
     }
     .story .visual {
       position: sticky;

@@ -621,3 +621,62 @@ b {
   transform: none !important;
   clip-path: none !important;
 }
+
+/* ——— Überlappende Headlines ———
+   Die Headline ragt um --ol in das Bild links daneben (Desktop) bzw. mit der
+   ersten Zeile in das Bild darüber (Mobile). Der Teil über dem Bild wird hell,
+   der Rest bleibt in der Textfarbe – so bleibt alles lesbar.
+   Variablen: --ol (Überlappung), --ol-pad (Innenabstand der Textspalte),
+   --ol-on (Farbe über dem Bild), --ol-off (Farbe daneben). */
+.ol {
+  position: relative;
+  z-index: 3;
+  --ol: clamp(80px, 9vw, 160px);
+  --ol-pad: var(--gutter);
+  --ol-on: var(--cream);
+  --ol-off: var(--ink);
+}
+
+.ol .line > span {
+  display: inline-block;
+}
+
+.ol .line:first-child > span {
+  color: var(--ol-on);
+}
+
+@media (max-width: 999px) {
+  .ol {
+    margin-top: calc(-1 * var(--ol-pad-top, var(--section)) - 1.02em);
+  }
+}
+
+@media (min-width: 1000px) {
+  .ol {
+    margin-left: calc(-1 * (var(--ol) + var(--ol-pad)));
+  }
+  .ol .line > span,
+  .ol .line:first-child > span {
+    color: var(--ol-off);
+    background: linear-gradient(90deg, var(--ol-on) var(--ol), var(--ol-off) var(--ol));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+/* Abdunkelung im Bild genau dort, wo die Headline liegt */
+.ol-shade::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(0deg, rgba(36, 25, 19, 0.55) 0%, rgba(36, 25, 19, 0) 34%);
+}
+
+@media (min-width: 1000px) {
+  .ol-shade::after {
+    background: linear-gradient(270deg, rgba(36, 25, 19, 0.62) 0%, rgba(36, 25, 19, 0.35) 18%, rgba(36, 25, 19, 0) 40%);
+  }
+}

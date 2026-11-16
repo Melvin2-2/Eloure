@@ -1,0 +1,166 @@
+---
+// Studio-Impression „Ruhepunkt“: fixierte Section, das Raumbild öffnet sich beim
+// Scrollen von gerahmt zu randlos, zwei Detailbilder ziehen nach aussen weg,
+// das grosse Wort und die Glas-Karte kommen dazu.
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import imgMain from '../assets/shoot/lounge-tuer.jpg';
+import imgLeft from '../assets/shoot/sessel.jpg';
+import imgRight from '../assets/shoot/detail-tuecher.jpg';
+---
+
+<section class="calm bg-dark" data-calm>
+  <div class="stage">
+    <div class="side left" data-calm-side="-1">
+      <Image src={imgLeft} alt="" widths={[400, 700]} sizes="22vw" />
+    </div>
+    <div class="side right" data-calm-side="1">
+      <Image src={imgRight} alt="" widths={[400, 700]} sizes="22vw" />
+    </div>
+    <div class="frame" data-calm-frame>
+      <Image src={imgMain} alt="Blick durch die offene Tür in die helle Lounge des Eloure Studios" widths={[900, 1400, 2000, 2400]} sizes="100vw" />
+      <div class="shade"></div>
+    </div>
+    <p class="word" data-calm-word aria-hidden="true">Ruhepunkt.</p>
+    <div class="card glass" data-calm-card>
+      <h2>Hier darfst du ankommen.</h2>
+      <p>Helle Räume, warmes Holz, keine Hektik. Bevor es losgeht, setzt du dich in die Lounge und kommst erst einmal an.</p>
+      <a class="text-link" href="/studio">Das Studio ansehen <Icon name="arrow" size={16} /></a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .calm {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stage {
+    position: relative;
+    height: 100vh;
+    min-height: 640px;
+  }
+
+  .frame {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .frame :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 64%;
+  }
+
+  .shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(36, 25, 19, 0.1) 30%, rgba(36, 25, 19, 0.6) 100%);
+  }
+
+  .side {
+    position: absolute;
+    z-index: 2;
+    width: clamp(160px, 17vw, 280px);
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    display: none;
+  }
+
+  .side :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .side.left {
+    left: 8vw;
+    top: 22vh;
+  }
+
+  .side.right {
+    right: 8vw;
+    top: 48vh;
+  }
+
+  .word {
+    position: absolute;
+    z-index: 3;
+    left: var(--gutter);
+    top: calc(var(--header-h) + 6vh);
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(4.4rem, 11.5vw, 12.5rem);
+    line-height: 0.8;
+    letter-spacing: -0.05em;
+    color: var(--cream);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .card {
+    position: absolute;
+    z-index: 4;
+    right: var(--gutter);
+    bottom: var(--gutter);
+    max-width: 440px;
+    padding: clamp(24px, 3vw, 36px);
+    background: rgba(36, 25, 19, 0.6);
+  }
+
+  .card h2 {
+    font-size: clamp(1.9rem, 2.8vw, 2.6rem);
+  }
+
+  .card p {
+    color: rgba(246, 241, 234, 0.88);
+    margin-bottom: 18px;
+  }
+
+  .card .text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--lime);
+  }
+
+  @media (min-width: 900px) {
+    .side {
+      display: block;
+    }
+  }
+
+  @media (max-width: 899px) {
+    .stage {
+      height: auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .frame {
+      position: relative;
+      height: 118vw;
+    }
+    .word {
+      bottom: auto;
+      top: calc(118vw - 0.95em);
+      font-size: 20vw;
+    }
+    .card {
+      position: relative;
+      right: auto;
+      bottom: auto;
+      max-width: none;
+      margin: 0;
+      padding: 32px var(--gutter) 56px;
+      background: var(--espresso);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      border: 0;
+    }
+  }
+</style>

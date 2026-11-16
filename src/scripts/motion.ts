@@ -103,6 +103,32 @@ function init() {
     gsap.utils.toArray<HTMLElement>('[data-expand-text]').forEach((t) => gsap.set(t, { opacity: 1, y: 0 }));
   });
 
+  // 6b) Ruhepunkt: Raum öffnet sich, Detailbilder ziehen weg, Wort + Karte kommen
+  mm.add('(min-width: 900px)', () => {
+    gsap.utils.toArray<HTMLElement>('[data-calm]').forEach((sec) => {
+      const frame = sec.querySelector<HTMLElement>('[data-calm-frame]');
+      if (!frame) return;
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: sec, start: 'top top', end: '+=140%', scrub: 0.8, pin: true },
+      });
+      tl.fromTo(frame, { clipPath: 'inset(18% 30% 18% 30%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none', duration: 1 })
+        .fromTo(frame.querySelector('img'), { scale: 1.3 }, { scale: 1, ease: 'none', duration: 1 }, 0);
+      sec.querySelectorAll<HTMLElement>('[data-calm-side]').forEach((s) => {
+        const dir = Number(s.dataset.calmSide);
+        tl.fromTo(s, { x: 0, yPercent: 0 }, { x: dir * window.innerWidth * 0.22, yPercent: -90, opacity: 0, ease: 'power1.in', duration: 0.9 }, 0);
+      });
+      tl.fromTo(sec.querySelector('[data-calm-word]'), { opacity: 0, yPercent: 40, scale: 0.92 }, { opacity: 1, yPercent: 0, scale: 1, ease: 'power2.out', duration: 0.5, transformOrigin: 'left bottom' }, 0.55)
+        .fromTo(sec.querySelector('[data-calm-card]'), { opacity: 0, y: 60 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.4 }, 0.75);
+    });
+  });
+
+  // Hero-Video: falls Autoplay blockiert wurde, beim ersten Scroll/Tap erneut starten
+  document.querySelectorAll<HTMLVideoElement>('video[autoplay]').forEach((v) => {
+    const play = () => v.paused && v.play().catch(() => {});
+    play();
+    ['touchstart', 'scroll', 'click'].forEach((ev) => window.addEventListener(ev, play, { once: true, passive: true }));
+  });
+
   // 7) Zahlen hochzählen
   gsap.utils.toArray<HTMLElement>('[data-count]').forEach((el) => {
     const to = Number(el.dataset.count);

@@ -172,3 +172,11 @@ export const faqGroups: FaqGroup[] = [
 export const topFaqIds = ['schmerz', 'unangenehm', 'sitzungen', 'geeignet', 'kosten', 'absagen'];
 export const allFaqs = faqGroups.flatMap((g) => g.items);
 export const pickFaqs = (ids: string[]) => ids.map((id) => allFaqs.find((f) => f.id === id)!).filter(Boolean);
+
+/** Kurzantworten für die Startseite (Details auf /faq) */
+export const shortFaqs: { q: string; a: string }[] = [
+  { q: 'Tut das weh?', a: 'Meist ein kurzes, warmes Pieksen. Du gibst das Tempo vor, Pausen sind jederzeit okay.' },
+  { q: 'Intimbereich – ist das nicht unangenehm?', a: 'Ganz normal, dass du daran denkst. Geschlossener Raum, ruhig und diskret, jeder Schritt wird erklärt.' },
+  { q: 'Wie viele Sitzungen brauche ich?', a: 'Das ist individuell. Wir schätzen es ehrlich ein und passen den Plan von Mal zu Mal an.' },
+  { q: 'Wann bezahle ich?', a: 'Erst vor Ort nach dem Termin – bar, TWINT oder Karte.' },
+];

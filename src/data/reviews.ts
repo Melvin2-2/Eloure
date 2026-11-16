@@ -33,7 +33,7 @@ export const reviews: Review[] = [
     topic: 'Ehrlichkeit',
     when: 'vor 2 Jahren',
     text: 'Schon nach wenigen Sitzungen merkt man, dass die Haare weniger und/oder viel feiner/schwächer geworden sind. Ich bin sehr zufrieden und begrüsse es auch sehr, dass keine falschen Hoffnungen und unrealistischen Versprechungen gemacht werden. Sie sind stets transparent und ehrlich zu Ihren Kunden/Kundinnen …',
-    short: 'Ich begrüsse es sehr, dass keine falschen Hoffnungen und unrealistischen Versprechungen gemacht werden.',
+    short: '… begrüsse es auch sehr, dass keine falschen Hoffnungen und unrealistischen Versprechungen gemacht werden.',
   },
   {
     name: 'Cindy A.',
@@ -47,7 +47,7 @@ export const reviews: Review[] = [
     topic: 'Beratung',
     when: 'vor 10 Monaten',
     text: 'Caro nimmt sich immer viel Zeit für mich und arbeitet mega professionell! Schon nach meinem ersten Besuch für ein Beratungsgespräch, wusste ich, ich bin am richtigen Ort. Mittlerweile sind meine Haare auch deutlich weniger und dünner geworden und ich bin super happy!',
-    short: 'Schon nach meinem ersten Beratungsgespräch wusste ich, ich bin am richtigen Ort.',
+    short: 'Schon nach meinem ersten Besuch für ein Beratungsgespräch, wusste ich, ich bin am richtigen Ort.',
   },
   {
     name: 'Arani',
@@ -61,7 +61,7 @@ export const reviews: Review[] = [
     topic: 'Preis-Leistung',
     when: 'vor 6 Monaten',
     text: 'Eine grosse Empfehlung! Ich bin sehr zufrieden und finde das Preis-Leistungsverhältnis top. Das Studio ist modern und die Beratung/Behandlung ist professionell und trotzdem freundschaftlich.',
-    short: 'Ich finde das Preis-Leistungsverhältnis top. Professionell und trotzdem freundschaftlich.',
+    short: 'Ich bin sehr zufrieden und finde das Preis-Leistungsverhältnis top.',
   },
   {
     name: 'Amy H.',
