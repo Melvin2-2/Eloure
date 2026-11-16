@@ -48,7 +48,7 @@ const data = {
       }
 
       <header class="b-head">
-        <h1>Termin <em>buchen</em></h1>
+        <h1>Termin buchen</h1>
         <ol class="stepper" aria-label="Fortschritt">
           <li data-stepper="1" class="is-current"><span>1</span> Behandlung</li>
           <li data-stepper="2"><span>2</span> Termin</li>
@@ -359,13 +359,13 @@ const data = {
   }
 
   .stepper .is-current span {
-    background: var(--lime);
+    background: var(--linen);
     color: var(--ink);
   }
 
   .stepper .is-done span {
     background: var(--ink);
-    color: var(--lime);
+    color: var(--paper);
   }
 
   @media (max-width: 720px) {
@@ -429,7 +429,7 @@ const data = {
     display: block;
     padding: 10px 24px;
     border-radius: 999px;
-    font-weight: 700;
+    font-weight: 500;
     color: var(--muted);
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
@@ -486,10 +486,12 @@ const data = {
   }
 
   .fv-title {
-    font-family: var(--serif);
-    font-size: 1.6rem;
+    font-family: var(--sans);
     line-height: 1;
     margin-bottom: 6px;
+    font-size: 1.3rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
 
   .fv-grid {
@@ -561,7 +563,7 @@ const data = {
   .fv-card:has(input:checked) .tick {
     background: var(--ink);
     border-color: var(--ink);
-    color: var(--lime);
+    color: var(--paper);
   }
 
   .fv-card:has(input:focus-visible) {
@@ -591,10 +593,12 @@ const data = {
   }
 
   .region legend {
-    font-family: var(--serif);
-    font-size: 1.55rem;
+    font-family: var(--sans);
     margin-bottom: 8px;
     padding: 0;
+    font-size: 1.3rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
 
   .opt {
@@ -639,7 +643,7 @@ const data = {
   .opt:has(input:checked) .box {
     background: var(--ink);
     border-color: var(--ink);
-    color: var(--lime);
+    color: var(--paper);
   }
 
   .opt:has(input:focus-visible) {
@@ -655,7 +659,7 @@ const data = {
   .o-name {
     display: flex;
     flex-direction: column;
-    font-weight: 700;
+    font-weight: 500;
   }
 
   .o-name small {
@@ -665,7 +669,7 @@ const data = {
   }
 
   .o-price {
-    font-weight: 700;
+    font-weight: 500;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
@@ -714,9 +718,10 @@ const data = {
   }
 
   .cal-top strong {
-    font-family: var(--serif);
-    font-weight: 400;
-    font-size: 1.5rem;
+    font-family: var(--sans);
+    font-size: 1.15rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
 
   .cal-nav {
@@ -749,7 +754,7 @@ const data = {
 
   .cal-dow {
     font-size: 0.78rem;
-    font-weight: 700;
+    font-weight: 500;
     color: var(--muted);
     margin-bottom: 6px;
   }
@@ -792,7 +797,7 @@ const data = {
   }
 
   .cal-days :global(button[aria-pressed='true']::after) {
-    background: var(--lime);
+    background: var(--linen);
   }
 
   .slots {
@@ -814,7 +819,7 @@ const data = {
 
   .slots :global(.slot-label) {
     font-size: 0.78rem;
-    font-weight: 700;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--muted);
@@ -832,7 +837,7 @@ const data = {
     border-radius: 10px;
     border: 1.5px solid var(--line-strong);
     background: transparent;
-    font-weight: 700;
+    font-weight: 500;
     cursor: pointer;
     font-variant-numeric: tabular-nums;
   }
@@ -844,7 +849,7 @@ const data = {
   .slots :global(.slot-grid button[aria-pressed='true']) {
     background: var(--ink);
     border-color: var(--ink);
-    color: var(--lime);
+    color: var(--paper);
   }
 
   /* Formular */
@@ -888,7 +893,7 @@ const data = {
   .code input:focus {
     outline: none;
     border-color: var(--ink);
-    box-shadow: 0 0 0 4px var(--lime);
+    box-shadow: 0 0 0 4px var(--linen);
   }
 
   .form .is-invalid {
@@ -956,7 +961,7 @@ const data = {
   }
 
   .review :global(dt) {
-    font-weight: 700;
+    font-weight: 500;
     font-size: 0.88rem;
     color: var(--muted);
   }
@@ -969,7 +974,7 @@ const data = {
   .review :global(button) {
     border: 0;
     background: none;
-    font-weight: 700;
+    font-weight: 500;
     font-size: 0.85rem;
     text-decoration: underline;
     cursor: pointer;
@@ -988,7 +993,7 @@ const data = {
 
   .code label {
     display: block;
-    font-weight: 700;
+    font-weight: 500;
     margin-bottom: 8px;
   }
 
@@ -1035,7 +1040,7 @@ const data = {
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    background: var(--lime);
+    background: var(--linen);
     margin-bottom: 24px;
   }
 
@@ -1138,7 +1143,7 @@ const data = {
 
   .sum-discount {
     color: var(--ok);
-    font-weight: 700;
+    font-weight: 500;
   }
 
   .sum-discount[hidden] {
@@ -1149,7 +1154,7 @@ const data = {
     padding-top: 10px;
     margin-top: 4px;
     border-top: 1px solid var(--line-strong);
-    font-weight: 800;
+    font-weight: 600;
     font-size: 1.15rem;
   }
 
@@ -1183,7 +1188,7 @@ const data = {
 
   .sum-help a {
     color: var(--ink);
-    font-weight: 700;
+    font-weight: 500;
   }
 
   /* Mobile Summary */

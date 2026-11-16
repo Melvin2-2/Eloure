@@ -236,14 +236,15 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     display: block;
     padding: 14px 0;
     border-bottom: 1px solid var(--line);
-    font-family: var(--serif);
-    font-size: 2rem;
+    font-family: var(--sans);
     line-height: 1.1;
     text-decoration: none;
+    font-size: 1.6rem;
+    font-weight: 400;
+    letter-spacing: -0.01em;
   }
 
   .mobile-nav li a[aria-current='page'] {
-    font-style: italic;
   }
 
   .mobile-contact {

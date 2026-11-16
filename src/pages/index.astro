@@ -45,7 +45,7 @@ const faqs = pickFaqs(topFaqIds);
   <section class="hero">
     <div class="wrap hero-grid">
       <div class="hero-text">
-        <h1>Dauerhaft glatte Haut.<br /><em class="mark">Mit Zeit für dich.</em></h1>
+        <h1>Dauerhaft glatte Haut.<br />Mit Zeit für dich.</h1>
         <p class="lead">
           Eloure ist dein Studio für Laserhaarentfernung in Amriswil. Wir machen nur das – mit medizinischem Diodenlaser, ehrlicher
           Beratung und einem Plan, der zu deinem Körper passt.
@@ -93,7 +93,7 @@ const faqs = pickFaqs(topFaqIds);
   <section class="section bg-paper">
     <div class="wrap split">
       <div class="reveal">
-        <h2>Weniger Haare. <em>Weniger Gedanken.</em></h2>
+        <h2>Weniger Haare. Weniger Gedanken.</h2>
         <p class="lead">
           Ständig nachrasieren, gereizte Haut, kleine Pickel, eingewachsene Haare oder schmerzhaftes Wachsen – und ein paar Tage
           später geht alles von vorne los.
@@ -135,7 +135,7 @@ const faqs = pickFaqs(topFaqIds);
       </div>
       <div>
         <div class="section-head reveal">
-          <h2>Warum sich so viele bei uns <em>sofort wohlfühlen</em></h2>
+          <h2>Warum sich so viele bei uns sofort wohlfühlen</h2>
           <p class="lead">Laserhaarentfernung ist Vertrauenssache. Darum machen wir ein paar Dinge bewusst anders.</p>
         </div>
         <div class="usps">
@@ -164,7 +164,7 @@ const faqs = pickFaqs(topFaqIds);
   <section class="section bg-linen" id="behandlungen">
     <div class="wrap">
       <div class="section-head reveal">
-        <h2>Transparente Preise, <em>pro Sitzung</em></h2>
+        <h2>Transparente Preise, pro Sitzung</h2>
         <p class="lead">Du bezahlst pro Sitzung und Zone – ohne Vorauszahlung. Hier sind unsere beliebtesten Behandlungen.</p>
       </div>
 
@@ -211,7 +211,7 @@ const faqs = pickFaqs(topFaqIds);
   <section class="section">
     <div class="wrap">
       <div class="section-head reveal">
-        <h2>So läuft dein Weg zu <em>glatter Haut</em></h2>
+        <h2>So läuft dein Weg zu glatter Haut</h2>
         <p class="lead">Klar, transparent und in deinem Tempo – damit du dich von Anfang an sicher fühlst.</p>
       </div>
       <Steps />
@@ -228,7 +228,7 @@ const faqs = pickFaqs(topFaqIds);
         <Image src={imgDuo} alt="Caro und Sarah, das Team von Eloure The Studio" widths={[600, 900, 1200]} sizes="(min-width: 900px) 46vw, 100vw" />
       </div>
       <div class="reveal">
-        <h2>Hey, wir sind <em>Caro & Sarah</em></h2>
+        <h2>Hey, wir sind Caro & Sarah</h2>
         <p class="lead">
           Caro hat Eloure gegründet, Sarah ist an ihrer Seite – ein eingespieltes Team voller Leidenschaft, Kompetenz und
           Einfühlungsvermögen.
@@ -248,7 +248,7 @@ const faqs = pickFaqs(topFaqIds);
   <section class="section studio">
     <div class="wrap">
       <div class="studio-head reveal">
-        <h2>Ein Ort zum <em>Durchatmen</em></h2>
+        <h2>Ein Ort zum Durchatmen</h2>
         <p class="lead">
           Unser Studio im Herzen von Amriswil ist hell, ruhig und bewusst gemütlich eingerichtet. Damit du dich vom ersten
           Moment an wohlfühlst – und nicht wie in einer Klinik.
@@ -273,7 +273,7 @@ const faqs = pickFaqs(topFaqIds);
     <div class="wrap">
       <div class="split">
         <div class="reveal">
-          <h2>Sicherheit und Qualität kommen <em>zuerst</em></h2>
+          <h2>Sicherheit und Qualität kommen zuerst</h2>
         </div>
         <div class="reveal">
           <p class="lead">
@@ -296,7 +296,7 @@ const faqs = pickFaqs(topFaqIds);
   <section class="section">
     <div class="wrap faq-grid">
       <div class="faq-intro reveal">
-        <h2>Was viele vor dem ersten Termin <em>fragen</em></h2>
+        <h2>Was viele vor dem ersten Termin fragen</h2>
         <p class="lead">Unsicher zu sein ist völlig normal. Hier die ehrlichen Antworten auf die häufigsten Fragen.</p>
         <div class="ask">
           <p>Deine Frage ist nicht dabei?</p>
@@ -379,7 +379,7 @@ const faqs = pickFaqs(topFaqIds);
 
   .hero-main {
     aspect-ratio: 4 / 5;
-    border-radius: 220px 220px var(--radius-l) var(--radius-l);
+    border-radius: var(--radius-l);
   }
 
   .hero-video {
@@ -445,9 +445,10 @@ const faqs = pickFaqs(topFaqIds);
   }
 
   .compare h3 {
-    font-family: var(--serif);
-    font-weight: 400;
-    font-size: 1.7rem;
+    font-family: var(--sans);
+    font-size: 1.3rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
 
   .compare ul:not(.check-list) {
@@ -508,7 +509,7 @@ const faqs = pickFaqs(topFaqIds);
     background: transparent;
     padding: 10px 26px;
     border-radius: 999px;
-    font-weight: 700;
+    font-weight: 500;
     cursor: pointer;
     color: var(--muted);
   }
@@ -562,9 +563,11 @@ const faqs = pickFaqs(topFaqIds);
   }
 
   .c-name {
-    font-family: var(--serif);
-    font-size: 1.8rem;
-    line-height: 1.1;
+    font-family: var(--sans);
+    line-height: 1.25;
+    font-size: 1.3rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
 
   .c-meta {
@@ -591,7 +594,7 @@ const faqs = pickFaqs(topFaqIds);
   }
 
   .c-price {
-    font-weight: 800;
+    font-weight: 600;
     font-size: 1.1rem;
   }
 
@@ -603,12 +606,13 @@ const faqs = pickFaqs(topFaqIds);
     border-radius: 999px;
     background: var(--linen);
     font-size: 0.85rem;
-    font-weight: 700;
+    font-weight: 500;
     transition: background 0.2s;
   }
 
   .card:hover .c-go {
-    background: var(--lime);
+    background: var(--ink);
+    color: var(--paper);
   }
 
   .pop-foot {
@@ -633,10 +637,11 @@ const faqs = pickFaqs(topFaqIds);
   }
 
   .sign {
-    font-family: var(--serif);
-    font-size: 1.6rem;
-    font-style: italic;
+    font-family: var(--sans);
     margin: 20px 0;
+    font-size: 1.15rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
 
   /* Studio */
@@ -742,10 +747,12 @@ const faqs = pickFaqs(topFaqIds);
   }
 
   .f-big {
-    font-family: var(--serif);
-    font-size: 2.3rem;
+    font-family: var(--sans);
     line-height: 1;
-    color: var(--lime);
+    color: var(--paper);
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: -0.01em;
   }
 
   /* FAQ */
@@ -772,7 +779,7 @@ const faqs = pickFaqs(topFaqIds);
   }
 
   .ask p {
-    font-weight: 700;
+    font-weight: 500;
     margin-bottom: 14px;
   }
 </style>

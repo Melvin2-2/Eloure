@@ -39,7 +39,7 @@ const { items, open } = Astro.props;
     gap: 24px;
     padding: 22px 0;
     cursor: pointer;
-    font-weight: 700;
+    font-weight: 500;
     font-size: 1.08rem;
     line-height: 1.35;
   }
@@ -83,8 +83,9 @@ const { items, open } = Astro.props;
   }
 
   details[open] .pm {
-    background: var(--lime);
-    border-color: var(--lime);
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
   }
 
   details[open] .pm::after {
@@ -107,7 +108,7 @@ const { items, open } = Astro.props;
   }
 
   .answer :global(a) {
-    font-weight: 700;
+    font-weight: 500;
   }
 
   @media (max-width: 600px) {

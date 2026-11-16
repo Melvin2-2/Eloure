@@ -52,7 +52,7 @@ const faqs = [
     <div class="wrap hero-grid">
       <div class="hero-text">
         <p class="offer-pill"><span class="dot"></span> Neukundenangebot · nur für kurze Zeit</p>
-        <h1>Glatte Haut ohne Rasieren. <em class="mark">Jetzt {promo.percent} % günstiger starten.</em></h1>
+        <h1>Glatte Haut ohne Rasieren. Jetzt {promo.percent} % günstiger starten.</h1>
         <p class="lead">
           Laserhaarentfernung in Amriswil – mit medizinischem Diodenlaser, ehrlicher Beratung und viel Zeit für dich. Ohne Rasieren,
           ohne Pickel, ohne Stress.
@@ -101,7 +101,7 @@ const faqs = [
   <section class="section bg-paper" id="preise">
     <div class="wrap">
       <div class="section-head">
-        <h2>Dein Neukunden-Vorteil: <em>{promo.percent} % auf jede erste Behandlung</em></h2>
+        <h2>Dein Neukunden-Vorteil: {promo.percent} % auf jede erste Behandlung</h2>
         <p class="lead">Ein paar Beispiele. Der Rabatt gilt für alle Zonen – für Frauen und Männer.</p>
       </div>
 
@@ -139,7 +139,7 @@ const faqs = [
   <section class="section">
     <div class="wrap">
       <div class="section-head">
-        <h2>Warum <em>Eloure?</em></h2>
+        <h2>Warum Eloure?</h2>
         <p class="lead">
           Wir sind kein Beauty-Allrounder, sondern ein Studio, das sich zu 100 % auf Laserhaarentfernung konzentriert. Präzise
           Behandlungen, hochwertige medizinische Technologie und echte Expertise – für Ergebnisse, die bleiben.
@@ -177,7 +177,7 @@ const faqs = [
         <Image src={imgConsult} alt="Persönliches Beratungsgespräch in der Studio-Lounge" widths={[480, 800]} sizes="(min-width: 900px) 44vw, 100vw" />
       </div>
       <div>
-        <h2>Wie wirkt Laserhaarentfernung <em>wirklich?</em></h2>
+        <h2>Wie wirkt Laserhaarentfernung wirklich?</h2>
         <p class="lead">
           Das Licht des Lasers wird vom Farbstoff im Haar aufgenommen, in Wärme umgewandelt und zerstört gezielt die
           Haarwurzel – ohne die Haut stark zu belasten.
@@ -198,7 +198,7 @@ const faqs = [
   <section class="section">
     <div class="wrap">
       <div class="section-head">
-        <h2>So läuft dein <em>erster Termin</em> ab</h2>
+        <h2>So läuft dein erster Termin ab</h2>
         <p class="lead">Klar, transparent und so, dass du dich von Anfang an sicher fühlst.</p>
       </div>
       <Steps />
@@ -214,7 +214,7 @@ const faqs = [
     <div class="wrap">
       <div class="split">
         <div>
-          <h2>Sicherheit und Qualität <em>an erster Stelle</em></h2>
+          <h2>Sicherheit und Qualität an erster Stelle</h2>
           <p class="lead">
             Wir arbeiten mit einem medizinischen Diodenlaser und haben 5 Jahre Erfahrung – ausschliesslich in der
             Laserhaarentfernung. Jede Behandlung wird verantwortungsvoll, präzise und nach aktuellen Standards durchgeführt.
@@ -240,13 +240,13 @@ const faqs = [
   <section class="section">
     <div class="wrap wrap-narrow">
       <div class="section-head">
-        <h2>Kurz und <em>ehrlich</em> beantwortet</h2>
+        <h2>Kurz und ehrlich beantwortet</h2>
       </div>
       <FaqList items={faqs} open="code" />
     </div>
   </section>
 
-  <CtaFinal title={`Dein erster Schritt – <em>${promo.percent} % günstiger</em>`} code={promo.code} />
+  <CtaFinal title={`Dein erster Schritt – ${promo.percent} % günstiger`} code={promo.code} />
 </Base>
 
 <style>
@@ -276,13 +276,10 @@ const faqs = [
     background: var(--paper);
     border: 1px solid var(--line);
     font-size: 0.86rem;
-    font-weight: 700;
+    font-weight: 500;
     margin-bottom: 22px;
   }
 
-  .hero-text h1 {
-    font-size: clamp(2.6rem, 6.2vw, 5rem);
-  }
 
   .code-box {
     display: flex;
@@ -304,10 +301,12 @@ const faqs = [
   }
 
   .code-box strong {
-    font-family: var(--serif);
-    font-size: 2.2rem;
+    font-family: var(--sans);
     line-height: 1.05;
     letter-spacing: 0.06em;
+    font-size: 1.7rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
   }
 
   .copy {
@@ -319,7 +318,7 @@ const faqs = [
     border: 0;
     background: var(--ink);
     color: var(--paper);
-    font-weight: 700;
+    font-weight: 500;
     font-size: 0.86rem;
     cursor: pointer;
     flex: none;
@@ -354,7 +353,7 @@ const faqs = [
 
   .v-main {
     aspect-ratio: 3 / 4;
-    border-radius: 200px 200px var(--radius-l) var(--radius-l);
+    border-radius: var(--radius-l);
   }
 
   .v-side {
@@ -391,10 +390,11 @@ const faqs = [
   }
 
   .ex-group h3 {
-    font-family: var(--serif);
-    font-weight: 400;
-    font-size: 1.7rem;
+    font-family: var(--sans);
     margin-bottom: 12px;
+    font-size: 1.3rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
 
   .ex {
@@ -437,9 +437,11 @@ const faqs = [
   }
 
   .ex-name {
-    font-family: var(--serif);
-    font-size: 1.6rem;
-    line-height: 1.1;
+    font-family: var(--sans);
+    line-height: 1.25;
+    font-size: 1.3rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
 
   .ex-meta {
@@ -461,10 +463,8 @@ const faqs = [
 
   .ex-prices strong {
     font-size: 1.35rem;
-    font-weight: 800;
-    padding: 0 6px;
-    background: var(--lime);
-    border-radius: 6px;
+    font-weight: 600;
+    color: var(--ink);
   }
 
   .ex-go {
@@ -472,7 +472,7 @@ const faqs = [
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-weight: 700;
+    font-weight: 500;
     font-size: 0.88rem;
   }
 
@@ -526,7 +526,7 @@ const faqs = [
     margin-top: 24px;
     padding: 18px 20px;
     border-radius: var(--radius);
-    background: var(--lime);
+    background: var(--linen);
     color: var(--ink);
     font-weight: 600;
   }

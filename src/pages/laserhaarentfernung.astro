@@ -11,7 +11,7 @@ import Icon from '../components/Icon.astro';
   description="Wie Laserhaarentfernung wirkt, wie viele Sitzungen du brauchst, für wen sie geeignet ist und wie du dich optimal vorbereitest – ehrlich erklärt von Eloure in Amriswil."
 >
   <PageHero
-    title="So funktioniert <em>Laserhaarentfernung</em>"
+    title="So funktioniert Laserhaarentfernung"
     lead="Wer versteht, was passiert, fühlt sich sicherer. Darum erklären wir dir hier alles Wichtige – ohne Fachchinesisch und ohne leere Versprechen."
   >
     <div class="btn-row">
@@ -24,7 +24,7 @@ import Icon from '../components/Icon.astro';
   <section class="section bg-paper">
     <div class="wrap split">
       <div class="reveal">
-        <h2>Licht, das genau <em>die Haarwurzel</em> trifft</h2>
+        <h2>Licht, das genau die Haarwurzel trifft</h2>
         <p class="lead">
           Unser medizinischer Diodenlaser sendet gebündeltes Licht, das vom Farbstoff im Haar – dem Melanin – aufgenommen wird.
         </p>
@@ -47,7 +47,7 @@ import Icon from '../components/Icon.astro';
   <section class="section">
     <div class="wrap">
       <div class="section-head reveal">
-        <h2>Warum es <em>mehrere Sitzungen</em> braucht</h2>
+        <h2>Warum es mehrere Sitzungen braucht</h2>
         <p class="lead">
           Deine Haare wachsen nicht alle gleichzeitig. Wirksam behandeln lässt sich nur ein Haar, das gerade aktiv wächst.
         </p>
@@ -98,7 +98,7 @@ import Icon from '../components/Icon.astro';
   <section class="section bg-linen">
     <div class="wrap">
       <div class="section-head reveal">
-        <h2>Ist das <em>etwas für mich?</em></h2>
+        <h2>Ist das etwas für mich?</h2>
         <p class="lead">Das klären wir immer persönlich mit dir. Als erste Orientierung:</p>
       </div>
       <div class="fit">
@@ -134,7 +134,7 @@ import Icon from '../components/Icon.astro';
   <section class="section">
     <div class="wrap">
       <div class="section-head reveal">
-        <h2>Dein Ablauf <em>bei uns</em></h2>
+        <h2>Dein Ablauf bei uns</h2>
       </div>
       <Steps />
     </div>
@@ -144,7 +144,7 @@ import Icon from '../components/Icon.astro';
   <section class="section bg-paper" id="vorbereitung">
     <div class="wrap">
       <div class="section-head reveal">
-        <h2>Gut vorbereitet <em>in 2 Minuten</em></h2>
+        <h2>Gut vorbereitet in 2 Minuten</h2>
         <p class="lead">Mit diesen Tipps holst du das Beste aus jeder Sitzung heraus.</p>
       </div>
       <div class="prep">
@@ -246,7 +246,7 @@ import Icon from '../components/Icon.astro';
   }
 
   .phases li:first-child .ph-bar::after {
-    background: var(--lime);
+    background: var(--ok);
     box-shadow: inset 0 0 0 1px rgba(46, 45, 43, 0.2);
   }
 
@@ -272,10 +272,12 @@ import Icon from '../components/Icon.astro';
   }
 
   .n {
-    font-family: var(--serif);
-    font-size: clamp(3rem, 6vw, 4.5rem);
+    font-family: var(--sans);
     line-height: 1;
     color: var(--ink);
+    font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+    font-weight: 400;
+    letter-spacing: -0.01em;
   }
 
   .honest {
@@ -285,7 +287,7 @@ import Icon from '../components/Icon.astro';
     margin-top: 40px;
     padding: 20px 24px;
     border-radius: var(--radius);
-    background: var(--lime);
+    background: var(--linen);
     font-weight: 600;
     max-width: 760px;
   }
@@ -328,7 +330,7 @@ import Icon from '../components/Icon.astro';
   }
 
   .badge.good {
-    background: var(--lime);
+    background: var(--linen);
   }
 
   .badge.mid {
@@ -357,10 +359,11 @@ import Icon from '../components/Icon.astro';
   }
 
   .prep-card h3 {
-    font-family: var(--serif);
-    font-weight: 400;
-    font-size: 2rem;
+    font-family: var(--sans);
     margin-bottom: 20px;
+    font-size: 1.3rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
 
   .prep-card.dark {
