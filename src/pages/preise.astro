@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import PriceTable from '../components/PriceTable.astro';
 import Lines from '../components/Lines.astro';
-import Counters from '../components/Counters.astro';
+import TrustBand from '../components/TrustBand.astro';
 import CtaFinal from '../components/CtaFinal.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
@@ -43,17 +43,10 @@ import imgCost from '../assets/shoot/caro-telefon.jpg';
     </div>
   </section>
 
-  <Counters
-    items={[
-      { value: 29, label: 'CHF – kleinste Zone pro Sitzung' },
-      { value: 15, label: 'Minuten dauern viele Zonen' },
-      { value: 0, label: 'CHF Vorauszahlung' },
-      { value: 24, label: 'Std. vorher kostenlos absagen' },
-    ]}
-  />
+  <TrustBand />
 
   <section class="cost bg-mocha">
-    <div class="cost-img fade-r" data-anim="img">
+    <div class="cost-img" data-anim="img">
       <Image src={imgCost} alt="Caro am Telefon in der Studio-Lounge" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 50vw, 100vw" />
     </div>
     <div class="cost-content">
@@ -163,7 +156,7 @@ import imgCost from '../assets/shoot/caro-telefon.jpg';
   @media (min-width: 1000px) {
     .cost-content :global(.cost-title) {
       width: max-content;
-      margin-left: calc(-4vw - var(--gutter));
+      margin-left: 0;
     }
   }
 

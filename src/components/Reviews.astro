@@ -4,7 +4,7 @@ import Icon from './Icon.astro';
 import Lines from './Lines.astro';
 import { reviews, googleRating } from '../data/reviews';
 import { site } from '../data/site';
-import img from '../assets/shoot/detail-tulpen.jpg';
+import img from '../assets/shoot/detail-buch.jpg';
 
 interface Props {
   title?: string[];
@@ -16,8 +16,8 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
 ---
 
 <section class="reviews bg-sand" data-reviews>
-  <div class="pic fade-r" data-anim="img">
-    <Image src={img} alt="Frische Tulpen im Studio" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 40vw, 100vw" />
+  <div class="pic" data-anim="img">
+    <Image src={img} alt="Bildband von Peter Lindbergh im Sonnenlicht in der Studio-Lounge" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 40vw, 100vw" />
   </div>
 
   <div class="content">
@@ -99,12 +99,7 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
     max-width: 900px;
   }
 
-  @media (min-width: 1000px) {
-    .content :global(.r-title) {
-      width: max-content;
-      margin-left: calc(-11vw - var(--gutter));
-    }
-  }
+
 
   .score {
     display: inline-flex;

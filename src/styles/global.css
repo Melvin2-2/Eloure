@@ -8,7 +8,7 @@
    Keine Rundungen bei Bildern & Flächen. Glas-Flächen über Bildern.
    ———————————————————————————————————————————————— */
 :root {
-  --espresso: #2b1f1a;
+  --espresso: #2f2119;
   --cocoa: #3a2a22;
   --mocha: #5a4033;
   --taupe: #9c8b7e;
@@ -22,9 +22,9 @@
   --bg: var(--cream);
   --linen: var(--sand);
   --stone: #cfc3b6;
-  --ink: var(--espresso);
-  --ink-2: #5a4a40;
-  --muted: #8c7b6f;
+  --ink: #3a281f; /* Schrift: immer Braun, nie Schwarz */
+  --ink-2: #5e4839;
+  --muted: #8a7466;
   --line: rgba(43, 31, 26, 0.14);
   --line-strong: rgba(43, 31, 26, 0.28);
   --line-light: rgba(246, 241, 234, 0.2);
@@ -620,42 +620,4 @@ b {
   opacity: 1 !important;
   transform: none !important;
   clip-path: none !important;
-}
-
-/* ——— Lesbarkeit bei überlappenden Headlines ———
-   Bildkante läuft weich in die Flächenfarbe aus, damit Text auf dem Bild lesbar bleibt. */
-.bg-dark,
-.bg-ink {
-  --fade: var(--espresso);
-}
-.bg-mocha {
-  --fade: var(--mocha);
-}
-.bg-sand,
-.bg-linen {
-  --fade: var(--sand);
-}
-.bg-paper {
-  --fade: var(--paper);
-}
-
-@media (min-width: 1000px) {
-  .fade-r::after,
-  .fade-l::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 42%;
-    pointer-events: none;
-    z-index: 1;
-  }
-  .fade-r::after {
-    right: 0;
-    background: linear-gradient(270deg, var(--fade, var(--espresso)) 0%, color-mix(in srgb, var(--fade, var(--espresso)) 55%, transparent) 40%, transparent 100%);
-  }
-  .fade-l::after {
-    left: 0;
-    background: linear-gradient(90deg, var(--fade, var(--espresso)) 0%, color-mix(in srgb, var(--fade, var(--espresso)) 55%, transparent) 40%, transparent 100%);
-  }
 }

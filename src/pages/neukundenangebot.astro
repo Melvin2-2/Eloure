@@ -5,7 +5,7 @@ import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import Lines from '../components/Lines.astro';
 import ZoneHighlights from '../components/ZoneHighlights.astro';
-import StepsCompact from '../components/StepsCompact.astro';
+import StoryPath from '../components/StoryPath.astro';
 import FaqList from '../components/FaqList.astro';
 import Reviews from '../components/Reviews.astro';
 import CtaFinal from '../components/CtaFinal.astro';
@@ -126,7 +126,7 @@ const faqs = [
   </section>
 
   <!-- ABLAUF -->
-  <StepsCompact title={['So läuft dein', 'erster Termin.']} ctaHref={`/termin?${q}`} ctaLabel={`Mit ${pct} starten`} />
+  <StoryPath title={['So läuft dein', 'erster Termin.']} ctaHref={`/termin?${q}`} ctaLabel={`Mit ${pct} starten`} />
 
   <!-- SICHERHEIT -->
   <section class="safe bg-mocha">

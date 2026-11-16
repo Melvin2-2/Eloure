@@ -4,6 +4,7 @@ import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import Lines from '../components/Lines.astro';
 import ImageExpand from '../components/ImageExpand.astro';
+import Gallery from '../components/Gallery.astro';
 import Reviews from '../components/Reviews.astro';
 import CtaFinal from '../components/CtaFinal.astro';
 import Icon from '../components/Icon.astro';
@@ -37,7 +38,7 @@ import imgV2 from '../assets/shoot/detail-pflanze.jpg';
 
   <!-- Team -->
   <section class="team bg-sand" id="team">
-    <div class="t-img fade-r" data-anim="img">
+    <div class="t-img" data-anim="img">
       <Image src={imgCaro} alt="Caro, Gründerin und Inhaberin von Eloure" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 46vw, 100vw" />
       <span class="t-cap glass">Caro · Gründerin & Hauptansprechpartnerin</span>
     </div>
@@ -107,6 +108,8 @@ import imgV2 from '../assets/shoot/detail-pflanze.jpg';
     ctaHref="/termin"
     ctaLabel="Termin buchen"
   />
+
+  <Gallery />
 
   <!-- Besuch -->
   <section class="visit bg-lime">
@@ -185,7 +188,6 @@ import imgV2 from '../assets/shoot/detail-pflanze.jpg';
   @media (min-width: 1000px) {
     .t-content :global(.t-title) {
       width: max-content;
-      margin-left: calc(-10vw - var(--gutter));
     }
   }
 
@@ -227,7 +229,6 @@ import imgV2 from '../assets/shoot/detail-pflanze.jpg';
     padding: 0;
     display: grid;
     gap: 0;
-    border-top: 1px solid var(--line-light);
   }
 
   @media (min-width: 900px) {
@@ -238,7 +239,6 @@ import imgV2 from '../assets/shoot/detail-pflanze.jpg';
 
   .v-list li {
     padding: 32px 28px 32px 0;
-    border-bottom: 1px solid var(--line-light);
   }
 
   @media (min-width: 900px) {
