@@ -16,11 +16,6 @@ import { googleRating, pickReview } from '../data/reviews';
 import imgCaro from '../assets/shoot/caro-laechelt.jpg';
 
 const proof = pickReview('Luli');
-const usp = [
-  { icon: 'chat', title: 'Ehrliche Einschätzung vorab', text: 'Haut, Haar, Anzahl Sitzungen: Du weisst vorher, womit du rechnen kannst.' },
-  { icon: 'calendar', title: 'Dein Plan statt Standardpaket', text: 'Abstände und Einstellungen passen wir Sitzung für Sitzung an dich an.' },
-  { icon: 'heart', title: 'Persönlich bei Caro', text: 'Gründerin und deine Ansprechpartnerin – auch per WhatsApp.' },
-] as const;
 const rating = googleRating.rating.toFixed(1).replace('.', ',');
 ---
 
@@ -68,7 +63,7 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
 
   <!-- 3 · USP: warum Eloure -->
   <section class="usp bg-paper">
-    <div class="u-img ol-shade" data-anim="img">
+    <div class="u-img" data-anim="img">
       <Image src={imgCaro} alt="Caro, Gründerin von Eloure, lächelt in der Studio-Lounge" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 44vw, 100vw" />
       <figure class="u-proof glass">
         <span class="stars">★★★★★</span>
@@ -77,23 +72,10 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
       </figure>
     </div>
     <div class="u-text">
-      <Lines lines={['Keine leeren', 'Versprechen.']} class="ol u-title" />
+      <Lines lines={['Keine leeren', 'Versprechen.']} class="u-title" />
       <p class="lead reveal">
-        Bei uns weisst du vor der ersten Behandlung, was bei deiner Haut realistisch ist – und was nicht. Ohne Schönreden, ohne Druck.
+        Bevor wir lasern, sagen wir dir ehrlich, was bei deiner Haut realistisch ist – und was nicht.
       </p>
-      <ul class="u-points">
-        {
-          usp.map((u, i) => (
-            <li class="reveal" style={`--d:${i * 80}ms`}>
-              <Icon name={u.icon} size={40} stroke={1.15} />
-              <span>
-                <strong>{u.title}</strong>
-                {u.text}
-              </span>
-            </li>
-          ))
-        }
-      </ul>
       <div class="btn-row reveal">
         <a class="btn btn-dark" href="/termin">Ersten Termin buchen<span class="arrow"><Icon name="arrow" size={16} /></span></a>
         <a class="text-link" href="/termin?behandlung=beratungsgespraech">Erst kostenlos beraten lassen</a>
@@ -227,18 +209,11 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
     z-index: 2;
     left: var(--gutter);
     right: var(--gutter);
-    top: var(--gutter);
+    bottom: var(--gutter);
     margin: 0;
     padding: 18px 22px;
     max-width: 380px;
     background: rgba(36, 25, 19, 0.62);
-  }
-
-  @media (min-width: 1000px) {
-    .u-proof {
-      top: auto;
-      bottom: var(--gutter);
-    }
   }
 
   .u-proof blockquote {
@@ -261,36 +236,8 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
   }
 
   .u-text :global(.u-title) {
-    font-size: clamp(2.5rem, 5.6vw, 5.8rem);
+    font-size: clamp(2.8rem, 6vw, 6.6rem);
     line-height: 0.93;
   }
 
-  .u-points {
-    list-style: none;
-    margin: 36px 0 44px;
-    padding: 0;
-    display: grid;
-    gap: 26px;
-  }
-
-  .u-points li {
-    display: flex;
-    align-items: flex-start;
-    gap: 20px;
-    color: var(--ink-2);
-    font-size: 1.08rem;
-    line-height: 1.5;
-  }
-
-  .u-points :global(svg) {
-    flex: none;
-    color: var(--mocha);
-  }
-
-  .u-points strong {
-    display: block;
-    font-size: clamp(1.3rem, 1.7vw, 1.55rem);
-    color: var(--ink);
-    margin-bottom: 2px;
-  }
 </style>

@@ -103,6 +103,14 @@ function init() {
     gsap.utils.toArray<HTMLElement>('[data-expand-text]').forEach((t) => gsap.set(t, { opacity: 1, y: 0 }));
   });
 
+  // 6a) Unterseiten-Hero: Bild öffnet sich beim Scrollen bis an die Ränder
+  gsap.utils.toArray<HTMLElement>('[data-hero-frame]').forEach((f) => {
+    const img = f.querySelector('img');
+    const st = { trigger: f, start: 'top 95%', end: 'top 10%', scrub: 0.6 };
+    gsap.fromTo(f, { clipPath: 'inset(0% 5% 0% 5%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none', scrollTrigger: st });
+    if (img) gsap.fromTo(img, { scale: 1.14 }, { scale: 1, ease: 'none', scrollTrigger: { ...st } });
+  });
+
   // 6b) Ruhepunkt: Raum öffnet sich, Detailbilder ziehen weg, Wort + Karte kommen
   mm.add('(min-width: 900px)', () => {
     gsap.utils.toArray<HTMLElement>('[data-calm]').forEach((sec) => {

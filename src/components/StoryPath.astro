@@ -37,7 +37,7 @@ const phases = [
 ---
 
 <section class="story bg-paper" data-steps>
-  <div class="visual ol-shade">
+  <div class="visual">
     <Image src={img} alt="Caro im persönlichen Beratungsgespräch mit einer Kundin" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 50vw, 100vw" />
     <div class="progress glass" aria-hidden="true">
       {
@@ -53,7 +53,7 @@ const phases = [
 
   <div class="content">
     <div class="intro">
-      <Lines lines={title} class="ol story-title" />
+      <Lines lines={title} class="story-title" />
       <p class="lead reveal">Klar, persönlich und in deinem Tempo – so sieht deine Zeit bei uns aus.</p>
     </div>
     {
@@ -141,7 +141,7 @@ const phases = [
   }
 
   .content :global(.story-title) {
-    font-size: clamp(2.5rem, 5.2vw, 5.2rem);
+    font-size: clamp(2.8rem, 5.6vw, 5.8rem);
     line-height: 0.95;
   }
 
@@ -150,7 +150,7 @@ const phases = [
   }
 
   .phase {
-    padding: 40px 0;
+    padding: 28px 0;
   }
 
   .p-head {
@@ -213,7 +213,7 @@ const phases = [
       max-height: none;
     }
     .phase {
-      min-height: 78vh;
+      min-height: 50vh;
       display: flex;
       flex-direction: column;
       justify-content: center;

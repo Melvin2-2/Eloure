@@ -7,8 +7,8 @@ interface Props {
   variant: 'full' | 'minimal';
   ctaHref: string;
   ctaLabel: string;
-  /** dark: liegt transparent über dem Hero (helle Schrift); light: feste dunkle Leiste */
-  tone?: 'dark' | 'light';
+  /** dark: transparent über dunklem Hero (helle Schrift); paper: transparent über hellem Hero (dunkle Schrift); light: feste dunkle Leiste */
+  tone?: 'dark' | 'light' | 'paper';
 }
 const { variant, ctaHref, ctaLabel, tone = 'dark' } = Astro.props;
 
@@ -22,7 +22,7 @@ const nav = [
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---
 
-<header class:list={['site-header', tone === 'dark' ? 'is-over' : 'is-solid']} data-header>
+<header class:list={['site-header', tone === 'dark' ? 'is-over' : tone === 'paper' ? 'is-paper' : 'is-solid']} data-header>
   <div class="bar">
     <a href="/" class="logo" aria-label={`${site.name} – Startseite`}>
       <Logo />
@@ -126,6 +126,27 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     top: 0;
   }
 
+  .is-paper {
+    position: fixed;
+    top: auto;
+    color: var(--ink);
+  }
+
+  .is-paper:global(.is-scrolled),
+  .is-paper:global(.menu-open) {
+    position: fixed;
+    top: 0;
+    color: var(--cream);
+  }
+
+  .is-paper:global(.menu-open) {
+    background: var(--espresso);
+  }
+
+  .is-paper:not(:global(.is-scrolled)) .nav a::after {
+    background: var(--ink);
+  }
+
   .is-over:not(:global(.is-scrolled)) {
     background: linear-gradient(180deg, rgba(20, 14, 11, 0.45), rgba(20, 14, 11, 0));
   }
@@ -221,8 +242,9 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     place-items: center;
     width: 46px;
     height: 46px;
-    border: 1px solid rgba(246, 241, 234, 0.4);
+    border: 1px solid color-mix(in srgb, currentColor 40%, transparent);
     background: transparent;
+    color: inherit;
     cursor: pointer;
   }
 

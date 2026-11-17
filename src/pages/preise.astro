@@ -13,6 +13,7 @@ import imgCost from '../assets/shoot/caro-telefon.jpg';
 ---
 
 <Base
+  headerTone="paper"
   title="Preise Laserhaarentfernung Amriswil | Eloure The Studio"
   description="Alle Preise für Laserhaarentfernung bei Eloure in Amriswil: über 30 Zonen für Frauen und Männer, ab CHF 29 pro Sitzung. Bezahlt wird erst vor Ort."
 >
@@ -46,11 +47,11 @@ import imgCost from '../assets/shoot/caro-telefon.jpg';
   <TrustBand />
 
   <section class="cost bg-mocha">
-    <div class="cost-img ol-shade" data-anim="img">
+    <div class="cost-img" data-anim="img">
       <Image src={imgCost} alt="Caro am Telefon in der Studio-Lounge" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 50vw, 100vw" />
     </div>
     <div class="cost-content">
-      <Lines lines={['Und was kostet', 'es insgesamt?']} class="ol cost-title" />
+      <Lines lines={['Und was kostet', 'es insgesamt?']} class="cost-title" />
       <p class="lead reveal">Eine ehrliche Frage, die eine ehrliche Antwort verdient.</p>
       <p class="reveal">
         Damit möglichst alle Haarwurzeln in ihrer Wachstumsphase erwischt werden, braucht es mehrere Sitzungen. Wie viele, ist <strong>sehr individuell</strong> – Zone, Haardichte, Hauttyp und Hormone spielen mit. Am Anfang liegen meist 4 bis 8
@@ -153,7 +154,6 @@ import imgCost from '../assets/shoot/caro-telefon.jpg';
   }
 
   .cost-content :global(.cost-title) {
-    --ol-off: var(--cream);
     font-size: clamp(2.4rem, 4.6vw, 4.6rem);
     line-height: 0.95;
   }

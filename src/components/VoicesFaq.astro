@@ -15,7 +15,7 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
 ---
 
 <section class="vf bg-dark">
-  <div class="pic ol-shade" data-anim="img">
+  <div class="pic" data-anim="img">
     <Image src={img} alt="Kundin lacht im Beratungsgespräch im Eloure Studio" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 42vw, 100vw" />
     <a class="score glass" href={site.googleReviewsUrl} target="_blank" rel="noopener" aria-label={`${rating} von 5 Sternen aus ${googleRating.count} Google-Bewertungen`}>
       <span class="num">{rating}</span>
@@ -27,7 +27,7 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
   </div>
 
   <div class="content">
-    <Lines lines={['Unsicher?', 'Ganz normal.']} class="ol vf-title" />
+    <Lines lines={['Unsicher?', 'Ganz normal.']} class="vf-title" />
     <p class="lead reveal">Das sagen Kundinnen nach dem ersten Mal – und das fragen uns fast alle vorher.</p>
 
     <ul class="quotes">
@@ -140,8 +140,7 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
   }
 
   .content :global(.vf-title) {
-    --ol-off: var(--cream);
-    font-size: clamp(2.5rem, 5.4vw, 5.6rem);
+    font-size: clamp(2.8rem, 6vw, 6.2rem);
     line-height: 0.95;
   }
 
