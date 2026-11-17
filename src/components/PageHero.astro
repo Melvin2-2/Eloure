@@ -1,15 +1,19 @@
 ---
 // Unterseiten-Hero. Varianten:
-//  frame – Vollbild im Passepartout (dunkel oder hell). Links bündig, rechts und
-//          unten mit Rand; der Rahmen öffnet sich beim Scrollen bis randlos.
-//  shape – Bild randlos, darauf eine dunkelbraune Bogen-Form mit Text und Buttons,
-//          die beim Scrollen aufsteigt und sich zum Rechteck wandelt.
+//  frame – Vollbild im Passepartout (dunkel oder hell): oben und links bündig,
+//          rechts und unten mit Rand; der Rand verschwindet beim Scrollen.
+//  shape – Bild randlos. Darauf ein feiner Neon-Rahmen, der sich zeichnet und beim
+//          Scrollen verformt, und eine kantige dunkelbraune Fläche mit Text,
+//          deren schräge Kante sich beim Scrollen aufrichtet.
+// Aufbau Text: grosse Headline links; rechts ein Textblock mit eigener Überschrift
+// (Neon), kurzem Text und Buttons.
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import Lines from './Lines.astro';
 
 interface Props {
   title: string[];
+  /** Überschrift des Textblocks */
   sub?: string;
   lead?: string;
   image: ImageMetadata;
@@ -24,17 +28,15 @@ const hasSlot = Astro.slots.has('default');
 
 {
   variant === 'frame' && (
-    <section class:list={['ph ph-frame', frame === 'light' ? 'bg-paper is-light' : 'bg-dark']} data-ph-frame>
+    <section class:list={['ph ph-frame', frame === 'light' ? 'bg-paper' : 'bg-dark']} data-ph-frame>
       <div class="fr-img" data-ph-frame-img>
         <Image src={image} alt={alt} widths={[900, 1400, 2000, 2400]} sizes="100vw" loading="eager" fetchpriority="high" style={`object-position:${position}`} />
         <div class="fr-shade" />
       </div>
       <div class="fr-content">
-        <div class="fr-left">
-          {sub && <p class="ph-sub" data-anim="up">{sub}</p>}
-          <Lines as="h1" class="ph-title" lines={title} />
-        </div>
-        <div class="fr-right" data-anim="up">
+        <Lines as="h1" class="ph-title" lines={title} />
+        <div class="ph-block" data-anim="up">
+          {sub && <h2 class="ph-head">{sub}</h2>}
           {lead && <p class="ph-lead">{lead}</p>}
           {hasSlot && <div class="ph-actions"><slot /></div>}
         </div>
@@ -49,13 +51,16 @@ const hasSlot = Astro.slots.has('default');
       <div class="sh-img">
         <Image src={image} alt={alt} widths={[900, 1400, 2000, 2400]} sizes="100vw" loading="eager" fetchpriority="high" style={`object-position:${position}`} data-ph-shape-img />
         <div class="sh-shade" />
+        <svg class="sh-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <polygon data-ph-shape-line points="5,7 95,7 95,93 5,93" />
+        </svg>
       </div>
       <div class="sh-title">
-        {sub && <p class="ph-sub" data-anim="up">{sub}</p>}
         <Lines as="h1" class="ph-title" lines={title} />
       </div>
       <div class="sh-form" data-ph-shape-form>
-        <div class="sh-inner" data-anim="up">
+        <div class="ph-block" data-anim="up">
+          {sub && <h2 class="ph-head">{sub}</h2>}
           {lead && <p class="ph-lead">{lead}</p>}
           {hasSlot && <div class="ph-actions"><slot /></div>}
         </div>
@@ -73,19 +78,17 @@ const hasSlot = Astro.slots.has('default');
     color: var(--cream);
   }
 
-  .ph-sub {
-    margin: 0 0 18px;
-    font-size: 0.9rem;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
+  .ph-head {
+    margin: 0 0 12px;
+    font-size: clamp(1.25rem, 1.6vw, 1.6rem);
+    line-height: 1.1;
     color: var(--lime);
   }
 
   .ph-lead {
     margin: 0 0 24px;
     max-width: 34em;
-    font-size: clamp(1.05rem, 1.25vw, 1.2rem);
+    font-size: clamp(1.05rem, 1.2vw, 1.15rem);
     line-height: 1.55;
     color: rgba(246, 241, 234, 0.9);
   }
@@ -96,9 +99,9 @@ const hasSlot = Astro.slots.has('default');
   }
 
   .ph-actions :global(.btn-ghost:hover) {
-    --btn-bg: var(--cream);
+    --btn-bg: var(--lime);
     --btn-fg: var(--espresso);
-    --btn-border: var(--cream);
+    --btn-border: var(--lime);
   }
 
   .ph-actions :global(.btn-primary) {
@@ -107,7 +110,6 @@ const hasSlot = Astro.slots.has('default');
 
   /* ——— frame ——— */
   .ph-frame {
-    --fr-top: clamp(14px, 2vw, 32px);
     --fr-side: clamp(28px, 6vw, 112px);
     position: relative;
     height: calc(100svh - var(--header-h));
@@ -119,7 +121,7 @@ const hasSlot = Astro.slots.has('default');
     position: absolute;
     inset: 0;
     overflow: hidden;
-    clip-path: inset(var(--fr-top) var(--fr-side) var(--fr-side) 0);
+    clip-path: inset(0px var(--fr-side) var(--fr-side) 0px);
   }
 
   .fr-img :global(img) {
@@ -131,7 +133,7 @@ const hasSlot = Astro.slots.has('default');
   .fr-shade {
     position: absolute;
     inset: 0;
-    background: linear-gradient(0deg, rgba(36, 25, 19, 0.75) 0%, rgba(36, 25, 19, 0.28) 42%, rgba(36, 25, 19, 0) 70%);
+    background: linear-gradient(0deg, rgba(36, 25, 19, 0.78) 0%, rgba(36, 25, 19, 0.3) 42%, rgba(36, 25, 19, 0) 70%);
   }
 
   .fr-content {
@@ -141,11 +143,11 @@ const hasSlot = Astro.slots.has('default');
     right: calc(var(--fr-side) + var(--gutter));
     bottom: calc(var(--fr-side) + var(--gutter));
     display: grid;
-    gap: 24px 56px;
+    gap: 28px 56px;
     align-items: end;
   }
 
-  .fr-left {
+  .fr-content :global(.ph-title) {
     min-width: 0;
   }
 
@@ -158,10 +160,9 @@ const hasSlot = Astro.slots.has('default');
   @media (max-width: 999px) {
     .ph-frame {
       --fr-side: 18px;
-      height: calc(100svh - var(--header-h));
     }
     .fr-shade {
-      background: linear-gradient(0deg, rgba(36, 25, 19, 0.85) 0%, rgba(36, 25, 19, 0.45) 55%, rgba(36, 25, 19, 0.1) 85%);
+      background: linear-gradient(0deg, rgba(36, 25, 19, 0.86) 0%, rgba(36, 25, 19, 0.5) 55%, rgba(36, 25, 19, 0.1) 85%);
     }
     .fr-content {
       left: var(--gutter);
@@ -192,36 +193,60 @@ const hasSlot = Astro.slots.has('default');
   .sh-shade {
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, rgba(36, 25, 19, 0.55) 0%, rgba(36, 25, 19, 0.15) 45%, rgba(36, 25, 19, 0) 65%);
+    background: linear-gradient(90deg, rgba(36, 25, 19, 0.6) 0%, rgba(36, 25, 19, 0.15) 45%, rgba(36, 25, 19, 0) 65%);
+  }
+
+  .sh-lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .sh-lines polygon {
+    fill: none;
+    stroke: var(--lime);
+    stroke-width: 1.4;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* Rahmen zeichnet sich beim Laden von links nach rechts */
+  :global(.motion) .sh-lines {
+    animation: draw 2.2s 0.3s cubic-bezier(0.65, 0, 0.35, 1) both;
+  }
+
+  @keyframes draw {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
   }
 
   .sh-title {
     position: absolute;
-    z-index: 2;
-    left: var(--gutter);
-    bottom: clamp(48px, 7vw, 110px);
-    max-width: 58vw;
+    z-index: 3;
+    left: calc(5% + var(--gutter));
+    bottom: calc(7% + clamp(28px, 4vw, 56px));
+    max-width: 52vw;
   }
 
   .sh-form {
     position: absolute;
-    z-index: 3;
-    right: clamp(24px, 7vw, 120px);
-    bottom: 0;
-    width: clamp(320px, 31vw, 480px);
-    height: 74%;
+    z-index: 4;
+    right: 5%;
+    bottom: 7%;
+    width: clamp(340px, 32vw, 480px);
+    padding: clamp(80px, 9vw, 130px) clamp(28px, 3vw, 44px) clamp(32px, 3.4vw, 48px) clamp(56px, 6vw, 92px);
     background: var(--espresso);
-    border-radius: 999px 999px 0 0;
-    display: flex;
-    align-items: flex-end;
-    will-change: transform, border-radius;
+    clip-path: polygon(22% 0%, 100% 0%, 100% 100%, 0% 100%);
+    will-change: clip-path, transform;
   }
 
-  .sh-inner {
-    padding: 0 clamp(28px, 3vw, 48px) clamp(40px, 5vw, 72px);
-  }
-
-  .sh-inner :global(.btn-row) {
+  .sh-form :global(.btn-row) {
     flex-direction: column;
     align-items: stretch;
   }
@@ -233,7 +258,6 @@ const hasSlot = Astro.slots.has('default');
       max-height: none;
       display: flex;
       flex-direction: column;
-      padding-bottom: 0;
     }
     .sh-img {
       position: relative;
@@ -242,27 +266,24 @@ const hasSlot = Astro.slots.has('default');
       max-height: 560px;
     }
     .sh-shade {
-      background: linear-gradient(0deg, rgba(36, 25, 19, 0.7) 0%, rgba(36, 25, 19, 0) 60%);
+      background: linear-gradient(0deg, rgba(36, 25, 19, 0.75) 0%, rgba(36, 25, 19, 0) 60%);
     }
     .sh-title {
       position: relative;
       left: auto;
       bottom: auto;
       max-width: none;
-      margin: -9.5rem var(--gutter) 0;
+      margin: -8.5rem var(--gutter) 0;
     }
     .sh-form {
       position: relative;
       right: auto;
+      bottom: auto;
       width: auto;
-      height: auto;
-      margin: 32px var(--gutter) 0;
-      padding-top: 64px;
-      border-radius: 200px 200px 0 0;
+      margin: 28px 0 0;
+      padding: 72px var(--gutter) 48px;
+      clip-path: polygon(0% 12%, 100% 0%, 100% 100%, 0% 100%);
       background: var(--mocha);
-    }
-    .sh-inner {
-      padding: 0 24px 40px;
     }
   }
 </style>

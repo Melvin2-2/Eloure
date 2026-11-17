@@ -122,15 +122,26 @@ function init() {
     if (img) gsap.fromTo(img, { scale: 1.08 }, { scale: 1, ease: 'none', scrollTrigger: { ...st } });
   });
 
-  // 6a2b) Bogen-Form: steigt beim Scrollen auf und wird zum Rechteck
+  // 6a2b) Kantige Form: schräge Kante richtet sich auf, Neon-Rahmen verformt sich
   gsap.utils.toArray<HTMLElement>('[data-ph-shape]').forEach((sec) => {
     const form = sec.querySelector<HTMLElement>('[data-ph-shape-form]');
     const img = sec.querySelector<HTMLElement>('[data-ph-shape-img]');
+    const line = sec.querySelector<SVGPolygonElement>('[data-ph-shape-line]');
     const st = { trigger: sec, start: 'top top', end: 'bottom top', scrub: 0.8 };
-    if (img) gsap.fromTo(img, { scale: 1.12, yPercent: 0 }, { scale: 1, yPercent: 8, ease: 'none', scrollTrigger: st });
-    if (form) {
-      const r = getComputedStyle(form).borderRadius;
-      gsap.fromTo(form, { borderRadius: r, yPercent: 0 }, { borderRadius: '0px 0px 0px 0px', yPercent: -12, ease: 'none', scrollTrigger: { ...st } });
+    if (img) gsap.fromTo(img, { scale: 1.1, yPercent: 0 }, { scale: 1, yPercent: 8, ease: 'none', scrollTrigger: st });
+    if (line) {
+      gsap.fromTo(
+        line,
+        { attr: { points: '5,7 95,7 95,93 5,93' } },
+        { attr: { points: '18,2 98,12 84,98 2,86' }, opacity: 0.35, ease: 'none', scrollTrigger: { ...st } },
+      );
+    }
+    if (form && window.matchMedia('(min-width: 1000px)').matches) {
+      gsap.fromTo(
+        form,
+        { clipPath: 'polygon(22% 0%, 100% 0%, 100% 100%, 0% 100%)', yPercent: 0 },
+        { clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', yPercent: -18, ease: 'none', scrollTrigger: { ...st } },
+      );
     }
   });
 

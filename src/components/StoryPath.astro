@@ -1,9 +1,11 @@
 ---
-// Scroll-Story „Dein Weg zu glatter Haut“: links fixes Bild, rechts wechseln die Phasen.
+// Scroll-Story „Dein Weg zu glatter Haut“: links wechselt das Bild mit der Phase, rechts der Text.
 import { Image } from 'astro:assets';
 import Icon from './Icon.astro';
 import Lines from './Lines.astro';
-import img from '../assets/shoot/caro-beratung.jpg';
+import img1 from '../assets/shoot/caro-beratung.jpg';
+import img2 from '../assets/shoot/kundin-brille.jpg';
+import img3 from '../assets/shoot/caro-telefon.jpg';
 
 interface Props {
   title?: string[];
@@ -13,6 +15,9 @@ interface Props {
 const { title = ['Dein Weg zu', 'glatter Haut.'], ctaHref = '/termin', ctaLabel = 'Ersten Termin buchen' } = Astro.props;
 const phases = [
   {
+    img: img1,
+    alt: 'Caro im persönlichen Beratungsgespräch mit einer Kundin',
+    pos: 'center 30%',
     label: 'Beratung',
     head: 'Erst reden.',
     lead: 'Bevor der Laser zum Einsatz kommt, lernen wir uns kennen.',
@@ -20,6 +25,9 @@ const phases = [
     chip: 'Bei jedem ersten Termin inklusive',
   },
   {
+    img: img2,
+    alt: 'Entspannte Kundin mit Schutzbrille während der Laserbehandlung',
+    pos: 'center 35%',
     label: 'Behandlung',
     head: 'Dann lasern.',
     lead: 'Du weisst immer, was als Nächstes passiert.',
@@ -27,6 +35,9 @@ const phases = [
     chip: 'Du gibst das Tempo vor',
   },
   {
+    img: img3,
+    alt: 'Caro beantwortet in der Lounge eine Frage am Telefon',
+    pos: '60% 40%',
     label: 'Begleitung',
     head: 'Und dranbleiben.',
     lead: 'Glatte Haut entsteht Schritt für Schritt – wir gehen den Weg mit dir.',
@@ -38,7 +49,19 @@ const phases = [
 
 <section class="story bg-paper" data-steps>
   <div class="visual">
-    <Image src={img} alt="Caro im persönlichen Beratungsgespräch mit einer Kundin" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 50vw, 100vw" />
+    {
+      phases.map((p, i) => (
+        <Image
+          src={p.img}
+          alt={i === 0 ? p.alt : ''}
+          class:list={['v-img', { 'is-active': i === 0 }]}
+          data-step-img
+          widths={[700, 1100, 1600]}
+          sizes="(min-width: 1000px) 50vw, 100vw"
+          style={`object-position:${p.pos}`}
+        />
+      ))
+    }
     <div class="progress glass" aria-hidden="true">
       {
         phases.map((p, i) => (
@@ -59,6 +82,7 @@ const phases = [
     {
       phases.map((p, i) => (
         <article class:list={['phase', { 'is-active': i === 0 }]} data-step-item>
+          {i > 0 && <Image src={p.img} alt={p.alt} class="p-img" widths={[600, 900]} sizes="100vw" style={`object-position:${p.pos}`} />}
           <h3 class="p-head">{p.head}</h3>
           <p class="p-lead">{p.lead}</p>
           <p class="p-text">{p.text}</p>
@@ -87,13 +111,36 @@ const phases = [
     max-height: 640px;
   }
 
-  .visual :global(img) {
+  .visual :global(.v-img) {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 30%;
+    opacity: 0;
+    transform: scale(1.06);
+    transition:
+      opacity 0.9s var(--ease),
+      transform 1.6s var(--ease);
+  }
+
+  .visual :global(.v-img.is-active) {
+    opacity: 1;
+    transform: none;
+  }
+
+  .phase :global(.p-img) {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    margin-bottom: 24px;
+  }
+
+  @media (min-width: 1000px) {
+    .phase :global(.p-img) {
+      display: none;
+    }
   }
 
   .progress {
