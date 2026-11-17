@@ -18,7 +18,7 @@ interface Props {
   position?: string;
   variant?: 'editorial' | 'frame' | 'split' | 'collage';
 }
-const { title, sub, lead, image, image2, alt = '', position = 'center', variant = 'editorial' } = Astro.props;
+const { title, sub, lead, image, image2, alt = '', position = 'center', variant = 'frame' } = Astro.props;
 const hasSlot = Astro.slots.has('default');
 ---
 
@@ -233,11 +233,11 @@ const hasSlot = Astro.slots.has('default');
 
   .fr-content :global(.fr-title) {
     color: var(--cream);
-    font-size: clamp(2.6rem, 6.4vw, 7.2rem);
+    font-size: clamp(2.3rem, 5.4vw, 6.4rem);
   }
 
-  .fr-content :global(.fr-title .line) {
-    white-space: nowrap;
+  .fr-left {
+    min-width: 0;
   }
 
   .fr-right .ph-lead {
@@ -247,7 +247,7 @@ const hasSlot = Astro.slots.has('default');
 
   @media (min-width: 1000px) {
     .fr-content {
-      grid-template-columns: 1fr minmax(300px, 420px);
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
     }
   }
 
