@@ -13,10 +13,15 @@ import { site } from '../data/site';
 import { shortFaqs } from '../data/faq';
 import { googleRating } from '../data/reviews';
 
-import imgRoom from '../assets/shoot/raum-hoch.jpg';
+import imgRoom from '../assets/shoot/laser-achsel.jpg';
 import imgCaro from '../assets/shoot/caro-stehend.jpg';
 
 const rating = googleRating.rating.toFixed(1).replace('.', ',');
+const intro = [
+  { icon: 'venus', title: 'Für Frauen', text: 'Gesicht, Achseln, Bikini, Beine' },
+  { icon: 'mars', title: 'Für Männer', text: 'Rücken, Brust, Konturen, Beine' },
+  { icon: 'zones', title: 'Über 30 Zonen', text: 'einzeln oder als Kombi' },
+] as const;
 ---
 
 <Base
@@ -62,22 +67,34 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
   <section class="intro bg-dark">
     <div class="in-stage">
       <figure class="in-big" data-anim="img">
-        <Image src={imgRoom} alt="Heller Behandlungsraum im Eloure Studio mit Lichtskulptur und Diodenlaser" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 44vw, 100vw" />
+        <Image src={imgRoom} alt="Kundin mit Schutzbrille bei der Laserhaarentfernung an der Achsel" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 40vw, 100vw" style="object-position:center 35%" />
       </figure>
       <figure class="in-small" data-drift-y="-10">
-        <Image src={imgCaro} alt="Caro, Gründerin von Eloure, im Studio" widths={[400, 700]} sizes="(min-width: 1000px) 17vw, 40vw" />
+        <Image src={imgCaro} alt="Caro, Gründerin von Eloure, im Studio" widths={[400, 700]} sizes="(min-width: 1000px) 15vw, 40vw" />
       </figure>
-      <Lines lines={['Wo Schönheit', 'und Ästhetik', 'zuhause sind']} class="in-title" />
-    </div>
-    <div class="in-foot">
-      <p class="in-lead reveal">
-        Eloure ist dein Studio für dauerhafte Haarentfernung mit medizinischem Diodenlaser – mitten in Amriswil. Gründerin Caro
-        und ihr Team nehmen sich Zeit für dich: ehrlich beraten, sanft behandelt, persönlich begleitet. An einem Ort, an dem du dich
-        vom ersten Moment an wohlfühlst.
-      </p>
-      <div class="btn-row reveal">
-        <a class="btn btn-primary" href="/termin">Termin buchen<span class="arrow"><Icon name="arrow" size={16} /></span></a>
-        <a class="text-link" href="/studio">Das Studio kennenlernen</a>
+      <div class="in-text">
+        <Lines lines={['Glatte Haut.', 'Gutes Gefühl.']} class="in-title" />
+        <p class="in-lead reveal">
+          Eloure ist dein Studio für Laserhaarentfernung in Amriswil. Mit medizinischem Diodenlaser reduzieren wir störende Haare
+          langfristig – persönlich betreut von Gründerin Caro und ihrem Team.
+        </p>
+        <ul class="in-facts">
+          {
+            intro.map((f, i) => (
+              <li class="reveal" style={`--d:${i * 80}ms`}>
+                <Icon name={f.icon} size={40} stroke={1.15} />
+                <span>
+                  <strong>{f.title}</strong>
+                  {f.text}
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+        <div class="btn-row reveal">
+          <a class="btn btn-primary" href="/termin">Termin buchen<span class="arrow"><Icon name="arrow" size={16} /></span></a>
+          <a class="text-link" href="#zonen">Zonen & Preise</a>
+        </div>
       </div>
     </div>
   </section>
@@ -178,20 +195,66 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
 
   /* ——— Einstieg ——— */
   .intro {
-    padding: var(--section) var(--gutter) clamp(72px, 9vw, 140px);
+    padding: clamp(72px, 9vw, 136px) var(--gutter);
     overflow: hidden;
   }
 
   .in-stage {
     position: relative;
+    display: flex;
+    flex-direction: column;
   }
 
-  .in-stage :global(.in-title) {
+  .in-text {
     position: relative;
     z-index: 3;
-    margin: 0;
-    font-size: clamp(2.7rem, 12vw, 9.6rem);
+  }
+
+  .in-text :global(.in-title) {
+    margin: 0 0 clamp(24px, 3vw, 40px);
+    font-size: clamp(3rem, 13vw, 9.6rem);
     line-height: 0.92;
+    color: var(--cream);
+  }
+
+  .in-lead {
+    margin: 0 0 32px;
+    max-width: 34em;
+    font-size: clamp(1.15rem, 1.45vw, 1.35rem);
+    line-height: 1.55;
+    color: rgba(246, 241, 234, 0.9);
+  }
+
+  .in-facts {
+    list-style: none;
+    margin: 0 0 40px;
+    padding: 0;
+    display: grid;
+    gap: 22px 32px;
+  }
+
+  .in-facts li {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: rgba(246, 241, 234, 0.75);
+    font-size: 0.98rem;
+    line-height: 1.35;
+  }
+
+  .in-facts :global(svg) {
+    flex: none;
+    color: var(--lime);
+  }
+
+  .in-facts strong {
+    display: block;
+    font-family: var(--serif);
+    font-weight: var(--display-weight);
+    font-stretch: var(--display-stretch);
+    text-transform: uppercase;
+    font-size: 1.25rem;
+    letter-spacing: var(--display-ls);
     color: var(--cream);
   }
 
@@ -208,90 +271,73 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
     object-fit: cover;
   }
 
-  .in-big :global(img) {
-    filter: brightness(0.82);
-  }
-
   .in-big {
     position: relative;
-    aspect-ratio: 4 / 5;
-    margin-top: -0.5em;
+    aspect-ratio: 4 / 4.2;
+  }
+
+  @media (max-width: 999px) {
+    .in-big::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, rgba(36, 25, 19, 0.7) 0%, rgba(36, 25, 19, 0) 40%);
+    }
+  }
+
+  .in-text {
+    margin-top: -2.3rem;
   }
 
   .in-small {
-    position: relative;
+    display: none;
+    position: absolute;
     z-index: 4;
-    width: 40vw;
     aspect-ratio: 3 / 4;
-    margin: -24vw 0 0 auto;
-    outline: 10px solid var(--espresso);
+    outline: 8px solid var(--espresso);
   }
 
-  .in-foot {
-    display: grid;
-    gap: 28px 64px;
-    margin-top: clamp(40px, 5vw, 72px);
-  }
-
-  .in-lead {
-    margin: 0;
-    max-width: 36em;
-    font-size: clamp(1.15rem, 1.5vw, 1.4rem);
-    line-height: 1.55;
-    color: rgba(246, 241, 234, 0.88);
-  }
-
-  .in-foot .text-link {
+  .intro .text-link {
     color: var(--lime);
   }
 
-  /* Mobile: Headline zuerst, Bild darunter mit überlappender letzter Zeile */
-  @media (max-width: 999px) {
-    .in-stage {
-      display: flex;
-      flex-direction: column;
-    }
-    .in-stage :global(.in-title) {
-      order: -1;
-    }
-    .in-big {
-      margin-top: -1.6rem;
+  @media (min-width: 640px) {
+    .in-facts {
+      grid-template-columns: repeat(3, auto);
+      justify-content: start;
     }
   }
 
   @media (min-width: 1000px) {
     .in-stage {
-      min-height: min(88vh, 900px);
-      padding-top: clamp(24px, 4vh, 56px);
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      align-items: center;
+      gap: 0 clamp(40px, 5vw, 88px);
+      min-height: min(72vh, 760px);
     }
-    .in-stage :global(.in-title) {
-      font-size: clamp(3.2rem, 7.6vw, 9.4rem);
+    .in-text {
+      grid-column: 1;
+      grid-row: 1;
+      margin-top: 0;
     }
-    .in-stage :global(.in-title .line:nth-child(2)) {
-      padding-left: 9vw;
-    }
-    .in-stage :global(.in-title .line:nth-child(3)) {
-      padding-left: 4vw;
+    .in-text :global(.in-title) {
+      font-size: clamp(3.2rem, 8vw, 9.6rem);
+      width: max-content;
+      margin-right: -12vw;
     }
     .in-big {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 40vw;
-      height: 100%;
+      grid-column: 2;
+      grid-row: 1;
       aspect-ratio: auto;
+      height: min(72vh, 760px);
       margin: 0;
     }
     .in-small {
-      position: absolute;
-      left: 30vw;
-      bottom: -4vh;
-      width: 15vw;
-      margin: 0;
-    }
-    .in-foot {
-      max-width: min(52vw, 760px);
-      margin-top: clamp(48px, 6vw, 88px);
+      display: block;
+      right: -1px;
+      bottom: calc(-1 * clamp(32px, 6vh, 64px));
+      width: 11vw;
     }
   }
 </style>

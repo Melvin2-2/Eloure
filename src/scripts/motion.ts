@@ -156,6 +156,33 @@ function init() {
     }
   });
 
+  // 6a2c) Vorhang: Inhalt schiebt sich über den Hero, das Bild wird unscharf und tritt zurück
+  mm.add('(min-width: 1000px)', () => {
+    gsap.utils.toArray<HTMLElement>('[data-curtain]').forEach((sec) => {
+      const next = sec.nextElementSibling as HTMLElement | null;
+      const img = sec.querySelector<HTMLElement>('.sh-img');
+      if (!next || !img) return;
+      const st = { trigger: next, start: 'top bottom', end: 'top 15%', scrub: true };
+      gsap.fromTo(img, { filter: 'blur(0px) brightness(1)' }, { filter: 'blur(12px) brightness(0.45)', ease: 'none', scrollTrigger: st });
+      gsap.fromTo(
+        sec.querySelectorAll('.sh-title, [data-ph-shape-form] > *'),
+        { opacity: 1 },
+        { opacity: 0, ease: 'none', scrollTrigger: { ...st, end: 'top 45%' } },
+      );
+    });
+
+    // Signet: der untere Neon-Bogen gleitet unter den oberen Bogen und schliesst die Form
+    gsap.utils.toArray<HTMLElement>('[data-ph-signet]').forEach((sec) => {
+      const u = sec.querySelector<HTMLElement>('.sg-signet');
+      const arch = sec.querySelector<HTMLElement>('[data-sg-arch]');
+      const img = sec.querySelector<HTMLElement>('[data-ph-shape-img]');
+      const st = { trigger: sec, start: 'top top', end: 'bottom 20%', scrub: 0.8 };
+      if (u) gsap.fromTo(u, { xPercent: 0 }, { xPercent: 50, ease: 'none', scrollTrigger: st });
+      if (arch) gsap.fromTo(arch, { yPercent: 0 }, { yPercent: -6, ease: 'none', scrollTrigger: { ...st } });
+      if (img) gsap.fromTo(img, { scale: 1.1 }, { scale: 1, ease: 'none', scrollTrigger: { ...st } });
+    });
+  });
+
   // 6a3) Versetztes Detailbild schwebt schneller als der Rest
   gsap.utils.toArray<HTMLElement>('[data-drift-y]').forEach((el) => {
     const d = Number(el.dataset.driftY || -15);

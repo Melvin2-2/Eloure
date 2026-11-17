@@ -7,10 +7,11 @@ interface Props {
   showFirstVisit?: boolean;
 }
 const { initial = 'frauen', showFirstVisit = true } = Astro.props;
-const groups: { id: Group; label: string }[] = [
-  { id: 'frauen', label: 'Frauen' },
-  { id: 'maenner', label: 'Männer' },
+const groups: { id: Group; label: string; icon: 'venus' | 'mars' }[] = [
+  { id: 'frauen', label: 'Frauen', icon: 'venus' },
+  { id: 'maenner', label: 'Männer', icon: 'mars' },
 ];
+const zoneCount = (g: Group) => byRegion(g).reduce((n, [, list]) => n + list.length, 0);
 ---
 
 <div class="price-table" data-tabs>
@@ -25,7 +26,11 @@ const groups: { id: Group; label: string }[] = [
           aria-selected={String(g.id === initial)}
           data-tab={g.id}
         >
-          {g.label}
+          <Icon name={g.icon} size={40} stroke={1.2} />
+          <span class="t-txt">
+            <span class="t-label">{g.label}</span>
+            <span class="t-sub">{zoneCount(g.id)} Zonen</span>
+          </span>
         </button>
       ))
     }
@@ -34,6 +39,33 @@ const groups: { id: Group; label: string }[] = [
   {
     groups.map((g) => (
       <div role="tabpanel" id={`panel-${g.id}`} aria-labelledby={`tab-${g.id}`} hidden={g.id !== initial} data-panel={g.id}>
+        <div class="regions">
+          {byRegion(g.id).map(([region, list]) => (
+            <section class="region">
+              <h3>{region}</h3>
+              <ul class="rows">
+                {list.map((s) => (
+                  <li>
+                    <div class="name">
+                      <strong>
+                        {s.name}
+                        {s.popular && <span class="tag">Beliebt</span>}
+                      </strong>
+                      <span class="meta">
+                        {duration(s.minutes)}
+                        {s.note && <> · {s.note}</>}
+                      </span>
+                    </div>
+                    <span class="price">{chf(s.price)}</span>
+                    <a class="book" href={`/termin?behandlung=${s.id}&gruppe=${g.id}`} aria-label={`${s.name} buchen`}>
+                      <Icon name="arrow" size={16} />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
         {showFirstVisit && (
           <div class="first">
             <div class="first-text">
@@ -64,33 +96,6 @@ const groups: { id: Group; label: string }[] = [
           </div>
         )}
 
-        <div class="regions">
-          {byRegion(g.id).map(([region, list]) => (
-            <section class="region">
-              <h3>{region}</h3>
-              <ul class="rows">
-                {list.map((s) => (
-                  <li>
-                    <div class="name">
-                      <strong>
-                        {s.name}
-                        {s.popular && <span class="tag">Beliebt</span>}
-                      </strong>
-                      <span class="meta">
-                        {duration(s.minutes)}
-                        {s.note && <> · {s.note}</>}
-                      </span>
-                    </div>
-                    <span class="price">{chf(s.price)}</span>
-                    <a class="book" href={`/termin?behandlung=${s.id}&gruppe=${g.id}`} aria-label={`${s.name} buchen`}>
-                      <Icon name="arrow" size={16} />
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))}
-        </div>
       </div>
     ))
   }
@@ -105,34 +110,95 @@ const groups: { id: Group; label: string }[] = [
   }
 
   .tabs {
-    display: inline-flex;
-    border: 1px solid var(--espresso);
-    background: var(--paper);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: min(100%, 560px);
   }
 
   .tabs button {
-    min-width: clamp(140px, 16vw, 200px);
-    padding: 18px 28px;
-    border: 0;
-    background: transparent;
-    cursor: pointer;
-    font-weight: 700;
-    font-size: 0.95rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    border: 1px solid rgba(47, 33, 25, 0.2);
+    background: var(--paper);
     color: var(--ink);
+    text-align: left;
+    cursor: pointer;
     transition:
-      background 0.25s,
-      color 0.25s;
+      background 0.3s,
+      color 0.3s,
+      border-color 0.3s;
+  }
+
+  .tabs button::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 4px;
+    background: var(--lime);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s var(--ease);
+  }
+
+  .tabs button :global(svg) {
+    flex: none;
+    color: var(--mocha);
+    transition: color 0.3s;
   }
 
   .tabs button:hover {
-    background: var(--cream);
+    border-color: var(--espresso);
   }
 
   .tabs button[aria-selected='true'] {
     background: var(--espresso);
+    border-color: var(--espresso);
+    color: var(--cream);
+  }
+
+  .tabs button[aria-selected='true'] :global(svg) {
     color: var(--lime);
+  }
+
+  .tabs button[aria-selected='true']::after {
+    transform: scaleX(1);
+  }
+
+  .t-txt {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .t-label {
+    font-family: var(--serif);
+    font-weight: var(--display-weight);
+    font-stretch: var(--display-stretch);
+    text-transform: uppercase;
+    font-size: clamp(1.4rem, 2.2vw, 1.9rem);
+    line-height: 1;
+  }
+
+  .t-sub {
+    font-size: 0.9rem;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 420px) {
+    .tabs button {
+      padding: 16px 14px;
+      gap: 10px;
+    }
+    .tabs button :global(svg) {
+      width: 30px;
+      height: 30px;
+    }
   }
 
   /* ——— Neu bei uns: dunkle Karte ——— */
@@ -142,7 +208,7 @@ const groups: { id: Group; label: string }[] = [
     padding: clamp(24px, 3.4vw, 40px);
     background: var(--espresso);
     color: var(--cream);
-    margin-bottom: 16px;
+    margin-top: 16px;
   }
 
   @media (min-width: 900px) {

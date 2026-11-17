@@ -19,12 +19,31 @@ interface Props {
   image: ImageMetadata;
   alt?: string;
   position?: string;
-  variant?: 'frame' | 'shape';
+  variant?: 'frame' | 'shape' | 'signet';
   frame?: 'dark' | 'light';
-  /** shape: feiner Neon-Rahmen ('frame', zeichnet sich beim Laden) oder Neon-Ecken ('corners', blenden beim Scrollen ein) */
-  lines?: 'frame' | 'corners';
+  /** shape: feiner Neon-Rahmen ('frame', zeichnet sich beim Laden), Neon-Ecken ('corners') oder keiner */
+  lines?: 'frame' | 'corners' | 'none';
+  /** shape: Form leicht transparent (Glas) */
+  glass?: boolean;
+  /** grössere Headline */
+  xl?: boolean;
+  /** Hero bleibt stehen, der Inhalt darunter schiebt sich darüber, das Bild tritt zurück */
+  curtain?: boolean;
 }
-const { title, sub, lead, image, alt = '', position = 'center', variant = 'frame', frame = 'dark', lines = 'frame' } = Astro.props;
+const {
+  title,
+  sub,
+  lead,
+  image,
+  alt = '',
+  position = 'center',
+  variant = 'frame',
+  frame = 'dark',
+  lines = 'frame',
+  glass = false,
+  xl = false,
+  curtain = false,
+} = Astro.props;
 // Vier Eckwinkel im 100×100-Raster (ix/iy = Abstand zum Rand)
 const corners = (ix: number, iy: number, lx = 7, ly = 11) =>
   `M${ix},${iy + ly} V${iy} H${ix + lx} M${100 - ix - lx},${iy} H${100 - ix} V${iy + ly} M${100 - ix},${100 - iy - ly} V${100 - iy} H${100 - ix - lx} M${ix + lx},${100 - iy} H${ix} V${100 - iy - ly}`;
@@ -52,11 +71,11 @@ const hasSlot = Astro.slots.has('default');
 
 {
   variant === 'shape' && (
-    <section class="ph ph-shape bg-dark" data-ph-shape>
+    <section class:list={['ph ph-shape bg-dark', { 'is-xl': xl, 'is-curtain': curtain }]} data-ph-shape data-curtain={curtain ? '' : undefined}>
       <div class="sh-img">
         <Image src={image} alt={alt} widths={[900, 1400, 2000, 2400]} sizes="100vw" loading="eager" fetchpriority="high" style={`object-position:${position}`} data-ph-shape-img />
         <div class="sh-shade" />
-        {lines === 'frame' ? (
+        {lines === 'none' ? null : lines === 'frame' ? (
           <svg class="sh-lines is-draw" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
             <polygon data-ph-shape-line points="5,7 95,7 95,93 5,93" />
           </svg>
@@ -69,7 +88,33 @@ const hasSlot = Astro.slots.has('default');
       <div class="sh-title">
         <Lines as="h1" class="ph-title" lines={title} />
       </div>
-      <div class="sh-form" data-ph-shape-form>
+      <div class:list={['sh-form', { 'is-glass': glass }]} data-ph-shape-form>
+        <div class="ph-block" data-anim="up">
+          {sub && <h2 class="ph-head">{sub}</h2>}
+          {lead && <p class="ph-lead">{lead}</p>}
+          {hasSlot && <div class="ph-actions"><slot /></div>}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+{
+  variant === 'signet' && (
+    <section class="ph ph-signet bg-dark" data-ph-signet>
+      <div class="sg-img">
+        <Image src={image} alt={alt} widths={[900, 1400, 2000, 2400]} sizes="100vw" loading="eager" fetchpriority="high" style={`object-position:${position}`} data-ph-shape-img />
+        <div class="sh-shade" />
+      </div>
+      <div class="sh-title">
+        <Lines as="h1" class="ph-title" lines={title} />
+      </div>
+      <div class="sg-signet" aria-hidden="true">
+        <svg class="sg-u" viewBox="0 0 200 104" data-sg-u>
+          <path d="M2 2 C2 60 44 102 100 102 C156 102 198 60 198 2" pathLength="1" />
+        </svg>
+      </div>
+      <div class="sg-arch" data-sg-arch>
         <div class="ph-block" data-anim="up">
           {sub && <h2 class="ph-head">{sub}</h2>}
           {lead && <p class="ph-lead">{lead}</p>}
@@ -258,6 +303,43 @@ const hasSlot = Astro.slots.has('default');
     will-change: clip-path, transform;
   }
 
+  .sh-form.is-glass {
+    background: rgba(36, 25, 19, 0.62);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    backdrop-filter: blur(14px) saturate(1.1);
+  }
+
+  .is-xl :global(.ph-title) {
+    font-size: clamp(2.8rem, 6.4vw, 7.6rem);
+    line-height: 0.9;
+  }
+
+  @media (min-width: 1000px) {
+    .is-xl .sh-title {
+      max-width: 60vw;
+    }
+  }
+
+  .is-xl .sh-shade {
+    background:
+      linear-gradient(90deg, rgba(36, 25, 19, 0.7) 0%, rgba(36, 25, 19, 0.25) 45%, rgba(36, 25, 19, 0) 65%),
+      linear-gradient(0deg, rgba(36, 25, 19, 0.45) 0%, rgba(36, 25, 19, 0) 45%);
+  }
+
+  /* Vorhang: Hero bleibt stehen, der nächste Abschnitt schiebt sich darüber */
+  @media (min-width: 1000px) {
+    .ph-shape.is-curtain {
+      position: sticky;
+      top: 0;
+      z-index: 0;
+    }
+    .ph-shape.is-curtain + :global(*) {
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 -30px 60px -20px rgba(20, 14, 11, 0.45);
+    }
+  }
+
   .sh-form :global(.btn-row) {
     flex-direction: column;
     align-items: stretch;
@@ -296,6 +378,130 @@ const hasSlot = Astro.slots.has('default');
       padding: 72px var(--gutter) 48px;
       clip-path: polygon(0% 12%, 100% 0%, 100% 100%, 0% 100%);
       background: var(--mocha);
+    }
+  }
+
+  /* ——— signet (Studio) ———
+     Abgeleitet vom „O“ im Eloure-Logo: oben ein Bogen, unten ein versetzter Bogen.
+     Der obere Bogen trägt den Text (Glas), der untere ist eine feine Neon-Linie,
+     die sich zeichnet und beim Scrollen unter den oberen Bogen gleitet. */
+  .ph-signet {
+    --sg-w: clamp(340px, 30vw, 460px);
+    position: relative;
+    height: calc(100svh - var(--header-h));
+    min-height: 640px;
+    max-height: 1000px;
+    overflow: hidden;
+  }
+
+  .sg-img {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .sg-img :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .sg-arch {
+    position: absolute;
+    z-index: 4;
+    right: 7%;
+    bottom: 26%;
+    width: var(--sg-w);
+    padding: calc(var(--sg-w) * 0.42) clamp(28px, 3vw, 44px) clamp(30px, 3vw, 42px);
+    background: rgba(36, 25, 19, 0.66);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    backdrop-filter: blur(14px) saturate(1.1);
+    border-radius: 999px 999px 0 0;
+  }
+
+  .sg-arch :global(.btn-row) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sg-signet {
+    position: absolute;
+    z-index: 3;
+    right: calc(7% + var(--sg-w) * 0.5);
+    bottom: calc(26% - var(--sg-w) * 0.52);
+    width: var(--sg-w);
+    pointer-events: none;
+  }
+
+  .sg-u {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .sg-u path {
+    fill: none;
+    stroke: var(--lime);
+    stroke-width: 1.6;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+
+  :global(.motion) .sg-u path {
+    animation: sg-draw 2s 0.4s cubic-bezier(0.65, 0, 0.35, 1) both;
+  }
+
+  @keyframes sg-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .ph-signet .sh-title {
+    bottom: 26%;
+  }
+
+  @media (max-width: 999px) {
+    .ph-signet {
+      --sg-w: calc(100vw - 2 * var(--gutter));
+      height: auto;
+      min-height: 0;
+      max-height: none;
+      display: flex;
+      flex-direction: column;
+    }
+    .sg-img {
+      position: relative;
+      inset: auto;
+      height: 100vw;
+      max-height: 560px;
+    }
+    .ph-signet .sh-title {
+      position: relative;
+      left: auto;
+      bottom: auto;
+      max-width: none;
+      margin: -8.5rem var(--gutter) 0;
+    }
+    .sg-arch {
+      position: relative;
+      right: auto;
+      bottom: auto;
+      width: auto;
+      margin: 28px var(--gutter) 0;
+      padding: 38vw 24px 36px;
+      background: var(--mocha);
+    }
+    .sg-signet {
+      position: relative;
+      right: auto;
+      bottom: auto;
+      width: 70%;
+      margin: 0 auto 40px var(--gutter);
     }
   }
 </style>
