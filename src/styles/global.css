@@ -649,3 +649,29 @@ b {
   transform: none !important;
   clip-path: none !important;
 }
+
+/* ——— Überlappende Headlines (einfarbig) ———
+   Die Headline ragt um --ol in das Bild links daneben (Desktop) bzw. mit einer
+   halben Zeile in das Bild darüber (Mobile). Die Farbe bleibt einheitlich. */
+.ol {
+  position: relative;
+  z-index: 3;
+  --ol: clamp(56px, 7vw, 132px);
+  --ol-pad: var(--gutter);
+}
+
+.ol .line > span {
+  display: inline-block;
+}
+
+@media (max-width: 999px) {
+  .ol {
+    margin-top: calc(-1 * var(--ol-pad-top, var(--section)) - 0.5em);
+  }
+}
+
+@media (min-width: 1000px) {
+  .ol {
+    margin-left: calc(-1 * (var(--ol) + var(--ol-pad)));
+  }
+}

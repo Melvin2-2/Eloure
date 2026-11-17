@@ -111,6 +111,23 @@ function init() {
     if (img) gsap.fromTo(img, { scale: 1.14 }, { scale: 1, ease: 'none', scrollTrigger: { ...st } });
   });
 
+  // 6a2) Passepartout-Hero: Rahmen öffnet sich beim Scrollen, Bild zoomt zurück
+  gsap.utils.toArray<HTMLElement>('[data-ph-frame]').forEach((sec) => {
+    const el = sec.querySelector<HTMLElement>('[data-ph-frame-img]');
+    if (!el) return;
+    const from = getComputedStyle(el).clipPath;
+    const st = { trigger: sec, start: 'top top', end: 'bottom 30%', scrub: 0.6 };
+    gsap.fromTo(el, { clipPath: from }, { clipPath: 'inset(0px 0px 0px 0px)', ease: 'none', scrollTrigger: st });
+    const img = el.querySelector('img');
+    if (img) gsap.fromTo(img, { scale: 1.08 }, { scale: 1, ease: 'none', scrollTrigger: { ...st } });
+  });
+
+  // 6a3) Versetztes Detailbild schwebt schneller als der Rest
+  gsap.utils.toArray<HTMLElement>('[data-drift-y]').forEach((el) => {
+    const d = Number(el.dataset.driftY || -15);
+    gsap.fromTo(el, { yPercent: 0 }, { yPercent: d, ease: 'none', scrollTrigger: { trigger: el.closest('section') || el, start: 'top top', end: 'bottom top', scrub: true } });
+  });
+
   // 6b) Ruhepunkt: Raum öffnet sich, Detailbilder ziehen weg, Wort + Karte kommen
   mm.add('(min-width: 900px)', () => {
     gsap.utils.toArray<HTMLElement>('[data-calm]').forEach((sec) => {

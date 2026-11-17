@@ -46,12 +46,12 @@ import imgCost from '../assets/shoot/caro-telefon.jpg';
 
   <TrustBand />
 
-  <section class="cost bg-mocha">
+  <section class="cost bg-paper">
     <div class="cost-img" data-anim="img">
       <Image src={imgCost} alt="Caro am Telefon in der Studio-Lounge" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 50vw, 100vw" />
     </div>
     <div class="cost-content">
-      <Lines lines={['Und was kostet', 'es insgesamt?']} class="cost-title" />
+      <Lines lines={['Und was kostet', 'es insgesamt?']} class="ol cost-title" />
       <p class="lead reveal">Eine ehrliche Frage, die eine ehrliche Antwort verdient.</p>
       <p class="reveal">
         Damit möglichst alle Haarwurzeln in ihrer Wachstumsphase erwischt werden, braucht es mehrere Sitzungen. Wie viele, ist <strong>sehr individuell</strong> – Zone, Haardichte, Hauttyp und Hormone spielen mit. Am Anfang liegen meist 4 bis 8
@@ -159,7 +159,7 @@ import imgCost from '../assets/shoot/caro-telefon.jpg';
   }
 
   .cost-content p:not(.lead) {
-    color: rgba(246, 241, 234, 0.82);
+    color: var(--ink-2);
   }
 
   .cost-content .btn-row {

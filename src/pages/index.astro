@@ -72,7 +72,7 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
       </figure>
     </div>
     <div class="u-text">
-      <Lines lines={['Keine leeren', 'Versprechen.']} class="u-title" />
+      <Lines lines={['Keine leeren', 'Versprechen.']} class="ol u-title" />
       <p class="lead reveal">
         Bevor wir lasern, sagen wir dir ehrlich, was bei deiner Haut realistisch ist – und was nicht.
       </p>
@@ -209,11 +209,18 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
     z-index: 2;
     left: var(--gutter);
     right: var(--gutter);
-    bottom: var(--gutter);
+    top: var(--gutter);
     margin: 0;
     padding: 18px 22px;
     max-width: 380px;
     background: rgba(36, 25, 19, 0.62);
+  }
+
+  @media (min-width: 1000px) {
+    .u-proof {
+      top: auto;
+      bottom: var(--gutter);
+    }
   }
 
   .u-proof blockquote {

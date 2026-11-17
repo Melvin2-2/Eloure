@@ -43,7 +43,6 @@ const kombiSub: Record<string, string> = {
           <div class="row kombi">
             {pick[g.id].kombi.map(svc).map((s) => (
               <a class="card k reveal" href={`/termin?behandlung=${s.id}${q}`}>
-                <span class="badge">Kombi</span>
                 <span class="name">{s.name}</span>
                 {kombiSub[s.id] && <span class="sub">{kombiSub[s.id]}</span>}
                 <span class="foot">
@@ -52,7 +51,7 @@ const kombiSub: Record<string, string> = {
                     {chf(price(s.price!))}
                   </span>
                   <span class="go">
-                    Buchen <Icon name="arrow" size={18} />
+                    Buchen <Icon name="arrow" size={16} />
                   </span>
                 </span>
               </a>
@@ -61,7 +60,6 @@ const kombiSub: Record<string, string> = {
           <div class="row top">
             {pick[g.id].top.map(svc).map((s) => (
               <a class="card t reveal" href={`/termin?behandlung=${s.id}${q}`}>
-                <span class="badge">Topseller</span>
                 <span class="name">{s.name}</span>
                 <span class="foot">
                   <span class="price">
@@ -69,7 +67,7 @@ const kombiSub: Record<string, string> = {
                     {chf(price(s.price!))}
                   </span>
                   <span class="go">
-                    Buchen <Icon name="arrow" size={18} />
+                    Buchen <Icon name="arrow" size={16} />
                   </span>
                 </span>
               </a>
@@ -161,26 +159,12 @@ const kombiSub: Record<string, string> = {
 
   .k {
     background: var(--lime);
-    min-height: 250px;
+    min-height: 230px;
   }
 
   .t {
     background: var(--cream);
-    min-height: 210px;
-  }
-
-  .badge {
-    align-self: flex-start;
-    margin-bottom: 14px;
-    font-size: 0.86rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--mocha);
-  }
-
-  .k .badge {
-    color: var(--ink);
+    min-height: 200px;
   }
 
   .name {
@@ -235,12 +219,13 @@ const kombiSub: Record<string, string> = {
   }
 
   .go {
+    flex: none;
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    min-height: 52px;
-    padding: 0 20px;
-    font-size: 0.95rem;
+    min-height: 46px;
+    padding: 0 18px;
+    font-size: 0.85rem;
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -249,14 +234,17 @@ const kombiSub: Record<string, string> = {
     transition: background 0.3s;
   }
 
-  .t .go {
-    background: var(--lime);
-    color: var(--ink);
-  }
-
   .card:hover .go {
     background: var(--mocha);
     color: var(--cream);
+  }
+
+  .go :global(svg) {
+    transition: transform 0.3s var(--ease);
+  }
+
+  .card:hover .go :global(svg) {
+    transform: translateX(4px);
   }
 
   .more {

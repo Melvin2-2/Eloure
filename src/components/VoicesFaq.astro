@@ -1,6 +1,6 @@
 ---
-// Kombi aus Kundenstimmen und den wichtigsten Fragen – bewusst kurz.
-// Die ausführlichen Antworten stehen auf /faq.
+// Stimmen & Fragen: ein grosses Zitat sofort sichtbar, weitere per Thema wählbar,
+// darunter nur die vier wichtigsten Fragen (zugeklappt). Details auf /faq.
 import { Image } from 'astro:assets';
 import Icon from './Icon.astro';
 import Lines from './Lines.astro';
@@ -9,14 +9,18 @@ import { googleRating, pickReview } from '../data/reviews';
 import { shortFaqs } from '../data/faq';
 import img from '../assets/shoot/beratung-kundin.jpg';
 
-
-const quotes = ['Cindy A.', 'Julia F.', 'Dina G.'].map(pickReview);
+const quotes = [
+  { label: 'Nervosität', r: pickReview('Cindy A.') },
+  { label: 'Ergebnis', r: pickReview('Julia F.') },
+  { label: 'Beratung', r: pickReview('Dina G.') },
+  { label: 'Wohlfühlen', r: pickReview('Natalie B.') },
+];
 const rating = googleRating.rating.toFixed(1).replace('.', ',');
 ---
 
-<section class="vf bg-dark">
+<section class="vf bg-lime" data-voices>
   <div class="pic" data-anim="img">
-    <Image src={img} alt="Kundin lacht im Beratungsgespräch im Eloure Studio" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 42vw, 100vw" />
+    <Image src={img} alt="Kundin lacht im Beratungsgespräch im Eloure Studio" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 40vw, 100vw" />
     <a class="score glass" href={site.googleReviewsUrl} target="_blank" rel="noopener" aria-label={`${rating} von 5 Sternen aus ${googleRating.count} Google-Bewertungen`}>
       <span class="num">{rating}</span>
       <span class="meta">
@@ -27,35 +31,48 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
   </div>
 
   <div class="content">
-    <Lines lines={['Unsicher?', 'Ganz normal.']} class="vf-title" />
-    <p class="lead reveal">Das sagen Kundinnen nach dem ersten Mal – und das fragen uns fast alle vorher.</p>
+    <Lines lines={['Unsicher?', 'Ganz normal.']} class="ol vf-title" />
 
-    <ul class="quotes">
+    <div class="quotes reveal" aria-live="polite">
       {
-        quotes.map((r, i) => (
-          <li class="reveal" style={`--d:${i * 80}ms`}>
-            <blockquote>«{r.short}»</blockquote>
-            <span class="who">{r.name} · Google</span>
-          </li>
+        quotes.map((q, i) => (
+          <figure class:list={['q', { 'is-active': i === 0 }]} data-q aria-hidden={i === 0 ? 'false' : 'true'}>
+            <blockquote>«{q.r.short}»</blockquote>
+            <figcaption>
+              <span class="stars" aria-hidden="true">★★★★★</span> {q.r.name} · Google
+            </figcaption>
+          </figure>
         ))
       }
-    </ul>
+    </div>
 
-    <dl class="faq">
+    <div class="topics reveal" role="tablist" aria-label="Stimmen nach Thema">
+      {
+        quotes.map((q, i) => (
+          <button type="button" role="tab" aria-selected={String(i === 0)} data-q-tab={i}>
+            {q.label}
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="faq reveal">
       {
         shortFaqs.map((f) => (
-          <div class="reveal">
-            <dt>{f.q}</dt>
-            <dd>{f.a}</dd>
-          </div>
+          <details>
+            <summary>
+              {f.q}
+              <Icon name="plus" size={18} />
+            </summary>
+            <p>{f.a}</p>
+          </details>
         ))
       }
-    </dl>
+    </div>
 
     <div class="btn-row reveal">
-      <a class="btn btn-primary" href="/termin?behandlung=beratungsgespraech">Kostenlos beraten lassen<span class="arrow"><Icon name="arrow" size={16} /></span></a>
+      <a class="btn btn-dark" href="/termin?behandlung=beratungsgespraech">Kostenlos beraten lassen<span class="arrow"><Icon name="arrow" size={16} /></span></a>
       <a class="text-link" href="/faq">Alle Fragen</a>
-      <a class="text-link" href={site.googleReviewsUrl} target="_blank" rel="noopener">Alle Bewertungen</a>
     </div>
   </div>
 </section>
@@ -68,7 +85,7 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
   .pic {
     position: relative;
     overflow: hidden;
-    min-height: 112vw;
+    min-height: 105vw;
   }
 
   .pic :global(img) {
@@ -77,17 +94,15 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 22%;
+    object-position: 35% 22%;
   }
 
   @media (min-width: 1000px) {
     .vf {
-      grid-template-columns: 0.85fr 1.15fr;
+      grid-template-columns: 0.8fr 1.2fr;
+      min-height: 100vh;
     }
     .vf .pic {
-      position: sticky;
-      top: 0;
-      height: 100vh;
       min-height: 0;
     }
   }
@@ -103,6 +118,7 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
     padding: 14px 20px;
     text-decoration: none;
     color: var(--cream);
+    background: rgba(36, 25, 19, 0.55);
   }
 
   @media (min-width: 1000px) {
@@ -116,10 +132,8 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
     font-family: var(--serif);
     font-weight: var(--display-weight);
     font-stretch: var(--display-stretch);
-    text-transform: uppercase;
-    font-size: 3rem;
+    font-size: 2.8rem;
     line-height: 0.9;
-    letter-spacing: var(--display-ls);
   }
 
   .meta {
@@ -129,73 +143,170 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
     font-size: 0.95rem;
   }
 
-  .stars {
+  .score .stars {
     color: var(--lime);
     letter-spacing: 3px;
   }
 
   .content {
     padding: var(--section) var(--gutter);
-    max-width: 860px;
+    max-width: 880px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .content :global(.vf-title) {
-    font-size: clamp(2.8rem, 6vw, 6.2rem);
+    font-size: clamp(2.8rem, 6vw, 6.4rem);
     line-height: 0.95;
+    margin-bottom: clamp(28px, 3vw, 44px);
   }
 
   .quotes {
-    list-style: none;
-    margin: 40px 0 0;
-    padding: 0;
     display: grid;
-    gap: 0;
-    border-top: 1px solid var(--line-light);
   }
 
-  .quotes li {
-    padding: 22px 0;
-    border-bottom: 1px solid var(--line-light);
+  .q {
+    grid-area: 1 / 1;
+    margin: 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(14px);
+    transition:
+      opacity 0.55s var(--ease),
+      transform 0.55s var(--ease),
+      visibility 0.55s;
+  }
+
+  .q.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
   }
 
   blockquote {
-    margin: 0 0 8px;
-    font-size: clamp(1.25rem, 1.8vw, 1.5rem);
-    line-height: 1.32;
-    color: var(--cream);
+    margin: 0 0 16px;
+    font-size: clamp(1.55rem, 2.5vw, 2.4rem);
+    font-weight: 500;
+    line-height: 1.22;
+    letter-spacing: -0.01em;
+    color: var(--ink);
   }
 
-  .who {
-    font-size: 0.92rem;
-    color: rgba(246, 241, 234, 0.65);
+  figcaption {
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+
+  figcaption .stars {
+    color: var(--espresso);
+    letter-spacing: 2px;
+    margin-right: 6px;
+  }
+
+  .topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 28px 0 44px;
+  }
+
+  .topics button {
+    padding: 10px 16px;
+    border: 1px solid rgba(47, 33, 25, 0.35);
+    background: transparent;
+    color: var(--ink);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      background 0.3s,
+      color 0.3s,
+      border-color 0.3s;
+  }
+
+  .topics button:hover {
+    border-color: var(--espresso);
+  }
+
+  .topics button[aria-selected='true'] {
+    background: var(--espresso);
+    border-color: var(--espresso);
+    color: var(--lime);
   }
 
   .faq {
-    margin: 48px 0 44px;
-    display: grid;
-    gap: 28px 40px;
+    border-top: 1px solid rgba(47, 33, 25, 0.25);
+    margin-bottom: 36px;
   }
 
-  @media (min-width: 700px) {
-    .faq {
-      grid-template-columns: 1fr 1fr;
-    }
+  .faq details {
+    border-bottom: 1px solid rgba(47, 33, 25, 0.25);
   }
 
-  dt {
+  .faq summary {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 16px 0;
+    cursor: pointer;
     font-weight: 700;
-    font-size: 1.15rem;
-    color: var(--lime);
-    margin-bottom: 6px;
+    font-size: 1.08rem;
+    color: var(--ink);
   }
 
-  dd {
-    margin: 0;
-    color: rgba(246, 241, 234, 0.82);
-    line-height: 1.55;
+  .faq summary::-webkit-details-marker {
+    display: none;
   }
 
-  .btn-row .text-link {
-    color: var(--cream);
+  .faq summary :global(svg) {
+    flex: none;
+    transition: transform 0.3s var(--ease);
+  }
+
+  .faq details[open] summary :global(svg) {
+    transform: rotate(45deg);
+  }
+
+  .faq p {
+    margin: 0 0 18px;
+    color: var(--ink-2);
+    max-width: 38em;
   }
 </style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-voices]').forEach((root) => {
+    const qs = [...root.querySelectorAll<HTMLElement>('[data-q]')];
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-q-tab]')];
+    let i = 0;
+    let timer: number | undefined;
+    const show = (n: number) => {
+      i = (n + qs.length) % qs.length;
+      qs.forEach((q, j) => {
+        q.classList.toggle('is-active', j === i);
+        q.setAttribute('aria-hidden', String(j !== i));
+      });
+      tabs.forEach((t, j) => t.setAttribute('aria-selected', String(j === i)));
+    };
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const stop = () => window.clearInterval(timer);
+    const auto = () => {
+      if (reduce) return;
+      stop();
+      timer = window.setInterval(() => show(i + 1), 6500);
+    };
+    tabs.forEach((t, j) =>
+      t.addEventListener('click', () => {
+        stop();
+        show(j);
+      }),
+    );
+    new IntersectionObserver((e) => (e[0].isIntersecting ? auto() : stop())).observe(root);
+  });
+</script>
