@@ -20,7 +20,9 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
 
 <section class="vf bg-lime" data-voices>
   <div class="pic" data-anim="img">
-    <Image src={img} alt="Kundin lacht im Beratungsgespräch im Eloure Studio" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 40vw, 100vw" />
+    <div class="flip">
+      <Image src={img} alt="Kundin lacht im Beratungsgespräch im Eloure Studio" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 40vw, 100vw" />
+    </div>
     <a class="score glass" href={site.googleReviewsUrl} target="_blank" rel="noopener" aria-label={`${rating} von 5 Sternen aus ${googleRating.count} Google-Bewertungen`}>
       <span class="num">{rating}</span>
       <span class="meta">
@@ -88,6 +90,11 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
     min-height: 105vw;
   }
 
+  .flip {
+    position: absolute;
+    inset: 0;
+  }
+
   .pic :global(img) {
     position: absolute;
     inset: 0;
@@ -102,7 +109,15 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
       grid-template-columns: 0.8fr 1.2fr;
       min-height: 100vh;
     }
+    .vf .content {
+      justify-content: flex-start;
+      padding-top: clamp(48px, 5vw, 80px);
+    }
     .vf .pic {
+      position: sticky;
+      top: 0;
+      align-self: start;
+      height: 100vh;
       min-height: 0;
     }
   }
@@ -241,6 +256,20 @@ const rating = googleRating.rating.toFixed(1).replace('.', ',');
   .faq {
     border-top: 1px solid rgba(47, 33, 25, 0.25);
     margin-bottom: 36px;
+    interpolate-size: allow-keywords;
+  }
+
+  /* sanftes Auf- und Zuklappen (wo der Browser es unterstützt) */
+  .faq details::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition:
+      block-size 0.45s var(--ease),
+      content-visibility 0.45s allow-discrete;
+  }
+
+  .faq details[open]::details-content {
+    block-size: auto;
   }
 
   .faq details {

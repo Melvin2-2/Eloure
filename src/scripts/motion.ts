@@ -122,6 +122,18 @@ function init() {
     if (img) gsap.fromTo(img, { scale: 1.08 }, { scale: 1, ease: 'none', scrollTrigger: { ...st } });
   });
 
+  // 6a2b) Bogen-Form: steigt beim Scrollen auf und wird zum Rechteck
+  gsap.utils.toArray<HTMLElement>('[data-ph-shape]').forEach((sec) => {
+    const form = sec.querySelector<HTMLElement>('[data-ph-shape-form]');
+    const img = sec.querySelector<HTMLElement>('[data-ph-shape-img]');
+    const st = { trigger: sec, start: 'top top', end: 'bottom top', scrub: 0.8 };
+    if (img) gsap.fromTo(img, { scale: 1.12, yPercent: 0 }, { scale: 1, yPercent: 8, ease: 'none', scrollTrigger: st });
+    if (form) {
+      const r = getComputedStyle(form).borderRadius;
+      gsap.fromTo(form, { borderRadius: r, yPercent: 0 }, { borderRadius: '0px 0px 0px 0px', yPercent: -12, ease: 'none', scrollTrigger: { ...st } });
+    }
+  });
+
   // 6a3) Versetztes Detailbild schwebt schneller als der Rest
   gsap.utils.toArray<HTMLElement>('[data-drift-y]').forEach((el) => {
     const d = Number(el.dataset.driftY || -15);
@@ -192,8 +204,20 @@ function init() {
 }
 
 // Header: transparent über dunklem Hero, fest beim Scrollen
+// und blendet sich beim Runterscrollen aus, beim Hochscrollen wieder ein
 const header = document.querySelector<HTMLElement>('[data-header]');
-const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 24);
+let lastY = window.scrollY;
+const onScroll = () => {
+  const y = window.scrollY;
+  header?.classList.toggle('is-scrolled', y > 24);
+  if (header && !header.classList.contains('menu-open')) {
+    const down = y > lastY + 4;
+    const up = y < lastY - 4;
+    if (down && y > 160) header.classList.add('is-hidden');
+    else if (up || y <= 160) header.classList.remove('is-hidden');
+  }
+  if (Math.abs(y - lastY) > 4) lastY = y;
+};
 onScroll();
 window.addEventListener('scroll', onScroll, { passive: true });
 

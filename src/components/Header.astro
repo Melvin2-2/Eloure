@@ -102,7 +102,12 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     color: var(--cream);
     transition:
       background 0.4s ease,
-      box-shadow 0.4s ease;
+      box-shadow 0.4s ease,
+      transform 0.45s var(--ease);
+  }
+
+  .site-header:global(.is-hidden) {
+    transform: translateY(-100%);
   }
 
   .is-over {

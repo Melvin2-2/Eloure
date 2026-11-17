@@ -1,9 +1,9 @@
 ---
 // Unterseiten-Hero. Varianten:
-//  editorial – helle Fläche, Headline, darunter breites Bild
-//  frame     – Vollbild im hellen Passepartout, Rahmen öffnet sich beim Scrollen
-//  split     – Text links, gerahmtes Hochformat rechts, Headline überlappt das Bild
-//  collage   – Headline überlappt ein grosses Bild, kleines Detailbild schwebt versetzt
+//  frame – Vollbild im Passepartout (dunkel oder hell). Links bündig, rechts und
+//          unten mit Rand; der Rahmen öffnet sich beim Scrollen bis randlos.
+//  shape – Bild randlos, darauf eine dunkelbraune Bogen-Form mit Text und Buttons,
+//          die beim Scrollen aufsteigt und sich zum Rechteck wandelt.
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import Lines from './Lines.astro';
@@ -13,48 +13,30 @@ interface Props {
   sub?: string;
   lead?: string;
   image: ImageMetadata;
-  image2?: ImageMetadata;
   alt?: string;
   position?: string;
-  variant?: 'editorial' | 'frame' | 'split' | 'collage';
+  variant?: 'frame' | 'shape';
+  frame?: 'dark' | 'light';
 }
-const { title, sub, lead, image, image2, alt = '', position = 'center', variant = 'frame' } = Astro.props;
+const { title, sub, lead, image, alt = '', position = 'center', variant = 'frame', frame = 'dark' } = Astro.props;
 const hasSlot = Astro.slots.has('default');
 ---
 
 {
-  variant === 'editorial' && (
-    <section class="ph ph-editorial bg-paper">
-      <div class="wrap ph-top">
-        <Lines as="h1" class="ph-title" lines={title} />
-        <div class="ph-meta">
-          {sub && <p class="ph-sub" data-anim="up">{sub}</p>}
-          {lead && <p class="ph-lead" data-anim="up">{lead}</p>}
-          {hasSlot && <div class="ph-actions" data-anim="up"><slot /></div>}
-        </div>
-      </div>
-      <figure class="ph-figure" data-hero-frame>
-        <Image src={image} alt={alt} widths={[800, 1200, 1600, 2000, 2400]} sizes="100vw" loading="eager" fetchpriority="high" style={`object-position:${position}`} />
-      </figure>
-    </section>
-  )
-}
-
-{
   variant === 'frame' && (
-    <section class="ph ph-frame bg-paper" data-ph-frame>
+    <section class:list={['ph ph-frame', frame === 'light' ? 'bg-paper is-light' : 'bg-dark']} data-ph-frame>
       <div class="fr-img" data-ph-frame-img>
         <Image src={image} alt={alt} widths={[900, 1400, 2000, 2400]} sizes="100vw" loading="eager" fetchpriority="high" style={`object-position:${position}`} />
         <div class="fr-shade" />
       </div>
       <div class="fr-content">
         <div class="fr-left">
-          {sub && <p class="ph-sub on-img" data-anim="up">{sub}</p>}
-          <Lines as="h1" class="ph-title fr-title" lines={title} />
+          {sub && <p class="ph-sub" data-anim="up">{sub}</p>}
+          <Lines as="h1" class="ph-title" lines={title} />
         </div>
         <div class="fr-right" data-anim="up">
-          {lead && <p class="ph-lead on-img">{lead}</p>}
-          {hasSlot && <div class="ph-actions on-dark"><slot /></div>}
+          {lead && <p class="ph-lead">{lead}</p>}
+          {hasSlot && <div class="ph-actions"><slot /></div>}
         </div>
       </div>
     </section>
@@ -62,146 +44,82 @@ const hasSlot = Astro.slots.has('default');
 }
 
 {
-  variant === 'split' && (
-    <section class="ph ph-split bg-paper">
-      <div class="sp-text">
-        {sub && <p class="ph-sub" data-anim="up">{sub}</p>}
-        <Lines as="h1" class="ph-title sp-title" lines={title} />
-        {lead && <p class="ph-lead" data-anim="up">{lead}</p>}
-        {hasSlot && <div class="ph-actions" data-anim="up"><slot /></div>}
+  variant === 'shape' && (
+    <section class="ph ph-shape bg-dark" data-ph-shape>
+      <div class="sh-img">
+        <Image src={image} alt={alt} widths={[900, 1400, 2000, 2400]} sizes="100vw" loading="eager" fetchpriority="high" style={`object-position:${position}`} data-ph-shape-img />
+        <div class="sh-shade" />
       </div>
-      <figure class="sp-img" data-anim="img">
-        <Image src={image} alt={alt} widths={[700, 1100, 1600, 2000]} sizes="(min-width: 1000px) 46vw, 100vw" loading="eager" fetchpriority="high" style={`object-position:${position}`} data-parallax="8" />
-      </figure>
-    </section>
-  )
-}
-
-{
-  variant === 'collage' && (
-    <section class="ph ph-collage bg-paper">
-      <div class="co-text">
+      <div class="sh-title">
         {sub && <p class="ph-sub" data-anim="up">{sub}</p>}
-        <Lines as="h1" class="ph-title co-title" lines={title} />
-        {lead && <p class="ph-lead" data-anim="up">{lead}</p>}
-        {hasSlot && <div class="ph-actions" data-anim="up"><slot /></div>}
+        <Lines as="h1" class="ph-title" lines={title} />
       </div>
-      <figure class="co-big" data-anim="img">
-        <Image src={image} alt={alt} widths={[900, 1400, 2000]} sizes="(min-width: 1000px) 58vw, 100vw" loading="eager" fetchpriority="high" style={`object-position:${position}`} data-parallax="8" />
-      </figure>
-      {
-        image2 && (
-          <figure class="co-small" data-drift-y="-18">
-            <Image src={image2} alt="" widths={[400, 700]} sizes="(min-width: 1000px) 20vw, 40vw" />
-          </figure>
-        )
-      }
+      <div class="sh-form" data-ph-shape-form>
+        <div class="sh-inner" data-anim="up">
+          {lead && <p class="ph-lead">{lead}</p>}
+          {hasSlot && <div class="ph-actions"><slot /></div>}
+        </div>
+      </div>
     </section>
   )
 }
 
 <style>
-  /* ——— gemeinsame Elemente ——— */
+  /* ——— gemeinsam ——— */
   .ph :global(.ph-title) {
-    font-size: clamp(2.8rem, 7.4vw, 8.4rem);
+    font-size: clamp(2.3rem, 5.4vw, 6.4rem);
     line-height: 0.92;
     margin: 0;
+    color: var(--cream);
   }
 
   .ph-sub {
-    margin: 0;
+    margin: 0 0 18px;
     font-size: 0.9rem;
     font-weight: 700;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--mocha);
+    color: var(--lime);
   }
 
   .ph-lead {
-    margin: 0;
+    margin: 0 0 24px;
     max-width: 34em;
-    font-size: clamp(1.1rem, 1.35vw, 1.28rem);
+    font-size: clamp(1.05rem, 1.25vw, 1.2rem);
     line-height: 1.55;
-    color: var(--ink-2);
+    color: rgba(246, 241, 234, 0.9);
   }
 
   .ph-actions :global(.btn-ghost) {
-    --btn-fg: var(--ink);
-    --btn-border: var(--ink);
-  }
-
-  .ph-actions.on-dark :global(.btn-ghost) {
     --btn-fg: var(--cream);
     --btn-border: rgba(246, 241, 234, 0.6);
   }
 
-  .on-img {
-    color: var(--cream);
+  .ph-actions :global(.btn-ghost:hover) {
+    --btn-bg: var(--cream);
+    --btn-fg: var(--espresso);
+    --btn-border: var(--cream);
   }
 
-  .ph-sub.on-img {
-    color: var(--lime);
-  }
-
-  /* ——— editorial ——— */
-  .ph-editorial {
-    padding-top: calc(var(--header-h) + clamp(40px, 5.5vw, 96px));
-  }
-
-  .ph-editorial :global(.ph-title) {
-    color: var(--ink);
-  }
-
-  .ph-meta {
-    display: grid;
-    gap: 18px 56px;
-    margin-top: clamp(28px, 3.6vw, 52px);
-  }
-
-  @media (min-width: 1000px) {
-    .ph-meta {
-      grid-template-columns: minmax(180px, 0.7fr) 1.5fr auto;
-      align-items: start;
-    }
-    .ph-meta .ph-sub {
-      padding-top: 6px;
-    }
-  }
-
-  .ph-figure {
-    position: relative;
-    margin: clamp(40px, 4.5vw, 72px) 0 0;
-    height: clamp(380px, 74vh, 860px);
-    overflow: hidden;
-  }
-
-  .ph-figure :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  @media (max-width: 999px) {
-    .ph-figure {
-      height: auto;
-      aspect-ratio: 4 / 5;
-      max-height: 78vh;
-    }
+  .ph-actions :global(.btn-primary) {
+    --btn-border: var(--lime);
   }
 
   /* ——— frame ——— */
   .ph-frame {
+    --fr-top: clamp(14px, 2vw, 32px);
+    --fr-side: clamp(28px, 6vw, 112px);
     position: relative;
-    height: 100svh;
-    min-height: 640px;
-    max-height: 1100px;
+    height: calc(100svh - var(--header-h));
+    min-height: 600px;
+    max-height: 1000px;
   }
 
   .fr-img {
     position: absolute;
     inset: 0;
     overflow: hidden;
-    clip-path: inset(var(--header-h) var(--gutter) var(--gutter) var(--gutter));
+    clip-path: inset(var(--fr-top) var(--fr-side) var(--fr-side) 0);
   }
 
   .fr-img :global(img) {
@@ -213,215 +131,138 @@ const hasSlot = Astro.slots.has('default');
   .fr-shade {
     position: absolute;
     inset: 0;
-    background: linear-gradient(0deg, rgba(36, 25, 19, 0.72) 0%, rgba(36, 25, 19, 0.25) 42%, rgba(36, 25, 19, 0) 70%);
+    background: linear-gradient(0deg, rgba(36, 25, 19, 0.75) 0%, rgba(36, 25, 19, 0.28) 42%, rgba(36, 25, 19, 0) 70%);
   }
 
   .fr-content {
     position: absolute;
-    left: calc(var(--gutter) * 2);
-    right: calc(var(--gutter) * 2);
-    bottom: calc(var(--gutter) * 2);
     z-index: 2;
+    left: calc(var(--gutter) * 1.5);
+    right: calc(var(--fr-side) + var(--gutter));
+    bottom: calc(var(--fr-side) + var(--gutter));
     display: grid;
-    gap: 24px 64px;
+    gap: 24px 56px;
     align-items: end;
-  }
-
-  .fr-left .ph-sub {
-    margin-bottom: 18px;
-  }
-
-  .fr-content :global(.fr-title) {
-    color: var(--cream);
-    font-size: clamp(2.3rem, 5.4vw, 6.4rem);
   }
 
   .fr-left {
     min-width: 0;
   }
 
-  .fr-right .ph-lead {
-    margin-bottom: 24px;
-    color: rgba(246, 241, 234, 0.9);
-  }
-
   @media (min-width: 1000px) {
     .fr-content {
-      grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
     }
   }
 
   @media (max-width: 999px) {
+    .ph-frame {
+      --fr-side: 18px;
+      height: calc(100svh - var(--header-h));
+    }
     .fr-shade {
       background: linear-gradient(0deg, rgba(36, 25, 19, 0.85) 0%, rgba(36, 25, 19, 0.45) 55%, rgba(36, 25, 19, 0.1) 85%);
     }
+    .fr-content {
+      left: var(--gutter);
+    }
   }
 
-  /* ——— split ——— */
-  .ph-split {
+  /* ——— shape ——— */
+  .ph-shape {
     position: relative;
-    display: grid;
-  }
-
-  .sp-text {
-    position: relative;
-    z-index: 3;
-    padding: calc(var(--header-h) + clamp(40px, 6vw, 96px)) var(--gutter) clamp(48px, 6vw, 96px);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 26px;
-  }
-
-  .sp-text :global(.sp-title) {
-    color: var(--ink);
-  }
-
-  .sp-img {
-    position: relative;
-    margin: 0;
+    height: calc(100svh - var(--header-h));
+    min-height: 620px;
+    max-height: 1000px;
     overflow: hidden;
-    aspect-ratio: 4 / 5;
-    max-height: 80vh;
-    margin-inline: var(--gutter);
   }
 
-  .sp-img :global(img) {
+  .sh-img {
     position: absolute;
-    inset: -6% 0;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .sh-img :global(img) {
     width: 100%;
-    height: 112%;
+    height: 100%;
     object-fit: cover;
   }
 
-  @media (min-width: 1000px) {
-    .ph-split {
-      grid-template-columns: 1fr 0.85fr;
-      min-height: 100svh;
-    }
-    .sp-text :global(.sp-title) {
-      width: max-content;
-      max-width: 62vw;
-      margin-right: -16vw;
-    }
-    .sp-img {
-      aspect-ratio: auto;
+  .sh-shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(36, 25, 19, 0.55) 0%, rgba(36, 25, 19, 0.15) 45%, rgba(36, 25, 19, 0) 65%);
+  }
+
+  .sh-title {
+    position: absolute;
+    z-index: 2;
+    left: var(--gutter);
+    bottom: clamp(48px, 7vw, 110px);
+    max-width: 58vw;
+  }
+
+  .sh-form {
+    position: absolute;
+    z-index: 3;
+    right: clamp(24px, 7vw, 120px);
+    bottom: 0;
+    width: clamp(320px, 31vw, 480px);
+    height: 74%;
+    background: var(--espresso);
+    border-radius: 999px 999px 0 0;
+    display: flex;
+    align-items: flex-end;
+    will-change: transform, border-radius;
+  }
+
+  .sh-inner {
+    padding: 0 clamp(28px, 3vw, 48px) clamp(40px, 5vw, 72px);
+  }
+
+  .sh-inner :global(.btn-row) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  @media (max-width: 999px) {
+    .ph-shape {
+      height: auto;
+      min-height: 0;
       max-height: none;
-      margin: calc(var(--header-h) + 24px) var(--gutter) var(--gutter) 0;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 0;
     }
-  }
-
-  @media (max-width: 999px) {
-    .sp-img {
-      order: -1;
-      margin-top: calc(var(--header-h) + 8px);
+    .sh-img {
+      position: relative;
+      inset: auto;
+      height: 100vw;
+      max-height: 560px;
     }
-    .sp-text {
-      padding-top: 0;
-      padding-bottom: 32px;
+    .sh-shade {
+      background: linear-gradient(0deg, rgba(36, 25, 19, 0.7) 0%, rgba(36, 25, 19, 0) 60%);
     }
-    .sp-text :global(.sp-title) {
-      margin-top: -0.55em;
+    .sh-title {
+      position: relative;
+      left: auto;
+      bottom: auto;
+      max-width: none;
+      margin: -9.5rem var(--gutter) 0;
     }
-    .sp-text .ph-sub {
-      order: 2;
+    .sh-form {
+      position: relative;
+      right: auto;
+      width: auto;
+      height: auto;
+      margin: 32px var(--gutter) 0;
+      padding-top: 64px;
+      border-radius: 200px 200px 0 0;
+      background: var(--mocha);
     }
-  }
-
-  /* ——— collage ——— */
-  .ph-collage {
-    position: relative;
-    display: grid;
-    padding-bottom: clamp(48px, 7vw, 120px);
-  }
-
-  .co-text {
-    position: relative;
-    z-index: 3;
-    padding: calc(var(--header-h) + clamp(40px, 6vw, 96px)) var(--gutter) 32px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  .co-text :global(.co-title) {
-    color: var(--ink);
-  }
-
-  .co-big {
-    position: relative;
-    margin: 0 var(--gutter);
-    overflow: hidden;
-    aspect-ratio: 4 / 3;
-  }
-
-  @media (max-width: 999px) {
-    .co-big {
-      order: -2;
-      margin-top: calc(var(--header-h) + 8px);
-      aspect-ratio: 4 / 4.2;
-    }
-    .co-small {
-      order: -1;
-    }
-    .co-text {
-      padding-top: 8px;
-    }
-    .co-text .ph-sub {
-      order: 2;
-    }
-  }
-
-  .co-big :global(img),
-  .co-small :global(img) {
-    position: absolute;
-    inset: -6% 0;
-    width: 100%;
-    height: 112%;
-    object-fit: cover;
-  }
-
-  .co-small {
-    position: relative;
-    z-index: 4;
-    width: 34vw;
-    aspect-ratio: 3 / 4;
-    margin: -22vw var(--gutter) 0 auto;
-    overflow: hidden;
-    outline: 10px solid var(--paper);
-  }
-
-  @media (min-width: 1000px) {
-    .ph-collage {
-      grid-template-columns: 0.95fr 1.05fr;
-      grid-template-rows: auto auto;
-      min-height: 100svh;
-      column-gap: 0;
-    }
-    .co-text {
-      grid-column: 1;
-      grid-row: 1 / 3;
-      padding-right: 0;
-      justify-content: center;
-    }
-    .co-text :global(.co-title) {
-      width: max-content;
-      max-width: 62vw;
-      margin-right: -14vw;
-    }
-    .co-big {
-      grid-column: 2;
-      grid-row: 1;
-      margin: calc(var(--header-h) + 32px) var(--gutter) 0 0;
-      aspect-ratio: auto;
-      height: 70vh;
-    }
-    .co-small {
-      grid-column: 2;
-      grid-row: 2;
-      justify-self: end;
-      width: 14vw;
-      margin: -18vh calc(var(--gutter) + 4vw) 0 0;
+    .sh-inner {
+      padding: 0 24px 40px;
     }
   }
 </style>
