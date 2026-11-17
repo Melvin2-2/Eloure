@@ -14,7 +14,7 @@ const groups: { id: Group; label: string }[] = [
 ---
 
 <div class="price-table" data-tabs>
-  <div class="tabs" role="tablist" aria-label="Preisliste wählen">
+  <div class="tabs-wrap"><div class="tabs" role="tablist" aria-label="Preisliste wählen">
     {
       groups.map((g) => (
         <button
@@ -29,7 +29,7 @@ const groups: { id: Group; label: string }[] = [
         </button>
       ))
     }
-  </div>
+  </div></div>
 
   {
     groups.map((g) => (
@@ -97,42 +97,52 @@ const groups: { id: Group; label: string }[] = [
 </div>
 
 <style>
+  /* ——— Frauen / Männer: zentral und gross ——— */
+  .tabs-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: clamp(32px, 4vw, 52px);
+  }
+
   .tabs {
     display: inline-flex;
-    padding: 5px;
-    border-radius: 0;
-    background: var(--linen);
-    margin-bottom: 32px;
+    border: 1px solid var(--espresso);
+    background: var(--paper);
   }
 
   .tabs button {
+    min-width: clamp(140px, 16vw, 200px);
+    padding: 18px 28px;
     border: 0;
     background: transparent;
-    padding: 10px 26px;
-    border-radius: 0;
-    font-weight: 500;
     cursor: pointer;
-    color: var(--muted);
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink);
     transition:
-      background 0.2s,
-      color 0.2s,
-      box-shadow 0.2s;
+      background 0.25s,
+      color 0.25s;
+  }
+
+  .tabs button:hover {
+    background: var(--cream);
   }
 
   .tabs button[aria-selected='true'] {
-    background: var(--paper);
-    color: var(--ink);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 4px 12px -4px rgba(0, 0, 0, 0.12);
+    background: var(--espresso);
+    color: var(--lime);
   }
 
+  /* ——— Neu bei uns: dunkle Karte ——— */
   .first {
     display: grid;
     gap: 16px 48px;
-    padding: clamp(20px, 3vw, 32px);
-    border-radius: 0;
-    background: var(--paper);
-    border: 1px solid var(--line);
-    margin-bottom: 40px;
+    padding: clamp(24px, 3.4vw, 40px);
+    background: var(--espresso);
+    color: var(--cream);
+    margin-bottom: 16px;
   }
 
   @media (min-width: 900px) {
@@ -143,34 +153,72 @@ const groups: { id: Group; label: string }[] = [
   }
 
   .first h3 {
-    font-family: var(--sans);
-    line-height: 1.25;
-    font-size: 1.3rem;
-    font-weight: 500;
-    letter-spacing: -0.01em;
+    font-family: var(--serif);
+    font-weight: var(--display-weight);
+    font-stretch: var(--display-stretch);
+    text-transform: uppercase;
+    font-size: clamp(1.4rem, 2vw, 1.8rem);
+    line-height: 1.05;
+    color: var(--cream);
+    margin-bottom: 10px;
   }
 
   .first p {
-    font-size: 0.95rem;
+    font-size: 1rem;
+    color: rgba(246, 241, 234, 0.75);
+    margin: 0;
   }
 
+  .first .rows li {
+    border-bottom-color: rgba(246, 241, 234, 0.18);
+  }
+
+  .first .meta {
+    color: rgba(246, 241, 234, 0.65);
+  }
+
+  .first .price.free {
+    color: var(--lime);
+  }
+
+  .first .book {
+    border-color: rgba(246, 241, 234, 0.4);
+    color: var(--cream);
+  }
+
+  .first .book:hover {
+    background: var(--lime);
+    border-color: var(--lime);
+    color: var(--espresso);
+  }
+
+  /* ——— Zonen: helle Karten, klar getrennt ——— */
   .regions {
     display: grid;
-    gap: 40px 56px;
+    gap: 16px;
   }
 
   @media (min-width: 900px) {
     .regions {
       grid-template-columns: 1fr 1fr;
+      align-items: start;
     }
   }
 
+  .region {
+    background: var(--paper);
+    padding: clamp(22px, 2.8vw, 36px);
+  }
+
   .region h3 {
-    font-family: var(--sans);
-    margin-bottom: 6px;
-    font-size: 1.3rem;
-    font-weight: 500;
-    letter-spacing: -0.01em;
+    font-family: var(--serif);
+    font-weight: var(--display-weight);
+    font-stretch: var(--display-stretch);
+    text-transform: uppercase;
+    font-size: clamp(1.4rem, 2vw, 1.8rem);
+    line-height: 1.05;
+    color: var(--ink);
+    margin: 0 0 8px;
   }
 
   .rows {
@@ -184,12 +232,13 @@ const groups: { id: Group; label: string }[] = [
     grid-template-columns: 1fr auto auto;
     align-items: center;
     gap: 16px;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--line);
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(47, 33, 25, 0.12);
   }
 
-  .first .rows li:last-child {
+  .rows li:last-child {
     border-bottom: 0;
+    padding-bottom: 0;
   }
 
   .name {
@@ -199,11 +248,17 @@ const groups: { id: Group; label: string }[] = [
   }
 
   .name strong {
-    font-weight: 500;
+    font-weight: 700;
+    font-size: 1.08rem;
+    color: var(--ink);
     display: flex;
     align-items: center;
     gap: 8px;
     flex-wrap: wrap;
+  }
+
+  .first .name strong {
+    color: var(--cream);
   }
 
   .meta {
@@ -213,42 +268,44 @@ const groups: { id: Group; label: string }[] = [
   }
 
   .tag {
-    font-size: 0.85rem;
-    font-weight: 500;
-    letter-spacing: 0.04em;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    padding: 2px 8px;
-    border-radius: 0;
-    background: var(--linen);
+    padding: 3px 8px;
+    background: var(--lime);
+    color: var(--espresso);
   }
 
   .price {
-    font-weight: 500;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--ink);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
 
-  .price.free {
-    font-weight: 500;
-    color: var(--ok);
+  .first .price {
+    color: var(--cream);
   }
 
   .book {
     display: grid;
     place-items: center;
-    width: 38px;
-    height: 38px;
-    border-radius: 0;
-    border: 1px solid var(--line-strong);
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(47, 33, 25, 0.3);
+    color: var(--ink);
     transition:
       background 0.2s,
-      border-color 0.2s;
+      border-color 0.2s,
+      color 0.2s;
   }
 
   .book:hover {
-    background: var(--ink);
-    color: var(--paper);
-    border-color: var(--ink);
+    background: var(--espresso);
+    color: var(--lime);
+    border-color: var(--espresso);
   }
 </style>
 

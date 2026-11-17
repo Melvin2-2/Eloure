@@ -129,11 +129,22 @@ function init() {
     const line = sec.querySelector<SVGPolygonElement>('[data-ph-shape-line]');
     const st = { trigger: sec, start: 'top top', end: 'bottom top', scrub: 0.8 };
     if (img) gsap.fromTo(img, { scale: 1.1, yPercent: 0 }, { scale: 1, yPercent: 8, ease: 'none', scrollTrigger: st });
+    // Rahmen weitet sich gleichmässig bis an die Bildkanten und wird leiser
     if (line) {
       gsap.fromTo(
         line,
         { attr: { points: '5,7 95,7 95,93 5,93' } },
-        { attr: { points: '18,2 98,12 84,98 2,86' }, opacity: 0.35, ease: 'none', scrollTrigger: { ...st } },
+        { attr: { points: '1.5,2 98.5,2 98.5,98 1.5,98' }, opacity: 0.3, ease: 'none', scrollTrigger: { ...st } },
+      );
+    }
+    // Eckwinkel: kommen beim Scrollen von den Bildkanten nach innen und blenden ein
+    const corners = sec.querySelector<SVGPathElement>('[data-ph-corners]');
+    if (corners) {
+      const to = corners.getAttribute('d')!;
+      gsap.fromTo(
+        corners,
+        { attr: { d: corners.dataset.from! }, opacity: 0 },
+        { attr: { d: to }, opacity: 1, ease: 'power2.out', scrollTrigger: { trigger: sec, start: 'top top', end: '+=38%', scrub: 0.6 } },
       );
     }
     if (form && window.matchMedia('(min-width: 1000px)').matches) {

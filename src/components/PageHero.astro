@@ -21,8 +21,13 @@ interface Props {
   position?: string;
   variant?: 'frame' | 'shape';
   frame?: 'dark' | 'light';
+  /** shape: feiner Neon-Rahmen ('frame', zeichnet sich beim Laden) oder Neon-Ecken ('corners', blenden beim Scrollen ein) */
+  lines?: 'frame' | 'corners';
 }
-const { title, sub, lead, image, alt = '', position = 'center', variant = 'frame', frame = 'dark' } = Astro.props;
+const { title, sub, lead, image, alt = '', position = 'center', variant = 'frame', frame = 'dark', lines = 'frame' } = Astro.props;
+// Vier Eckwinkel im 100×100-Raster (ix/iy = Abstand zum Rand)
+const corners = (ix: number, iy: number, lx = 7, ly = 11) =>
+  `M${ix},${iy + ly} V${iy} H${ix + lx} M${100 - ix - lx},${iy} H${100 - ix} V${iy + ly} M${100 - ix},${100 - iy - ly} V${100 - iy} H${100 - ix - lx} M${ix + lx},${100 - iy} H${ix} V${100 - iy - ly}`;
 const hasSlot = Astro.slots.has('default');
 ---
 
@@ -51,9 +56,15 @@ const hasSlot = Astro.slots.has('default');
       <div class="sh-img">
         <Image src={image} alt={alt} widths={[900, 1400, 2000, 2400]} sizes="100vw" loading="eager" fetchpriority="high" style={`object-position:${position}`} data-ph-shape-img />
         <div class="sh-shade" />
-        <svg class="sh-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <polygon data-ph-shape-line points="5,7 95,7 95,93 5,93" />
-        </svg>
+        {lines === 'frame' ? (
+          <svg class="sh-lines is-draw" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <polygon data-ph-shape-line points="5,7 95,7 95,93 5,93" />
+          </svg>
+        ) : (
+          <svg class="sh-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <path data-ph-corners data-from={corners(0.8, 1.2, 4, 6)} d={corners(4.5, 6.5)} />
+          </svg>
+        )}
       </div>
       <div class="sh-title">
         <Lines as="h1" class="ph-title" lines={title} />
@@ -205,7 +216,8 @@ const hasSlot = Astro.slots.has('default');
     z-index: 2;
   }
 
-  .sh-lines polygon {
+  .sh-lines polygon,
+  .sh-lines path {
     fill: none;
     stroke: var(--lime);
     stroke-width: 1.4;
@@ -213,7 +225,7 @@ const hasSlot = Astro.slots.has('default');
   }
 
   /* Rahmen zeichnet sich beim Laden von links nach rechts */
-  :global(.motion) .sh-lines {
+  :global(.motion) .sh-lines.is-draw {
     animation: draw 2.2s 0.3s cubic-bezier(0.65, 0, 0.35, 1) both;
   }
 
