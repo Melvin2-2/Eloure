@@ -29,7 +29,7 @@ const data = {
   promo,
   cancellationHours: site.cancellationHours,
   booking: { api: booking.api, timeZone: booking.timeZone, windowDays: booking.windowDays, slotStep: booking.slotStep, durations: booking.durations, staff: booking.staff },
-  contact: { whatsapp: site.whatsappHref, phone: site.phone, phoneHref: site.phoneHref },
+  contact: { whatsapp: site.whatsappHref, phone: site.phone, phoneHref: site.phoneHref, address: `${site.address.street}, ${site.address.zip} ${site.address.city}` },
 };
 ---
 
@@ -253,6 +253,14 @@ const data = {
             <span class="ok-icon"><Icon name="check" size={30} /></span>
             <h2 data-success-title>Danke! Deine Anfrage ist bei uns.</h2>
             <p class="lead" data-success-text></p>
+            <div class="add-cal" data-add-cal hidden>
+              <span class="add-cal-label">In deinen Kalender eintragen</span>
+              <div class="add-cal-btns">
+                <a class="add-cal-btn" data-cal-apple download="eloure-termin.ics">Apple Kalender</a>
+                <a class="add-cal-btn" data-cal-google target="_blank" rel="noopener">Google Kalender</a>
+                <a class="add-cal-btn" data-cal-outlook target="_blank" rel="noopener">Outlook</a>
+              </div>
+            </div>
             <div class="prep">
               <h3>So bereitest du dich vor</h3>
               <ul class="check-list">
@@ -1113,6 +1121,47 @@ const data = {
     font-size: clamp(2rem, 4vw, 3rem);
   }
 
+  .add-cal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 16px;
+    margin-top: 24px;
+  }
+
+  .add-cal[hidden] {
+    display: none;
+  }
+
+  .add-cal-label {
+    font-size: 0.94rem;
+    color: var(--ink-2);
+  }
+
+  .add-cal-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .add-cal-btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 18px;
+    border: 1px solid var(--line, rgba(58, 40, 31, 0.2));
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 0.94rem;
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .add-cal-btn:hover {
+    border-color: var(--ink);
+    background: var(--cream);
+  }
+
   .prep {
     margin: 28px 0;
     padding: 24px;
@@ -1615,7 +1664,7 @@ const data = {
     promo: { code: string; percent: number; label: string };
     cancellationHours: number;
     booking: { api: string; timeZone: string; windowDays: number; slotStep: number; durations: number[]; staff: { id: string; name: string; hostId: string; treatment: string; consult: string }[] };
-    contact: { whatsapp: string; phone: string; phoneHref: string };
+    contact: { whatsapp: string; phone: string; phoneHref: string; address: string };
   };
 
   const data: Data = JSON.parse(document.getElementById('booking-data')!.textContent!);
@@ -2028,6 +2077,48 @@ const data = {
   );
   $('[data-back]').addEventListener('click', () => go(Math.max(1, state.step - 1)));
 
+  // „Zum Kalender hinzufügen“ nach der Buchung: Apple (.ics-Datei), Google, Outlook
+  function setupAddToCalendar() {
+    if (!state.slot) return;
+    const start = new Date(state.slot.iso);
+    const mins = isConsultOnly() ? 25 : bookingLength() ?? totalMinutes();
+    const end = new Date(start.getTime() + mins * 60000);
+    const title = `Eloure · ${selectedList().map((s) => s.name).join(' + ')}`;
+    const details = `Dein Termin bei Eloure The Studio (${fmtDur(mins)}). Verschieben oder absagen: über den Link in deiner Bestätigungsmail oder unter ${data.contact.phone}.`;
+    const loc = `Eloure The Studio, ${data.contact.address}`;
+    const utc = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    const esc = (t: string) => t.replace(/\\/g, '\\\\').replace(/[,;]/g, (c) => '\\' + c).replace(/\n/g, '\\n');
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Eloure The Studio//Termin//DE',
+      'METHOD:PUBLISH',
+      'BEGIN:VEVENT',
+      `UID:${utc(start)}-${Math.random().toString(36).slice(2)}@eloure`,
+      `DTSTAMP:${utc(new Date())}`,
+      `DTSTART:${utc(start)}`,
+      `DTEND:${utc(end)}`,
+      `SUMMARY:${esc(title)}`,
+      `DESCRIPTION:${esc(details)}`,
+      `LOCATION:${esc(loc)}`,
+      'BEGIN:VALARM',
+      'ACTION:DISPLAY',
+      'DESCRIPTION:Termin bei Eloure',
+      'TRIGGER:-PT2H',
+      'END:VALARM',
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ].join('\r\n');
+    $<HTMLAnchorElement>('[data-cal-apple]').href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics);
+    $<HTMLAnchorElement>('[data-cal-google]').href =
+      'https://calendar.google.com/calendar/render?' +
+      new URLSearchParams({ action: 'TEMPLATE', text: title, dates: `${utc(start)}/${utc(end)}`, details, location: loc });
+    $<HTMLAnchorElement>('[data-cal-outlook]').href =
+      'https://outlook.live.com/calendar/0/deeplink/compose?' +
+      new URLSearchParams({ path: '/calendar/action/compose', rru: 'addevent', subject: title, startdt: start.toISOString(), enddt: end.toISOString(), body: details, location: loc });
+    $('[data-add-cal]').hidden = false;
+  }
+
   function whenText() {
     if (!state.date || !state.time) return '';
     return `${state.date.toLocaleDateString('de-CH', { weekday: 'short', day: 'numeric', month: 'long' })} · ${state.time} Uhr`;
@@ -2153,6 +2244,7 @@ const data = {
       $('[data-success-text]').textContent = `Wir haben deinen Termin am ${whenText()} fest für dich eingeplant. Du bekommst gleich eine Bestätigung per E-Mail – mit allen Infos und einem Link, falls du verschieben oder absagen musst. ${
         isConsultOnly() ? 'Bring einfach all deine Fragen mit.' : 'Wir freuen uns auf dich!'
       }`;
+      setupAddToCalendar();
       go(5);
     } catch (err: any) {
       const raw = err?.message ?? err?.error?.message ?? '';
