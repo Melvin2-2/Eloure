@@ -261,6 +261,13 @@ const data = {
                 <a class="add-cal-btn" data-cal-outlook target="_blank" rel="noopener">Outlook</a>
               </div>
             </div>
+            <div class="manage" data-manage hidden>
+              <span class="add-cal-label">Termin ändern</span>
+              <div class="add-cal-btns">
+                <a class="add-cal-btn" data-manage-reschedule target="_blank" rel="noopener">Termin verschieben</a>
+                <a class="add-cal-btn" data-manage-cancel target="_blank" rel="noopener">Termin stornieren</a>
+              </div>
+            </div>
             <div class="prep">
               <h3>So bereitest du dich vor</h3>
               <ul class="check-list">
@@ -1129,7 +1136,16 @@ const data = {
     margin-top: 24px;
   }
 
-  .add-cal[hidden] {
+  .manage {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 16px;
+    margin-top: 16px;
+  }
+
+  .add-cal[hidden],
+  .manage[hidden] {
     display: none;
   }
 
@@ -2078,13 +2094,15 @@ const data = {
   $('[data-back]').addEventListener('click', () => go(Math.max(1, state.step - 1)));
 
   // „Zum Kalender hinzufügen“ nach der Buchung: Apple (.ics-Datei), Google, Outlook
-  function setupAddToCalendar() {
+  function setupAddToCalendar(manage: { reschedule: string; cancel: string } | null) {
     if (!state.slot) return;
     const start = new Date(state.slot.iso);
     const mins = isConsultOnly() ? 25 : bookingLength() ?? totalMinutes();
     const end = new Date(start.getTime() + mins * 60000);
     const title = `Eloure · ${selectedList().map((s) => s.name).join(' + ')}`;
-    const details = `Dein Termin bei Eloure The Studio (${fmtDur(mins)}). Verschieben oder absagen: über den Link in deiner Bestätigungsmail oder unter ${data.contact.phone}.`;
+    const details = manage
+      ? `Dein Termin bei Eloure The Studio (${fmtDur(mins)}).\n\nTermin verschieben: ${manage.reschedule}\nTermin stornieren: ${manage.cancel}\n\nFragen? ${data.contact.phone}`
+      : `Dein Termin bei Eloure The Studio (${fmtDur(mins)}). Verschieben oder stornieren: über den Link in deiner Bestätigungsmail oder unter ${data.contact.phone}.`;
     const loc = `Eloure The Studio, ${data.contact.address}`;
     const utc = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
     const esc = (t: string) => t.replace(/\\/g, '\\\\').replace(/[,;]/g, (c) => '\\' + c).replace(/\n/g, '\\n');
@@ -2244,7 +2262,16 @@ const data = {
       $('[data-success-text]').textContent = `Wir haben deinen Termin am ${whenText()} fest für dich eingeplant. Du bekommst gleich eine Bestätigung per E-Mail – mit allen Infos und einem Link, falls du verschieben oder absagen musst. ${
         isConsultOnly() ? 'Bring einfach all deine Fragen mit.' : 'Wir freuen uns auf dich!'
       }`;
-      setupAddToCalendar();
+      // Links zum Verschieben/Stornieren (meetergo-Verwaltungsseite der Buchung)
+      let manage: { reschedule: string; cancel: string } | null = null;
+      if (json.appointmentId && json.secret) {
+        const q = `id=${encodeURIComponent(json.appointmentId)}&secret=${encodeURIComponent(json.secret)}`;
+        manage = { reschedule: `https://cal.meetergo.com/reschedule?${q}`, cancel: `https://cal.meetergo.com/cancel?${q}` };
+        $<HTMLAnchorElement>('[data-manage-reschedule]').href = manage.reschedule;
+        $<HTMLAnchorElement>('[data-manage-cancel]').href = manage.cancel;
+        $('[data-manage]').hidden = false;
+      }
+      setupAddToCalendar(manage);
       go(5);
     } catch (err: any) {
       const raw = err?.message ?? err?.error?.message ?? '';
