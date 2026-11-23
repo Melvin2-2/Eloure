@@ -24,10 +24,11 @@ export const booking = {
   /** Testphase: Buchungen landen im Testkalender */
   testMode: true,
   /**
-   * Kennung der Buchungsfrage „Behandlung“ in Cal.com (für den Kalendertitel).
-   * Erst eintragen, wenn die Frage in ALLEN Event-Typen angelegt ist – sonst null lassen.
+   * Kennung der Buchungsfrage „Behandlung“ in Cal.com (für den Kalendertitel
+   * „{Scheduler} · {behandlung}“). Fehlt die Frage in einem Event-Typ, bucht das
+   * Tool automatisch ohne sie nochmals.
    */
-  treatmentField: null as string | null,
+  treatmentField: 'behandlung' as string | null,
   staff: [
     {
       id: 'studio',
