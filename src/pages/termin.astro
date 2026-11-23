@@ -28,7 +28,7 @@ const data = {
   opening: site.openingSpec,
   promo,
   cancellationHours: site.cancellationHours,
-  booking: { api: booking.api, timeZone: booking.timeZone, windowDays: booking.windowDays, slotStep: booking.slotStep, staff: booking.staff, treatmentField: booking.treatmentField },
+  booking: { api: booking.api, timeZone: booking.timeZone, windowDays: booking.windowDays, slotStep: booking.slotStep, durations: booking.durations, staff: booking.staff },
   contact: { whatsapp: site.whatsappHref, phone: site.phone, phoneHref: site.phoneHref },
 };
 ---
@@ -45,13 +45,6 @@ const data = {
   <section class="booking" data-booking>
     <div class="b-band bg-dark">
       <div class="wrap">
-        {
-          booking.testMode && (
-            <p class="demo">
-              <Icon name="spark" size={16} /> Testphase: Die Online-Buchung ist aktiv – Termine landen vorerst in einem Testkalender.
-            </p>
-          )
-        }
         <header class="b-head">
           <div>
             <h1>Dein Termin bei Eloure.</h1>
@@ -330,18 +323,6 @@ const data = {
 <style>
   .booking {
     padding-block: clamp(24px, 4vw, 48px) 120px;
-  }
-
-  .demo {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    margin-bottom: 24px;
-    border-radius: 0;
-    background: var(--linen);
-    font-size: 0.94rem;
-    color: var(--ink-2);
   }
 
   .b-head {
@@ -1327,11 +1308,6 @@ const data = {
     margin-bottom: clamp(32px, 4vw, 56px);
   }
 
-  .b-band .demo {
-    background: rgba(246, 241, 234, 0.08);
-    color: rgba(246, 241, 234, 0.8);
-  }
-
   .b-band .b-head {
     align-items: flex-end;
     margin: 0;
@@ -1638,7 +1614,7 @@ const data = {
     opening: { days: number[]; open: string; close: string }[];
     promo: { code: string; percent: number; label: string };
     cancellationHours: number;
-    booking: { api: string; timeZone: string; windowDays: number; slotStep: number; treatmentField: string | null; staff: { id: string; name: string; eventTypes: Record<string, number>; consult: number }[] };
+    booking: { api: string; timeZone: string; windowDays: number; slotStep: number; durations: number[]; staff: { id: string; name: string; hostId: string; treatment: string; consult: string }[] };
     contact: { whatsapp: string; phone: string; phoneHref: string };
   };
 
@@ -1729,12 +1705,10 @@ const data = {
     }),
   );
 
-  // ——— Schritt 2: Kalender (freie Zeiten live aus Cal.com) ———
-  type StaffPick = { id: string; eventTypeId: number; adj: boolean };
+  // ——— Schritt 2: Kalender (freie Zeiten live aus meetergo) ———
+  type StaffPick = { id: string; hostId: string; meetingTypeId: string; adj: boolean };
   type Slot = { time: string; iso: string; staff: StaffPick[]; adj: boolean };
-  const DURATIONS = Object.keys(data.booking.staff[0]?.eventTypes ?? {})
-    .map(Number)
-    .sort((x, y) => x - y);
+  const DURATIONS = [...data.booking.durations].sort((x, y) => x - y);
   const avail = { key: '', status: 'idle' as 'idle' | 'loading' | 'ready' | 'error', days: new Map<string, Slot[]>() };
   let showAll = false;
   let slotNotice = '';
@@ -1759,33 +1733,44 @@ const data = {
     }
     avail.status = 'loading';
     renderStep2();
-    const range = `start=${ymd(today)}&end=${ymd(maxDate)}&timeZone=${encodeURIComponent(data.booking.timeZone)}`;
+    const end = new Date(maxDate);
+    end.setDate(end.getDate() + 1);
     try {
       const perStaff = await Promise.all(
         data.booking.staff.map(async (st) => {
-          const eventTypeId = key === 'consult' ? st.consult : st.eventTypes[key];
-          const res = await fetch(`${data.booking.api}/slots?eventTypeId=${eventTypeId}&${range}`, {
-            headers: { 'cal-api-version': '2024-09-04' },
+          const meetingTypeId = key === 'consult' ? st.consult : st.treatment;
+          const q = new URLSearchParams({
+            meetingTypeId,
+            hostIds: st.hostId,
+            start: ymd(today),
+            end: ymd(end),
+            timezone: data.booking.timeZone,
           });
+          if (key !== 'consult') q.set('meetingDuration', key);
+          const res = await fetch(`${data.booking.api}/booking-availability?${q}`);
           if (!res.ok) throw new Error(`slots ${res.status}`);
           const json = await res.json();
-          return { st, eventTypeId, days: (json.data ?? {}) as Record<string, { start: string }[]> };
+          const days: Record<string, string[]> = {};
+          for (const d of (json.dates ?? []) as { date: string; spots: { startTime: string }[] }[]) {
+            days[d.date] = (d.spots ?? []).map((x) => x.startTime);
+          }
+          return { st, meetingTypeId, days };
         }),
       );
       if (avail.key !== key) return; // Auswahl hat sich inzwischen geändert
       const step = data.booking.slotStep;
       const merged = new Map<string, Map<string, Slot>>();
-      for (const { st, eventTypeId, days } of perStaff) {
+      for (const { st, meetingTypeId, days } of perStaff) {
         for (const [day, list] of Object.entries(days)) {
-          const mins = new Set(list.map((x) => toMin(x.start.slice(11, 16))));
+          const mins = new Set(list.map((x) => toMin(x.slice(11, 16))));
           const byTime = merged.get(day) ?? new Map<string, Slot>();
-          for (const x of list) {
-            const t = x.start.slice(11, 16);
+          for (const iso of list) {
+            const t = iso.slice(11, 16);
             const m = toMin(t);
             // Anschlusszeit: direkt nach einem Termin/Öffnungsbeginn oder direkt vor dem nächsten Termin/Feierabend
             const adj = !mins.has(m - step) || !mins.has(m + step);
-            const slot = byTime.get(t) ?? { time: t, iso: x.start, staff: [], adj: false };
-            slot.staff.push({ id: st.id, eventTypeId, adj });
+            const slot = byTime.get(t) ?? { time: t, iso, staff: [], adj: false };
+            slot.staff.push({ id: st.id, hostId: st.hostId, meetingTypeId, adj });
             slot.adj = slot.adj || adj;
             byTime.set(t, slot);
           }
@@ -2085,8 +2070,8 @@ const data = {
     return `${names.join(' + ')} · ${fmtDur(len)}`;
   }
 
-  // Notizen für den Kalendertermin: kurz, Telefon zuerst (Name & E-Mail stehen schon im Titel bzw. unter „Wer“).
-  // Achtung: Cal.com zeigt diese Notizen auch der Kundin in der Bestätigung – nur neutrale Angaben.
+  // Angaben zum Termin – erscheinen im Kalendereintrag und in der Bestätigung der Kundin,
+  // deshalb nur neutrale Angaben (keine Gesundheitsdaten).
   function bookingNotes(f: FormData) {
     const list = selectedList();
     const zonenField = $<HTMLTextAreaElement>('textarea[name=zonen]');
@@ -2096,16 +2081,14 @@ const data = {
     const len = isConsultOnly() ? null : bookingLength();
     const msg = String(f.get('nachricht') ?? '').trim();
     const dur = `${fmtDur(totalMinutes())}${len && len !== totalMinutes() ? `, eingeplant ${fmtDur(len)}` : ''}`;
-    return [
-      `Telefon: ${String(f.get('telefon') ?? '').trim()}`,
-      `Behandlung: ${list.map((s) => s.name).join(' + ')} (${dur})`,
-      zonen ? `Ganzkörper-Zonen: ${zonen}` : null,
-      `Preis: ${fmtChf(total)} vor Ort${disc > 0 ? ` · Code ${state.code} –${fmtChf(round05(disc))}` : ''}`,
-      `Erster Besuch: ${state.returning ? 'nein' : 'ja'}`,
-      msg ? `Nachricht: ${msg}` : null,
-    ]
-      .filter(Boolean)
-      .join('\n');
+    const notes: Record<string, string> = {
+      Behandlung: `${list.map((s) => s.name).join(' + ')} (${dur})`,
+    };
+    if (zonen) notes['Ganzkörper-Zonen'] = zonen;
+    notes.Preis = `${fmtChf(total)} vor Ort${disc > 0 ? ` · Code ${state.code} –${fmtChf(round05(disc))}` : ''}`;
+    notes['Erster Besuch'] = state.returning ? 'nein' : 'ja';
+    if (msg) notes.Nachricht = msg;
+    return notes;
   }
 
   const submitError = $('[data-submit-error]');
@@ -2123,32 +2106,48 @@ const data = {
     submitError.hidden = true;
     submitting = true;
     render();
+    const phone = String(f.get('telefon') ?? '').trim();
+    const notes = bookingNotes(f);
     try {
-      const payload = (withTreatment: boolean) =>
-        JSON.stringify({
-          start: new Date(slot.iso).toISOString(),
-          eventTypeId: pick.eventTypeId,
-          attendee: { name, email: String(f.get('email') ?? '').trim(), timeZone: data.booking.timeZone, language: 'de' },
-          location: { type: 'address' },
-          bookingFieldsResponses: {
-            notes: bookingNotes(f),
-            ...(withTreatment && data.booking.treatmentField ? { [data.booking.treatmentField]: treatmentTitle() } : {}),
-          },
-        });
-      const post = (body: string) =>
-        fetch(`${data.booking.api}/bookings`, {
+      const body: Record<string, unknown> = {
+        meetingTypeId: pick.meetingTypeId,
+        hostIds: [pick.hostId],
+        start: slot.iso,
+        attendee: {
+          firstname: String(f.get('vorname') ?? '').trim(),
+          lastname: String(f.get('nachname') ?? '').trim(),
+          email: String(f.get('email') ?? '').trim(),
+          phone,
+          language: 'de',
+          timezone: data.booking.timeZone,
+          receiveReminders: true,
+          dataPolicyAccepted: true,
+          notes,
+        },
+        sourceChannel: 'embed',
+        referrerUrl: location.href.slice(0, 2048),
+        icsTitle: `${name} · ${treatmentTitle()}`.slice(0, 200),
+        icsDescription: [`Telefon: ${phone}`, ...Object.entries(notes).map(([k, v]) => `${k}: ${v}`)].join('\n').slice(0, 2000),
+      };
+      if (!isConsultOnly()) body.duration = bookingLength();
+      const post = (b: Record<string, unknown>) =>
+        fetch(`${data.booking.api}/booking`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'cal-api-version': '2024-08-13' },
-          body,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(b),
         });
-      let res = await post(payload(true));
-      // Fehlt die Buchungsfrage „behandlung“ in Cal.com, ohne sie nochmals buchen
-      if (!res.ok && data.booking.treatmentField) {
-        const peek = await res.clone().json().catch(() => ({}));
-        if (new RegExp(data.booking.treatmentField + '|bookingFieldsResponses', 'i').test(JSON.stringify(peek))) res = await post(payload(false));
+      let res = await post(body);
+      // Falls meetergo eigene Kalendertitel ablehnt: mit dem Standardtitel nochmals buchen
+      if (res.status === 400) {
+        const peek = JSON.stringify(await res.clone().json().catch(() => ({})));
+        if (/ics/i.test(peek)) {
+          delete body.icsTitle;
+          delete body.icsDescription;
+          res = await post(body);
+        }
       }
       const json = await res.json().catch(() => ({}));
-      if (!res.ok || json.status !== 'success') throw json;
+      if (!res.ok) throw { status: res.status, ...json };
 
       const first = String(f.get('vorname') ?? '').trim();
       $('[data-success-title]').textContent = `Danke${first ? ', ' + first : ''}! Dein Termin steht.`;
@@ -2157,11 +2156,12 @@ const data = {
       }`;
       go(5);
     } catch (err: any) {
-      const msg = String(err?.error?.message ?? err?.message ?? '');
+      const raw = err?.message ?? err?.error?.message ?? '';
+      const msg = Array.isArray(raw) ? raw.join(' ') : String(raw);
       if (/email/i.test(msg)) {
         showSubmitError('Diese E-Mail-Adresse scheint keine Post empfangen zu können. Bitte prüfe sie <button type="button" class="link-btn" data-fix-mail>hier</button>.');
         submitError.querySelector('[data-fix-mail]')?.addEventListener('click', () => go(3));
-      } else if (/avail|slot|booked|conflict|taken|no_available/i.test(msg)) {
+      } else if (err?.status === 409 || /avail|slot|booked|conflict|taken|occupied|no_available/i.test(msg)) {
         slotNotice = 'Dieser Termin wurde gerade vergeben. Bitte wähle eine andere Uhrzeit.';
         state.time = null;
         state.slot = null;

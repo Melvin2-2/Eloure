@@ -1,52 +1,41 @@
-// Online-Buchung über Cal.com.
-// Die Website spricht direkt mit der öffentlichen Buchungs-Schnittstelle von Cal.com
-// (freie Zeiten abfragen, Termin anlegen) – dafür ist KEIN API-Schlüssel nötig.
-// Cal.com prüft den verbundenen iCloud-Kalender und trägt die Buchung dort ein.
+// Online-Buchung über meetergo.
+// Die Website spricht direkt mit der öffentlichen Buchungs-Schnittstelle von meetergo
+// (freie Zeiten abfragen, Termin anlegen) – genau wie die meetergo-Buchungsseite selbst.
+// Dafür ist KEIN API-Schlüssel im Browser nötig. meetergo prüft den verbundenen
+// iCloud-Kalender, trägt die Buchung dort ein und verschickt Bestätigung und Erinnerung.
 //
-// Pro Person: ein Event-Typ je Dauer (Minuten → Event-Typ-ID) und das Beratungsgespräch.
-// Weitere Personen (z. B. Sarah) einfach als weiteren Eintrag ergänzen – das Tool
+// Ein Termintyp „Laserbehandlung“ mit allen erlaubten Dauern (Summe der Zonen, auf
+// 15 Min. aufgerundet) plus der Termintyp „Beratungsgespräch“.
+// Weitere Personen (z. B. Sarah) als weiteren Eintrag in `staff` ergänzen – das Tool
 // führt die freien Zeiten aller Personen zusammen.
 
 export interface StaffCalendar {
   id: string;
   name: string;
-  eventTypes: Record<number, number>;
-  consult: number;
+  /** meetergo-Benutzer-ID (Host) */
+  hostId: string;
+  /** Termintyp „Laserbehandlung“ */
+  treatment: string;
+  /** Termintyp „Beratungsgespräch“ */
+  consult: string;
 }
 
 export const booking = {
-  api: 'https://api.cal.com/v2',
+  api: 'https://api.meetergo.com/v4',
   timeZone: 'Europe/Zurich',
-  /** wie weit im Voraus gebucht werden kann (muss zu Cal.com passen) */
+  /** wie weit im Voraus gebucht werden kann (muss zu meetergo passen) */
   windowDays: 56,
-  /** Raster der Startzeiten in Minuten (wie in Cal.com eingestellt) */
+  /** Raster der Startzeiten in Minuten (wie in meetergo eingestellt) */
   slotStep: 15,
-  /** Testphase: Buchungen landen im Testkalender */
-  testMode: true,
-  /**
-   * Kennung der Buchungsfrage „Behandlung“ in Cal.com (für den Kalendertitel
-   * „{Scheduler} · {behandlung}“). Fehlt die Frage in einem Event-Typ, bucht das
-   * Tool automatisch ohne sie nochmals.
-   */
-  treatmentField: 'behandlung' as string | null,
+  /** in meetergo erlaubte Dauern des Termintyps „Laserbehandlung“ */
+  durations: [15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 180],
   staff: [
     {
       id: 'studio',
       name: 'Eloure',
-      eventTypes: {
-        15: 8030363,
-        30: 8030365,
-        45: 8030364,
-        60: 8030366,
-        75: 8030367,
-        90: 8030369,
-        105: 8030368,
-        120: 8030370,
-        135: 8030371,
-        150: 8030372,
-        180: 8030373,
-      },
-      consult: 8030337,
+      hostId: '499a8f32-4b10-4b1f-b59d-6e3249477d56',
+      treatment: '285f1cde-8941-4c9d-a606-92a3826e0a69',
+      consult: '8deff375-1acd-49bf-a9a9-9c335deb5064',
     },
   ] as StaffCalendar[],
 };
