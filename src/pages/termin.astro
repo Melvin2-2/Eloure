@@ -28,7 +28,7 @@ const data = {
   opening: site.openingSpec,
   promo,
   cancellationHours: site.cancellationHours,
-  booking: { api: booking.api, timeZone: booking.timeZone, windowDays: booking.windowDays, slotStep: booking.slotStep, staff: booking.staff },
+  booking: { api: booking.api, timeZone: booking.timeZone, windowDays: booking.windowDays, slotStep: booking.slotStep, staff: booking.staff, treatmentField: booking.treatmentField },
   contact: { whatsapp: site.whatsappHref, phone: site.phone, phoneHref: site.phoneHref },
 };
 ---
@@ -1638,7 +1638,7 @@ const data = {
     opening: { days: number[]; open: string; close: string }[];
     promo: { code: string; percent: number; label: string };
     cancellationHours: number;
-    booking: { api: string; timeZone: string; windowDays: number; slotStep: number; staff: { id: string; name: string; eventTypes: Record<string, number>; consult: number }[] };
+    booking: { api: string; timeZone: string; windowDays: number; slotStep: number; treatmentField: string | null; staff: { id: string; name: string; eventTypes: Record<string, number>; consult: number }[] };
     contact: { whatsapp: string; phone: string; phoneHref: string };
   };
 
@@ -2078,6 +2078,14 @@ const data = {
     });
   }
 
+  // Kurzbezeichnung für den Kalendertitel, z. B. „Achseln + Bikini / Intim · 30 Min.“
+  function treatmentTitle() {
+    const names = selectedList().map((s) => s.name);
+    const len = isConsultOnly() ? 25 : bookingLength() ?? totalMinutes();
+    return `${names.join(' + ')} · ${fmtDur(len)}`;
+  }
+
+  // Notizen für den Kalendertermin – oben das Wichtigste auf einen Blick
   function bookingNotes(f: FormData) {
     const list = selectedList();
     const zonenField = $<HTMLTextAreaElement>('textarea[name=zonen]');
@@ -2086,17 +2094,25 @@ const data = {
     const total = round05(subtotal() - disc);
     const len = isConsultOnly() ? null : bookingLength();
     const msg = String(f.get('nachricht') ?? '').trim();
+    const name = `${String(f.get('vorname') ?? '').trim()} ${String(f.get('nachname') ?? '').trim()}`.trim();
+    const first = !state.returning;
     return [
-      `Behandlung: ${list.map((s) => s.name).join(', ')}`,
-      zonen && `Gewählte Zonen: ${zonen}`,
-      `Dauer: ${fmtDur(totalMinutes())}${len && len !== totalMinutes() ? ` (eingeplant: ${fmtDur(len)})` : ''}`,
-      `Preis: ${fmtChf(total)}${disc > 0 ? ` (inkl. Code ${state.code}: –${fmtChf(round05(disc))})` : ''}`,
-      `Telefon: ${String(f.get('telefon') ?? '').trim()}`,
-      `Erster Besuch: ${state.returning ? 'nein' : 'ja'}`,
-      msg && `Nachricht: ${msg}`,
+      `KUNDIN/KUNDE: ${name}`,
+      `TELEFON: ${String(f.get('telefon') ?? '').trim()}`,
+      `E-MAIL: ${String(f.get('email') ?? '').trim()}`,
+      '',
+      `BEHANDLUNG: ${list.map((s) => s.name).join(' + ')}`,
+      zonen ? `ZONEN (Ganzkörper): ${zonen}` : null,
+      `DAUER: ${fmtDur(totalMinutes())}${len && len !== totalMinutes() ? ` (eingeplant ${fmtDur(len)})` : ''}`,
+      `PREIS: ${fmtChf(total)} – Zahlung vor Ort${disc > 0 ? ` (Code ${state.code}: –${fmtChf(round05(disc))})` : ''}`,
+      `ERSTER BESUCH: ${first ? 'ja – Beratung & Hauttyp-Check einplanen' : 'nein'}`,
+      msg ? '' : null,
+      msg ? `NACHRICHT: ${msg}` : null,
+      '',
       'Gebucht über die Website',
     ]
-      .filter(Boolean)
+      .filter((x) => x !== false && x !== null && x !== undefined)
+      .filter((x, i, arr) => !(x === '' && arr[i - 1] === ''))
       .join('\n');
   }
 
@@ -2124,7 +2140,10 @@ const data = {
           eventTypeId: pick.eventTypeId,
           attendee: { name, email: String(f.get('email') ?? '').trim(), timeZone: data.booking.timeZone, language: 'de' },
           location: { type: 'address' },
-          bookingFieldsResponses: { notes: bookingNotes(f) },
+          bookingFieldsResponses: {
+            notes: bookingNotes(f),
+            ...(data.booking.treatmentField ? { [data.booking.treatmentField]: treatmentTitle() } : {}),
+          },
         }),
       });
       const json = await res.json().catch(() => ({}));
