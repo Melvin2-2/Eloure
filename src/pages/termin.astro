@@ -2081,13 +2081,14 @@ const data = {
     const len = isConsultOnly() ? null : bookingLength();
     const msg = String(f.get('nachricht') ?? '').trim();
     const dur = `${fmtDur(totalMinutes())}${len && len !== totalMinutes() ? `, eingeplant ${fmtDur(len)}` : ''}`;
+    // meetergo sortiert die Angaben nach Länge der Bezeichnung – daher bewusst gewählte Längen:
+    // Behandlung (10) → Preis vor Ort (13) → Erster Besuch? (14) → Deine Nachricht (15)
     const notes: Record<string, string> = {
-      Behandlung: `${list.map((s) => s.name).join(' + ')} (${dur})`,
+      Behandlung: `${list.map((s) => s.name).join(' + ')}${zonen ? ` (Zonen: ${zonen})` : ''} · ${dur}`,
+      'Preis vor Ort': `${fmtChf(total)}${disc > 0 ? ` (Code ${state.code}, –${fmtChf(round05(disc))})` : ''}`,
+      'Erster Besuch?': state.returning ? 'Nein' : 'Ja',
     };
-    if (zonen) notes['Ganzkörper-Zonen'] = zonen;
-    notes.Preis = `${fmtChf(total)} vor Ort${disc > 0 ? ` · Code ${state.code} –${fmtChf(round05(disc))}` : ''}`;
-    notes['Erster Besuch'] = state.returning ? 'nein' : 'ja';
-    if (msg) notes.Nachricht = msg;
+    if (msg) notes['Deine Nachricht'] = msg;
     return notes;
   }
 
@@ -2127,7 +2128,6 @@ const data = {
         sourceChannel: 'embed',
         referrerUrl: location.href.slice(0, 2048),
         icsTitle: `${name} · ${treatmentTitle()}`.slice(0, 200),
-        icsDescription: [`Telefon: ${phone}`, ...Object.entries(notes).map(([k, v]) => `${k}: ${v}`)].join('\n').slice(0, 2000),
       };
       if (!isConsultOnly()) body.duration = bookingLength();
       const post = (b: Record<string, unknown>) =>
@@ -2142,7 +2142,6 @@ const data = {
         const peek = JSON.stringify(await res.clone().json().catch(() => ({})));
         if (/ics/i.test(peek)) {
           delete body.icsTitle;
-          delete body.icsDescription;
           res = await post(body);
         }
       }
