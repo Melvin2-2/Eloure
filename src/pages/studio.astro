@@ -66,7 +66,7 @@ import imgV2 from '../assets/shoot/detail-pflanze.jpg';
   </section>
 
   <!-- Werte -->
-  <section class="values bg-dark">
+  <section class="values bg-mist">
     <div class="wrap">
       <div class="v-head">
         <Lines lines={['Worauf du dich', 'verlassen kannst.']} />
@@ -250,6 +250,7 @@ import imgV2 from '../assets/shoot/detail-pflanze.jpg';
   }
 
   .v-no {
+    --lime: var(--salvia-ink);
     display: block;
     color: var(--lime);
     font-size: 2.4rem;
@@ -267,7 +268,7 @@ import imgV2 from '../assets/shoot/detail-pflanze.jpg';
   }
 
   .v-list p {
-    color: rgba(246, 241, 234, 0.75);
+    color: var(--ink-2);
   }
 
   .v-pics {
@@ -326,7 +327,7 @@ import imgV2 from '../assets/shoot/detail-pflanze.jpg';
     display: flex;
     justify-content: space-between;
     padding-bottom: 6px;
-    border-bottom: 1px solid rgba(43, 31, 26, 0.3);
+    border-bottom: 1px solid rgba(43, 47, 64, 0.3);
   }
 
   dd {

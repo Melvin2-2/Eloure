@@ -99,8 +99,8 @@ const q = code ? `?code=${code}` : '';
     flex-direction: column;
     gap: 6px;
     padding: 28px 84px 28px 28px;
-    background: rgba(251, 248, 244, 0.08);
-    border: 1px solid rgba(251, 248, 244, 0.22);
+    background: rgba(250, 251, 252, 0.08);
+    border: 1px solid rgba(250, 251, 252, 0.22);
     backdrop-filter: blur(8px);
     text-decoration: none;
     transition:
@@ -110,7 +110,7 @@ const q = code ? `?code=${code}` : '';
 
   .path:hover {
     transform: translateY(-3px);
-    background: rgba(251, 248, 244, 0.14);
+    background: rgba(250, 251, 252, 0.14);
   }
 
   .path.main {
@@ -158,15 +158,16 @@ const q = code ? `?code=${code}` : '';
   }
 
   .path:not(.main) .go {
-    background: rgba(251, 248, 244, 0.16);
+    background: rgba(250, 251, 252, 0.16);
     color: var(--paper);
+    --head: currentColor;
   }
 
   .contact {
     display: flex;
     flex-wrap: wrap;
     gap: 12px 28px;
-    color: rgba(251, 248, 244, 0.8);
+    color: rgba(250, 251, 252, 0.8);
   }
 
   .contact a,
@@ -179,6 +180,7 @@ const q = code ? `?code=${code}` : '';
 
   .contact a:hover {
     color: var(--paper);
+    --head: currentColor;
     text-decoration: underline;
   }
 </style>

@@ -100,7 +100,7 @@ const faqs = [
   <ZoneHighlights code={promo.code} discount={promo.percent} title={['Alle Topseller', `${pct} günstiger.`]} />
 
   <!-- WARUM ELOURE: Bildkacheln mit Glas-Text -->
-  <section class="why bg-dark">
+  <section class="why bg-paper">
     <div class="wrap why-head">
       <Lines lines={['Warum so viele', 'bei uns bleiben.']} />
       <p class="lead reveal">
@@ -129,7 +129,7 @@ const faqs = [
   <StoryPath title={['So läuft dein', 'erster Termin.']} ctaHref={`/termin?${q}`} ctaLabel={`Mit ${pct} starten`} />
 
   <!-- SICHERHEIT -->
-  <section class="safe bg-mocha">
+  <section class="safe bg-salvia">
     <div class="safe-img" data-anim="img">
       <Image src={uRoom} alt="Medizinischer Diodenlaser im Behandlungsraum" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 50vw, 100vw" />
     </div>
@@ -198,8 +198,8 @@ const faqs = [
   .hero-shade {
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, rgba(43, 31, 26, 0.85) 0%, rgba(43, 31, 26, 0.1) 45%, rgba(43, 31, 26, 0) 70%),
-      linear-gradient(0deg, rgba(43, 31, 26, 0.6), rgba(43, 31, 26, 0) 40%);
+    background: linear-gradient(90deg, rgba(43, 47, 64, 0.85) 0%, rgba(43, 47, 64, 0.1) 45%, rgba(43, 47, 64, 0) 70%),
+      linear-gradient(0deg, rgba(43, 47, 64, 0.6), rgba(43, 47, 64, 0) 40%);
   }
 
   .hero-content {
@@ -271,6 +271,7 @@ const faqs = [
     border: 0;
     background: var(--espresso);
     color: var(--cream);
+    --head: currentColor;
     font-weight: 600;
     font-size: 0.85rem;
     letter-spacing: 0.12em;
@@ -332,7 +333,7 @@ const faqs = [
       max-height: 680px;
     }
     .hero-shade {
-      background: linear-gradient(0deg, rgba(43, 31, 26, 1) 0%, rgba(43, 31, 26, 0) 55%);
+      background: linear-gradient(0deg, rgba(43, 47, 64, 1) 0%, rgba(43, 47, 64, 0) 55%);
     }
     .hero-content {
       margin-top: -32vw;

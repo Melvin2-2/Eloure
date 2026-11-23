@@ -23,38 +23,55 @@
 
 /* ————————————————————————————————————————————————
    Eloure – Design-System
-   Espresso · Mokka · Sand · Creme  +  Lime (etablierte Akzentfarbe)
-   Schrift:   Source Sans 3 für alles (offene Schwester der Hausschrift Myriad Pro).
-              Headlines Semibold, gross und eng – klar lesbar.
+   Deep Indigo · Salvia Blue · Neutral Gray  –  hell, ruhig, klar
+   (CMYK-Vorgaben: Deep Indigo C100 M92 Y52 K60 · Salvia Blue C41 M25 Y10 K0 ·
+    Neutral Gray C29 M18 Y20 K0 – per Druckprofil nach sRGB umgerechnet)
+   Schrift:   Abstufungen von Deep Indigo – Headlines am dunkelsten, Fliesstext
+              etwas heller, Nebentexte in gedämpftem Indigo-Grau.
    Keine Rundungen bei Bildern & Flächen. Glas-Flächen über Bildern.
    ———————————————————————————————————————————————— */
 :root {
-  --espresso: #2f2119;
-  --cocoa: #3a2a22;
-  --mocha: #5a4033;
-  --taupe: #9c8b7e;
-  --sand: #e9dfd3;
-  --cream: #f6f1ea;
-  --paper: #fbf8f3;
-  --lime: #edff63;
-  --lime-deep: #dcef3f;
+  /* Markenfarben */
+  --indigo: #2b2f40; /* Deep Indigo */
+  --indigo-deep: #222533;
+  --indigo-soft: #3d4257;
+  --salvia: #9baec9; /* Salvia Blue */
+  --salvia-deep: #8599b8;
+  --salvia-ink: #586d8e; /* Salvia als lesbare Schrift auf Hell */
+  --salvia-soft: #dfe6ef;
+  --gray: #b8c1c3; /* Neutral Gray */
+  --gray-soft: #e3e7e9;
+  --mist: #eef1f3;
+
+  /* Grundflächen (bestehende Namen, neue Werte) */
+  --espresso: var(--indigo);
+  --cocoa: var(--indigo-soft);
+  --mocha: #4a5670;
+  --taupe: #8d96a5;
+  --sand: var(--gray-soft);
+  --cream: #f4f6f7;
+  --paper: #fafbfc;
+  --lime: var(--salvia); /* Akzent (früher Lime) */
+  --lime-deep: var(--salvia-deep);
 
   /* semantische Tokens (von allen Komponenten genutzt) */
   --bg: var(--cream);
   --linen: var(--sand);
-  --stone: #cfc3b6;
-  --ink: #3a281f; /* Schrift: immer Braun, nie Schwarz */
-  --ink-2: #5e4839;
-  --muted: #8a7466;
-  --line: rgba(43, 31, 26, 0.14);
-  --line-strong: rgba(43, 31, 26, 0.28);
-  --line-light: rgba(246, 241, 234, 0.2);
-  --accent: var(--mocha);
-  --accent-hover: var(--cocoa);
+  --stone: var(--gray);
+  --ink: #2b2f40; /* Headlines & Betonungen: Deep Indigo */
+  --ink-body: #454b5f; /* Fliesstext */
+  --ink-2: #5b6276; /* Leads & Nebentexte */
+  --muted: #737a8d;
+  --head: var(--ink);
+  --line: rgba(43, 47, 64, 0.14);
+  --line-strong: rgba(43, 47, 64, 0.28);
+  --line-light: rgba(244, 246, 247, 0.2);
+  --accent: var(--indigo);
+  --accent-hover: var(--indigo-soft);
   --accent-ink: var(--cream);
-  --accent-soft: var(--sand);
-  --deep: var(--espresso);
-  --ok: #5c7a4f;
+  --accent-soft: var(--salvia-soft);
+  --deep: var(--indigo);
+  --ok: #5a7f6c;
 
   --serif: 'Eloure Display', 'Source Sans 3 Variable', system-ui, sans-serif;
   --display-weight: 700;
@@ -65,8 +82,8 @@
   --radius-s: 0px;
   --radius: 0px;
   --radius-l: 0px;
-  --shadow: 0 20px 40px -24px rgba(43, 31, 26, 0.35);
-  --shadow-l: 0 40px 80px -40px rgba(43, 31, 26, 0.55);
+  --shadow: 0 20px 40px -24px rgba(43, 47, 64, 0.35);
+  --shadow-l: 0 40px 80px -40px rgba(43, 47, 64, 0.55);
 
   --wrap: 1400px;
   --gutter: clamp(18px, 4vw, 56px);
@@ -102,7 +119,7 @@ html {
 body {
   margin: 0;
   background: var(--bg);
-  color: var(--ink);
+  color: var(--ink-body);
   font-family: var(--sans);
   font-size: 19px;
   line-height: 1.6;
@@ -177,6 +194,13 @@ h2,
   letter-spacing: var(--display-ls);
 }
 
+h1,
+h2,
+h3,
+.display {
+  color: var(--head);
+}
+
 h1 {
   font-size: clamp(2.4rem, 5.4vw, 5.2rem);
 }
@@ -243,47 +267,62 @@ b {
   background: var(--sand);
 }
 
+.bg-mist {
+  background: var(--mist);
+}
+
+.bg-salvia {
+  background: var(--salvia-soft);
+}
+
 .bg-ink,
 .bg-dark {
   background: var(--espresso);
   color: var(--cream);
+  --head: currentColor;
 }
 
 .bg-mocha {
   background: var(--mocha);
   color: var(--cream);
+  --head: currentColor;
 }
 
 .bg-lime {
   background: var(--lime);
   color: var(--espresso);
+  /* auf Salvia Blue: alle Schriftstufen dunkler, damit sie lesbar bleiben */
+  --ink-body: var(--indigo);
+  --ink-2: var(--indigo-soft);
+  --muted: var(--indigo-soft);
 }
 
 .bg-ink .lead,
 .bg-dark .lead,
 .bg-mocha .lead,
 .on-dark .lead {
-  color: rgba(246, 241, 234, 0.78);
+  color: rgba(244, 246, 247, 0.78);
 }
 
 .bg-ink .muted,
 .bg-dark .muted,
 .bg-mocha .muted,
 .on-dark .muted {
-  color: rgba(246, 241, 234, 0.6);
+  color: rgba(244, 246, 247, 0.6);
 }
 
 /* Glas-Flächen über Bildern */
 .glass {
-  background: rgba(43, 31, 26, 0.32);
+  background: rgba(43, 47, 64, 0.32);
   -webkit-backdrop-filter: blur(18px) saturate(1.15);
   backdrop-filter: blur(18px) saturate(1.15);
-  border: 1px solid rgba(246, 241, 234, 0.24);
+  border: 1px solid rgba(244, 246, 247, 0.24);
   color: var(--cream);
+  --head: currentColor;
 }
 
 .glass-light {
-  background: rgba(251, 248, 243, 0.62);
+  background: rgba(250, 251, 252, 0.62);
   -webkit-backdrop-filter: blur(18px) saturate(1.2);
   backdrop-filter: blur(18px) saturate(1.2);
   border: 1px solid rgba(255, 255, 255, 0.55);
@@ -434,7 +473,7 @@ b {
 .bg-mocha .btn-ghost,
 .on-dark .btn-ghost {
   --btn-fg: var(--cream);
-  --btn-border: rgba(246, 241, 234, 0.55);
+  --btn-border: rgba(244, 246, 247, 0.55);
 }
 
 .bg-ink .btn-ghost:hover,
@@ -611,6 +650,7 @@ b {
   padding: 10px 16px;
   background: var(--espresso);
   color: var(--cream);
+  --head: currentColor;
 }
 
 .skip-link:focus {

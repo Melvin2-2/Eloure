@@ -43,7 +43,7 @@ const data = {
   ctaLabel={`Fragen? ${site.phone}`}
 >
   <section class="booking" data-booking>
-    <div class="b-band bg-dark">
+    <div class="b-band bg-mist">
       <div class="wrap">
         <header class="b-head">
           <div>
@@ -387,6 +387,7 @@ const data = {
   .stepper .is-current {
     background: var(--ink);
     color: var(--paper);
+    --head: currentColor;
   }
 
   .stepper .is-current span {
@@ -397,6 +398,7 @@ const data = {
   .stepper .is-done span {
     background: var(--ink);
     color: var(--paper);
+    --head: currentColor;
   }
 
   @media (max-width: 720px) {
@@ -595,6 +597,7 @@ const data = {
     background: var(--ink);
     border-color: var(--ink);
     color: var(--paper);
+    --head: currentColor;
   }
 
   .fv-card:has(input:focus-visible) {
@@ -675,6 +678,7 @@ const data = {
     background: var(--ink);
     border-color: var(--ink);
     color: var(--paper);
+    --head: currentColor;
   }
 
   .opt:has(input:focus-visible) {
@@ -806,7 +810,7 @@ const data = {
   }
 
   .cal-days :global(button:disabled) {
-    color: rgba(46, 45, 43, 0.28);
+    color: rgba(43, 47, 64, 0.28);
     cursor: default;
   }
 
@@ -825,6 +829,7 @@ const data = {
   .cal-days :global(button[aria-pressed='true']) {
     background: var(--ink);
     color: var(--paper);
+    --head: currentColor;
   }
 
   .cal-days :global(button[aria-pressed='true']::after) {
@@ -930,6 +935,7 @@ const data = {
     background: var(--ink);
     border-color: var(--ink);
     color: var(--paper);
+    --head: currentColor;
   }
 
   /* Formular */
@@ -1165,7 +1171,7 @@ const data = {
     align-items: center;
     min-height: 44px;
     padding: 0 18px;
-    border: 1px solid var(--line, rgba(58, 40, 31, 0.2));
+    border: 1px solid var(--line, rgba(43, 47, 64, 0.2));
     background: var(--paper);
     color: var(--ink);
     font-size: 0.94rem;
@@ -1344,7 +1350,7 @@ const data = {
       justify-content: space-between;
       gap: 12px;
       padding: 12px var(--gutter) calc(12px + env(safe-area-inset-bottom));
-      background: rgba(252, 250, 248, 0.96);
+      background: rgba(250, 251, 252, 0.96);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-top: 1px solid var(--line);
@@ -1379,7 +1385,8 @@ const data = {
   }
 
   .b-band h1 {
-    color: var(--cream);
+    color: var(--ink);
+    --head: currentColor;
     font-size: clamp(2.6rem, 5vw, 4.6rem);
     margin-bottom: 18px;
   }
@@ -1391,7 +1398,7 @@ const data = {
     display: flex;
     flex-wrap: wrap;
     gap: 8px 26px;
-    color: rgba(246, 241, 234, 0.85);
+    color: var(--ink-2);
     font-size: 1rem;
   }
 
@@ -1403,7 +1410,7 @@ const data = {
 
   .b-trust :global(svg),
   .b-trust .stars {
-    color: var(--lime);
+    color: var(--salvia-ink);
   }
 
   .b-trust .stars {
@@ -1411,13 +1418,14 @@ const data = {
   }
 
   .b-band .stepper li {
-    background: rgba(246, 241, 234, 0.08);
-    color: rgba(246, 241, 234, 0.75);
+    background: var(--paper);
+    color: var(--ink-2);
   }
 
   .b-band .stepper span {
-    background: rgba(246, 241, 234, 0.15);
-    color: var(--cream);
+    background: var(--gray-soft);
+    color: var(--ink);
+    --head: currentColor;
   }
 
   .b-band .stepper .is-current {
@@ -1552,6 +1560,7 @@ const data = {
     background: var(--espresso);
     border-color: var(--espresso);
     color: var(--cream);
+    --head: currentColor;
   }
 
   .qk.is-on .qk-badge {
@@ -1596,19 +1605,21 @@ const data = {
   }
 
   .opt:has(input:checked) {
-    background: rgba(237, 255, 99, 0.35);
+    background: rgba(155, 174, 201, 0.35);
     border-color: var(--espresso);
   }
 
   .sum-card {
     background: var(--espresso);
     color: var(--cream);
+    --head: currentColor;
     border: 0;
     box-shadow: var(--shadow-l);
   }
 
   .sum-title {
     color: var(--cream);
+    --head: currentColor;
   }
 
   .sum-list :global(li) {
@@ -1616,15 +1627,15 @@ const data = {
   }
 
   .sum-list :global(.sum-empty) {
-    color: rgba(246, 241, 234, 0.6);
+    color: rgba(244, 246, 247, 0.6);
   }
 
   .sum-when {
-    background: rgba(246, 241, 234, 0.1);
+    background: rgba(244, 246, 247, 0.1);
   }
 
   .sum-totals div {
-    color: rgba(246, 241, 234, 0.85);
+    color: rgba(244, 246, 247, 0.85);
   }
 
   .sum-discount {
@@ -1648,7 +1659,7 @@ const data = {
 
   .sum-trust {
     border-color: var(--line-light);
-    color: rgba(246, 241, 234, 0.82);
+    color: rgba(244, 246, 247, 0.82);
   }
 
   .sum-trust :global(svg) {

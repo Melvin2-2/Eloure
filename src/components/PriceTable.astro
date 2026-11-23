@@ -122,7 +122,7 @@ const zoneCount = (g: Group) => byRegion(g).reduce((n, [, list]) => n + list.len
     align-items: center;
     gap: 16px;
     padding: 20px 24px;
-    border: 1px solid rgba(47, 33, 25, 0.2);
+    border: 1px solid rgba(43, 47, 64, 0.2);
     background: var(--paper);
     color: var(--ink);
     text-align: left;
@@ -160,6 +160,7 @@ const zoneCount = (g: Group) => byRegion(g).reduce((n, [, list]) => n + list.len
     background: var(--espresso);
     border-color: var(--espresso);
     color: var(--cream);
+    --head: currentColor;
   }
 
   .tabs button[aria-selected='true'] :global(svg) {
@@ -208,6 +209,7 @@ const zoneCount = (g: Group) => byRegion(g).reduce((n, [, list]) => n + list.len
     padding: clamp(24px, 3.4vw, 40px);
     background: var(--espresso);
     color: var(--cream);
+    --head: currentColor;
     margin-top: 16px;
   }
 
@@ -226,21 +228,22 @@ const zoneCount = (g: Group) => byRegion(g).reduce((n, [, list]) => n + list.len
     font-size: clamp(1.4rem, 2vw, 1.8rem);
     line-height: 1.05;
     color: var(--cream);
+    --head: currentColor;
     margin-bottom: 10px;
   }
 
   .first p {
     font-size: 1rem;
-    color: rgba(246, 241, 234, 0.75);
+    color: rgba(244, 246, 247, 0.75);
     margin: 0;
   }
 
   .first .rows li {
-    border-bottom-color: rgba(246, 241, 234, 0.18);
+    border-bottom-color: rgba(244, 246, 247, 0.18);
   }
 
   .first .meta {
-    color: rgba(246, 241, 234, 0.65);
+    color: rgba(244, 246, 247, 0.65);
   }
 
   .first .price.free {
@@ -248,8 +251,9 @@ const zoneCount = (g: Group) => byRegion(g).reduce((n, [, list]) => n + list.len
   }
 
   .first .book {
-    border-color: rgba(246, 241, 234, 0.4);
+    border-color: rgba(244, 246, 247, 0.4);
     color: var(--cream);
+    --head: currentColor;
   }
 
   .first .book:hover {
@@ -299,7 +303,7 @@ const zoneCount = (g: Group) => byRegion(g).reduce((n, [, list]) => n + list.len
     align-items: center;
     gap: 16px;
     padding: 15px 0;
-    border-bottom: 1px solid rgba(47, 33, 25, 0.12);
+    border-bottom: 1px solid rgba(43, 47, 64, 0.12);
   }
 
   .rows li:last-child {
@@ -325,6 +329,7 @@ const zoneCount = (g: Group) => byRegion(g).reduce((n, [, list]) => n + list.len
 
   .first .name strong {
     color: var(--cream);
+    --head: currentColor;
   }
 
   .meta {
@@ -353,6 +358,7 @@ const zoneCount = (g: Group) => byRegion(g).reduce((n, [, list]) => n + list.len
 
   .first .price {
     color: var(--cream);
+    --head: currentColor;
   }
 
   .book {
@@ -360,7 +366,7 @@ const zoneCount = (g: Group) => byRegion(g).reduce((n, [, list]) => n + list.len
     place-items: center;
     width: 40px;
     height: 40px;
-    border: 1px solid rgba(47, 33, 25, 0.3);
+    border: 1px solid rgba(43, 47, 64, 0.3);
     color: var(--ink);
     transition:
       background 0.2s,

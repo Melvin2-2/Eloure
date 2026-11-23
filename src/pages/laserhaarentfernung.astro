@@ -29,7 +29,7 @@ import Icon from '../components/Icon.astro';
   </PageHero>
 
   <!-- Wirkung -->
-  <section class="wirk bg-dark">
+  <section class="wirk bg-mist">
     <div class="w-content">
       <Lines lines={['Licht, das die', 'Haarwurzel trifft.']} class="w-title" />
       <p class="lead reveal">
@@ -224,7 +224,7 @@ import Icon from '../components/Icon.astro';
   }
 
   .w-content p:not(.lead) {
-    color: rgba(246, 241, 234, 0.82);
+    color: var(--ink-body);
   }
 
   .w-img {
@@ -317,7 +317,7 @@ import Icon from '../components/Icon.astro';
 
   .phases li:first-child .ph-bar::after {
     background: var(--ok);
-    box-shadow: inset 0 0 0 1px rgba(46, 45, 43, 0.2);
+    box-shadow: inset 0 0 0 1px rgba(43, 47, 64, 0.2);
   }
 
   .numbers {
@@ -438,12 +438,13 @@ import Icon from '../components/Icon.astro';
   .prep-card.dark {
     background: var(--ink);
     color: var(--paper);
+    --head: currentColor;
   }
 
   .tip {
     margin-top: 24px;
     padding-top: 20px;
-    color: rgba(252, 250, 248, 0.8);
+    color: rgba(250, 251, 252, 0.8);
     font-size: 0.95rem;
   }
 

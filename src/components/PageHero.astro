@@ -132,6 +132,7 @@ const hasSlot = Astro.slots.has('default');
     line-height: 0.92;
     margin: 0;
     color: var(--cream);
+    --head: currentColor;
   }
 
   .ph-head {
@@ -146,12 +147,12 @@ const hasSlot = Astro.slots.has('default');
     max-width: 34em;
     font-size: clamp(1.05rem, 1.2vw, 1.15rem);
     line-height: 1.55;
-    color: rgba(246, 241, 234, 0.9);
+    color: rgba(244, 246, 247, 0.9);
   }
 
   .ph-actions :global(.btn-ghost) {
     --btn-fg: var(--cream);
-    --btn-border: rgba(246, 241, 234, 0.6);
+    --btn-border: rgba(244, 246, 247, 0.6);
   }
 
   .ph-actions :global(.btn-ghost:hover) {
@@ -189,7 +190,7 @@ const hasSlot = Astro.slots.has('default');
   .fr-shade {
     position: absolute;
     inset: 0;
-    background: linear-gradient(0deg, rgba(36, 25, 19, 0.78) 0%, rgba(36, 25, 19, 0.3) 42%, rgba(36, 25, 19, 0) 70%);
+    background: linear-gradient(0deg, rgba(27, 30, 42, 0.78) 0%, rgba(27, 30, 42, 0.3) 42%, rgba(27, 30, 42, 0) 70%);
   }
 
   .fr-content {
@@ -218,7 +219,7 @@ const hasSlot = Astro.slots.has('default');
       --fr-side: 18px;
     }
     .fr-shade {
-      background: linear-gradient(0deg, rgba(36, 25, 19, 0.86) 0%, rgba(36, 25, 19, 0.5) 55%, rgba(36, 25, 19, 0.1) 85%);
+      background: linear-gradient(0deg, rgba(27, 30, 42, 0.86) 0%, rgba(27, 30, 42, 0.5) 55%, rgba(27, 30, 42, 0.1) 85%);
     }
     .fr-content {
       left: var(--gutter);
@@ -249,7 +250,7 @@ const hasSlot = Astro.slots.has('default');
   .sh-shade {
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, rgba(36, 25, 19, 0.6) 0%, rgba(36, 25, 19, 0.15) 45%, rgba(36, 25, 19, 0) 65%);
+    background: linear-gradient(90deg, rgba(27, 30, 42, 0.6) 0%, rgba(27, 30, 42, 0.15) 45%, rgba(27, 30, 42, 0) 65%);
   }
 
   .sh-lines {
@@ -304,7 +305,7 @@ const hasSlot = Astro.slots.has('default');
   }
 
   .sh-form.is-glass {
-    background: rgba(36, 25, 19, 0.62);
+    background: rgba(27, 30, 42, 0.62);
     -webkit-backdrop-filter: blur(14px) saturate(1.1);
     backdrop-filter: blur(14px) saturate(1.1);
   }
@@ -322,8 +323,8 @@ const hasSlot = Astro.slots.has('default');
 
   .is-xl .sh-shade {
     background:
-      linear-gradient(90deg, rgba(36, 25, 19, 0.7) 0%, rgba(36, 25, 19, 0.25) 45%, rgba(36, 25, 19, 0) 65%),
-      linear-gradient(0deg, rgba(36, 25, 19, 0.45) 0%, rgba(36, 25, 19, 0) 45%);
+      linear-gradient(90deg, rgba(27, 30, 42, 0.7) 0%, rgba(27, 30, 42, 0.25) 45%, rgba(27, 30, 42, 0) 65%),
+      linear-gradient(0deg, rgba(27, 30, 42, 0.45) 0%, rgba(27, 30, 42, 0) 45%);
   }
 
   /* Vorhang: Hero bleibt stehen, der nächste Abschnitt schiebt sich darüber */
@@ -336,7 +337,7 @@ const hasSlot = Astro.slots.has('default');
     .ph-shape.is-curtain + :global(*) {
       position: relative;
       z-index: 1;
-      box-shadow: 0 -30px 60px -20px rgba(20, 14, 11, 0.45);
+      box-shadow: 0 -30px 60px -20px rgba(17, 19, 28, 0.45);
     }
   }
 
@@ -360,7 +361,7 @@ const hasSlot = Astro.slots.has('default');
       max-height: 560px;
     }
     .sh-shade {
-      background: linear-gradient(0deg, rgba(36, 25, 19, 0.75) 0%, rgba(36, 25, 19, 0) 60%);
+      background: linear-gradient(0deg, rgba(27, 30, 42, 0.75) 0%, rgba(27, 30, 42, 0) 60%);
     }
     .sh-title {
       position: relative;
@@ -413,7 +414,7 @@ const hasSlot = Astro.slots.has('default');
     bottom: 26%;
     width: var(--sg-w);
     padding: calc(var(--sg-w) * 0.42) clamp(28px, 3vw, 44px) clamp(30px, 3vw, 42px);
-    background: rgba(36, 25, 19, 0.66);
+    background: rgba(27, 30, 42, 0.66);
     -webkit-backdrop-filter: blur(14px) saturate(1.1);
     backdrop-filter: blur(14px) saturate(1.1);
     border-radius: 999px 999px 0 0;

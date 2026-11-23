@@ -64,7 +64,7 @@ const intro = [
   </section>
 
   <!-- 3 · EINSTIEG: worum es bei Eloure geht -->
-  <section class="intro bg-dark">
+  <section class="intro bg-paper">
     <div class="in-stage">
       <figure class="in-big" data-anim="img">
         <Image src={imgRoom} alt="Kundin mit Schutzbrille bei der Laserhaarentfernung an der Achsel" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 40vw, 100vw" style="object-position:center 35%" />
@@ -140,8 +140,8 @@ const intro = [
   .hero-shade {
     position: absolute;
     inset: 0;
-    background: linear-gradient(0deg, rgba(36, 25, 19, 0.88) 0%, rgba(36, 25, 19, 0.45) 45%, rgba(36, 25, 19, 0.2) 75%),
-      linear-gradient(90deg, rgba(36, 25, 19, 0.55) 0%, rgba(36, 25, 19, 0) 60%);
+    background: linear-gradient(0deg, rgba(27, 30, 42, 0.88) 0%, rgba(27, 30, 42, 0.45) 45%, rgba(27, 30, 42, 0.2) 75%),
+      linear-gradient(90deg, rgba(27, 30, 42, 0.55) 0%, rgba(27, 30, 42, 0) 60%);
   }
 
   .hero-inner {
@@ -156,6 +156,7 @@ const intro = [
     line-height: 0.93;
     margin-bottom: 22px;
     color: var(--cream);
+    --head: currentColor;
   }
 
   .hero-sub {
@@ -170,7 +171,7 @@ const intro = [
   .hero-inner .lead {
     max-width: 32em;
     margin-bottom: 34px;
-    color: rgba(246, 241, 234, 0.9);
+    color: rgba(244, 246, 247, 0.9);
   }
 
   .hero-rating {
@@ -179,11 +180,12 @@ const intro = [
     gap: 12px;
     margin-top: 32px;
     padding: 12px 18px;
-    background: rgba(246, 241, 234, 0.12);
+    background: rgba(244, 246, 247, 0.12);
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
-    border: 1px solid rgba(246, 241, 234, 0.25);
+    border: 1px solid rgba(244, 246, 247, 0.25);
     color: var(--cream);
+    --head: currentColor;
     text-decoration: none;
     font-size: 1.02rem;
   }
@@ -214,7 +216,8 @@ const intro = [
     margin: 0 0 clamp(24px, 3vw, 40px);
     font-size: clamp(3rem, 13vw, 9.6rem);
     line-height: 0.92;
-    color: var(--cream);
+    color: var(--ink);
+    --head: currentColor;
   }
 
   .in-lead {
@@ -222,7 +225,7 @@ const intro = [
     max-width: 34em;
     font-size: clamp(1.15rem, 1.45vw, 1.35rem);
     line-height: 1.55;
-    color: rgba(246, 241, 234, 0.9);
+    color: var(--ink-2);
   }
 
   .in-facts {
@@ -237,14 +240,14 @@ const intro = [
     display: flex;
     align-items: center;
     gap: 16px;
-    color: rgba(246, 241, 234, 0.75);
+    color: var(--ink-2);
     font-size: 0.98rem;
     line-height: 1.35;
   }
 
   .in-facts :global(svg) {
     flex: none;
-    color: var(--lime);
+    color: var(--salvia-ink);
   }
 
   .in-facts strong {
@@ -255,7 +258,8 @@ const intro = [
     text-transform: uppercase;
     font-size: 1.25rem;
     letter-spacing: var(--display-ls);
-    color: var(--cream);
+    color: var(--ink);
+    --head: currentColor;
   }
 
   .in-big,
@@ -281,7 +285,7 @@ const intro = [
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(0deg, rgba(36, 25, 19, 0.7) 0%, rgba(36, 25, 19, 0) 40%);
+      background: linear-gradient(0deg, rgba(250, 251, 252, 0.95) 0%, rgba(250, 251, 252, 0) 45%);
     }
   }
 
@@ -294,11 +298,11 @@ const intro = [
     position: absolute;
     z-index: 4;
     aspect-ratio: 3 / 4;
-    outline: 8px solid var(--espresso);
+    outline: 8px solid var(--paper);
   }
 
   .intro .text-link {
-    color: var(--lime);
+    color: var(--salvia-ink);
   }
 
   @media (min-width: 640px) {

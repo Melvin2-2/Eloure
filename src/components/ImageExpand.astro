@@ -17,7 +17,7 @@ interface Props {
 const { image, alt, word, title, text, ctaHref, ctaLabel } = Astro.props;
 ---
 
-<section class="expand bg-dark" data-expand>
+<section class="expand bg-paper" data-expand>
   <div class="frame" data-expand-frame>
     <Image src={image} alt={alt} widths={[900, 1400, 2000, 2400]} sizes="100vw" />
     <div class="shade"></div>
@@ -62,7 +62,7 @@ const { image, alt, word, title, text, ctaHref, ctaLabel } = Astro.props;
   .shade {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(20, 14, 11, 0.15), rgba(20, 14, 11, 0.55));
+    background: linear-gradient(180deg, rgba(17, 19, 28, 0.15), rgba(17, 19, 28, 0.55));
   }
 
   .word {
@@ -75,6 +75,7 @@ const { image, alt, word, title, text, ctaHref, ctaLabel } = Astro.props;
     line-height: 0.8;
     letter-spacing: -0.05em;
     color: var(--cream);
+    --head: currentColor;
     white-space: nowrap;
     pointer-events: none;
     mix-blend-mode: overlay;
@@ -94,7 +95,7 @@ const { image, alt, word, title, text, ctaHref, ctaLabel } = Astro.props;
   }
 
   .card p {
-    color: rgba(246, 241, 234, 0.85);
+    color: rgba(244, 246, 247, 0.85);
     margin-bottom: 26px;
   }
 
