@@ -2085,7 +2085,8 @@ const data = {
     return `${names.join(' + ')} · ${fmtDur(len)}`;
   }
 
-  // Notizen für den Kalendertermin: kurz, Telefon zuerst (Name & E-Mail stehen schon im Titel bzw. unter „Wer“)
+  // Notizen für den Kalendertermin: kurz, Telefon zuerst (Name & E-Mail stehen schon im Titel bzw. unter „Wer“).
+  // Achtung: Cal.com zeigt diese Notizen auch der Kundin in der Bestätigung – nur neutrale Angaben.
   function bookingNotes(f: FormData) {
     const list = selectedList();
     const zonenField = $<HTMLTextAreaElement>('textarea[name=zonen]');
@@ -2100,7 +2101,7 @@ const data = {
       `Behandlung: ${list.map((s) => s.name).join(' + ')} (${dur})`,
       zonen ? `Ganzkörper-Zonen: ${zonen}` : null,
       `Preis: ${fmtChf(total)} vor Ort${disc > 0 ? ` · Code ${state.code} –${fmtChf(round05(disc))}` : ''}`,
-      state.returning ? 'Kundin/Kunde war schon da' : 'Erster Besuch – Beratung einplanen',
+      `Erster Besuch: ${state.returning ? 'nein' : 'ja'}`,
       msg ? `Nachricht: ${msg}` : null,
     ]
       .filter(Boolean)
