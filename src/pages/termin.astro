@@ -1,7 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import { site, promo, BOOKING_DEMO } from '../data/site';
+import { site, promo } from '../data/site';
+import { booking } from '../data/booking';
 import { googleRating } from '../data/reviews';
 import { services, firstVisit, byRegion, chf, duration, type Group } from '../data/services';
 
@@ -27,6 +28,8 @@ const data = {
   opening: site.openingSpec,
   promo,
   cancellationHours: site.cancellationHours,
+  booking: { api: booking.api, timeZone: booking.timeZone, windowDays: booking.windowDays, slotStep: booking.slotStep, staff: booking.staff },
+  contact: { whatsapp: site.whatsappHref, phone: site.phone, phoneHref: site.phoneHref },
 };
 ---
 
@@ -43,10 +46,9 @@ const data = {
     <div class="b-band bg-dark">
       <div class="wrap">
         {
-          BOOKING_DEMO && (
+          booking.testMode && (
             <p class="demo">
-              <Icon name="spark" size={16} /> Vorschau: Die Online-Buchung wird gerade angebunden – Anfragen werden noch nicht
-              übermittelt.
+              <Icon name="spark" size={16} /> Testphase: Die Online-Buchung ist aktiv – Termine landen vorerst in einem Testkalender.
             </p>
           )
         }
@@ -250,6 +252,7 @@ const data = {
               </div>
               <p class="code-msg" data-code-msg aria-live="polite"></p>
             </div>
+            <p class="form-error" data-submit-error hidden aria-live="assertive"></p>
           </div>
 
           <!-- ——— Erfolg ——— -->
@@ -847,6 +850,55 @@ const data = {
 
   .slots :global(.slot-group) {
     margin-bottom: 16px;
+  }
+
+  .slots :global(.slot-notice) {
+    margin: 0 0 14px;
+    padding: 10px 14px;
+    background: var(--lime);
+    color: var(--espresso);
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .slots :global(.slots-empty a),
+  .b-main :global([data-submit-error] a) {
+    font-weight: 700;
+    text-decoration: underline;
+  }
+
+  .slots :global(.slot-more) {
+    margin-top: 8px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: underline;
+    text-underline-offset: 5px;
+    cursor: pointer;
+  }
+
+  .slots :global([data-retry]) {
+    margin-top: 12px;
+  }
+
+  .cal-days:global(.is-loading) {
+    opacity: 0.45;
+  }
+
+  .b-main :global(.link-btn) {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
   }
 
   .slots :global(.slot-label) {
@@ -1586,6 +1638,8 @@ const data = {
     opening: { days: number[]; open: string; close: string }[];
     promo: { code: string; percent: number; label: string };
     cancellationHours: number;
+    booking: { api: string; timeZone: string; windowDays: number; slotStep: number; staff: { id: string; name: string; eventTypes: Record<string, number>; consult: number }[] };
+    contact: { whatsapp: string; phone: string; phoneHref: string };
   };
 
   const data: Data = JSON.parse(document.getElementById('booking-data')!.textContent!);
@@ -1600,6 +1654,7 @@ const data = {
     selected: new Set<string>(),
     date: null as Date | null,
     time: null as string | null,
+    slot: null as Slot | null,
     code: null as string | null,
     returning: false,
     month: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
@@ -1615,7 +1670,7 @@ const data = {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const maxDate = new Date(today);
-  maxDate.setDate(maxDate.getDate() + 75);
+  maxDate.setDate(maxDate.getDate() + data.booking.windowDays);
 
   const selectedList = () => [...state.selected].map((id) => byId.get(id)!).filter(Boolean);
   const totalMinutes = () => selectedList().reduce((a, s) => a + s.minutes, 0);
@@ -1669,34 +1724,101 @@ const data = {
       }
       // Zeitslot ggf. neu wählen, wenn sich die Dauer ändert
       state.time = null;
+      state.slot = null;
       syncChecks();
     }),
   );
 
-  // ——— Schritt 2: Kalender ———
-  function openingFor(d: Date) {
-    return data.opening.find((o) => o.days.includes(d.getDay()));
-  }
+  // ——— Schritt 2: Kalender (freie Zeiten live aus Cal.com) ———
+  type StaffPick = { id: string; eventTypeId: number; adj: boolean };
+  type Slot = { time: string; iso: string; staff: StaffPick[]; adj: boolean };
+  const DURATIONS = Object.keys(data.booking.staff[0]?.eventTypes ?? {})
+    .map(Number)
+    .sort((x, y) => x - y);
+  const avail = { key: '', status: 'idle' as 'idle' | 'loading' | 'ready' | 'error', days: new Map<string, Slot[]>() };
+  let showAll = false;
+  let slotNotice = '';
 
-  // Beispiel-Verfügbarkeit (deterministisch). Wird später durch das echte Buchungssystem ersetzt.
-  function isFree(d: Date, t: string) {
-    let h = 2166136261;
-    for (const c of dayKey(d) + t) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
-    return (h >>> 0) % 10 < 6;
-  }
+  const ymd = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const isConsultOnly = () => selectedList().length > 0 && selectedList().every((s) => s.id === 'beratungsgespraech');
+  // Dauer der gewählten Zonen → nächstlängerer buchbarer Termintyp
+  const bookingLength = () => DURATIONS.find((d) => d >= Math.max(totalMinutes(), 15)) ?? null;
+  const typeKey = () => (isConsultOnly() ? 'consult' : String(bookingLength() ?? 'too-long'));
+  const contactLinks = () =>
+    `<a href="${data.contact.whatsapp}" target="_blank" rel="noopener">WhatsApp</a> oder <a href="${data.contact.phoneHref}">${data.contact.phone}</a>`;
 
-  function slotsFor(d: Date) {
-    const o = openingFor(d);
-    if (!o) return [];
-    const dur = Math.max(totalMinutes(), 15);
-    const out: string[] = [];
-    const now = new Date();
-    for (let m = toMin(o.open); m + dur <= toMin(o.close); m += 30) {
-      const t = toTime(m);
-      if (d.getTime() === today.getTime() && m <= now.getHours() * 60 + now.getMinutes() + 120) continue;
-      if (isFree(d, t)) out.push(t);
+  async function loadAvailability(force = false) {
+    const key = typeKey();
+    if (!force && avail.key === key && avail.status !== 'error') return renderStep2();
+    avail.key = key;
+    avail.days = new Map();
+    showAll = false;
+    if (key === 'too-long') {
+      avail.status = 'ready';
+      return renderStep2();
     }
-    return out;
+    avail.status = 'loading';
+    renderStep2();
+    const range = `start=${ymd(today)}&end=${ymd(maxDate)}&timeZone=${encodeURIComponent(data.booking.timeZone)}`;
+    try {
+      const perStaff = await Promise.all(
+        data.booking.staff.map(async (st) => {
+          const eventTypeId = key === 'consult' ? st.consult : st.eventTypes[key];
+          const res = await fetch(`${data.booking.api}/slots?eventTypeId=${eventTypeId}&${range}`, {
+            headers: { 'cal-api-version': '2024-09-04' },
+          });
+          if (!res.ok) throw new Error(`slots ${res.status}`);
+          const json = await res.json();
+          return { st, eventTypeId, days: (json.data ?? {}) as Record<string, { start: string }[]> };
+        }),
+      );
+      if (avail.key !== key) return; // Auswahl hat sich inzwischen geändert
+      const step = data.booking.slotStep;
+      const merged = new Map<string, Map<string, Slot>>();
+      for (const { st, eventTypeId, days } of perStaff) {
+        for (const [day, list] of Object.entries(days)) {
+          const mins = new Set(list.map((x) => toMin(x.start.slice(11, 16))));
+          const byTime = merged.get(day) ?? new Map<string, Slot>();
+          for (const x of list) {
+            const t = x.start.slice(11, 16);
+            const m = toMin(t);
+            // Anschlusszeit: direkt nach einem Termin/Öffnungsbeginn oder direkt vor dem nächsten Termin/Feierabend
+            const adj = !mins.has(m - step) || !mins.has(m + step);
+            const slot = byTime.get(t) ?? { time: t, iso: x.start, staff: [], adj: false };
+            slot.staff.push({ id: st.id, eventTypeId, adj });
+            slot.adj = slot.adj || adj;
+            byTime.set(t, slot);
+          }
+          merged.set(day, byTime);
+        }
+      }
+      for (const [day, byTime] of merged) {
+        const list = [...byTime.values()].sort((x, y) => toMin(x.time) - toMin(y.time));
+        if (list.length) avail.days.set(day, list);
+      }
+      avail.status = 'ready';
+      if (state.date && !avail.days.has(ymd(state.date))) {
+        state.date = null;
+        state.time = null;
+        state.slot = null;
+      }
+      if (!state.date) {
+        const first = [...avail.days.keys()].sort()[0];
+        if (first) {
+          const [y, mo] = first.split('-').map(Number);
+          state.month = new Date(y, mo - 1, 1);
+        }
+      }
+    } catch (e) {
+      if (avail.key === key) avail.status = 'error';
+    }
+    renderStep2();
+  }
+
+  function renderStep2() {
+    renderCalendar();
+    renderSlots();
+    render();
   }
 
   function renderCalendar() {
@@ -1706,6 +1828,7 @@ const data = {
     $<HTMLButtonElement>('[data-cal-next]').disabled = new Date(m.getFullYear(), m.getMonth() + 1, 1) > maxDate;
 
     const grid = $('[data-cal-days]');
+    grid.classList.toggle('is-loading', avail.status === 'loading');
     grid.innerHTML = '';
     const offset = (new Date(m.getFullYear(), m.getMonth(), 1).getDay() + 6) % 7;
     for (let i = 0; i < offset; i++) grid.append(document.createElement('span'));
@@ -1716,16 +1839,17 @@ const data = {
       b.type = 'button';
       b.textContent = String(n);
       b.setAttribute('aria-label', d.toLocaleDateString('de-CH', { weekday: 'long', day: 'numeric', month: 'long' }));
-      const has = d >= today && d <= maxDate && slotsFor(d).length > 0;
+      const has = avail.status === 'ready' && (avail.days.get(ymd(d))?.length ?? 0) > 0;
       b.disabled = !has;
       if (has) b.classList.add('has-slots');
       if (state.date && d.getTime() === state.date.getTime()) b.setAttribute('aria-pressed', 'true');
       b.addEventListener('click', () => {
         state.date = d;
         state.time = null;
-        renderCalendar();
-        renderSlots();
-        render();
+        state.slot = null;
+        showAll = false;
+        slotNotice = '';
+        renderStep2();
       });
       grid.append(b);
     }
@@ -1733,38 +1857,72 @@ const data = {
 
   function renderSlots() {
     const box = $('[data-slots]');
-    if (!state.date) {
-      box.innerHTML = '<p class="muted slots-empty">Wähle zuerst einen Tag aus.</p>';
+    const notice = slotNotice ? `<p class="slot-notice">${slotNotice}</p>` : '';
+    if (avail.status === 'loading' || avail.status === 'idle') {
+      box.innerHTML = `${notice}<p class="muted slots-empty">Freie Termine werden geladen …</p>`;
       return;
     }
-    const slots = slotsFor(state.date);
+    if (avail.status === 'error') {
+      box.innerHTML = `<p class="slots-empty">Die freien Termine konnten gerade nicht geladen werden. Bitte versuch es gleich nochmals – oder melde dich per ${contactLinks()}.</p><button type="button" class="btn btn-ghost" data-retry>Nochmals laden</button>`;
+      box.querySelector('[data-retry]')!.addEventListener('click', () => loadAvailability(true));
+      return;
+    }
+    if (avail.key === 'too-long') {
+      box.innerHTML = `<p class="slots-empty">Für diese Kombination (${fmtDur(totalMinutes())}) planen wir deinen Termin gerne persönlich mit dir – kurz per ${contactLinks()}.</p>`;
+      return;
+    }
+    if (!avail.days.size) {
+      box.innerHTML = `<p class="slots-empty">In den nächsten ${Math.round(data.booking.windowDays / 7)} Wochen ist online leider nichts mehr frei. Melde dich per ${contactLinks()} – wir finden einen Termin.</p>`;
+      return;
+    }
+    if (!state.date) {
+      box.innerHTML = `${notice}<p class="muted slots-empty">Wähle einen Tag aus – alle markierten Tage haben freie Termine.</p>`;
+      return;
+    }
+    const all = avail.days.get(ymd(state.date)) ?? [];
+    const recommended = all.filter((x) => x.adj);
+    const list = showAll ? all : recommended;
     const title = state.date.toLocaleDateString('de-CH', { weekday: 'long', day: 'numeric', month: 'long' });
     const parts: [string, (m: number) => boolean][] = [
       ['Vormittag', (m) => m < 12 * 60],
       ['Nachmittag', (m) => m >= 12 * 60 && m < 17 * 60],
       ['Abend', (m) => m >= 17 * 60],
     ];
-    box.innerHTML = `<h3>${title}</h3>`;
+    box.innerHTML = `${notice}<h3>${title}</h3>`;
     for (const [label, test] of parts) {
-      const list = slots.filter((t) => test(toMin(t)));
-      if (!list.length) continue;
+      const group = list.filter((x) => test(toMin(x.time)));
+      if (!group.length) continue;
       const g = document.createElement('div');
       g.className = 'slot-group';
       g.innerHTML = `<p class="slot-label">${label}</p><div class="slot-grid"></div>`;
       const grid = g.querySelector('.slot-grid')!;
-      list.forEach((t) => {
+      group.forEach((x) => {
         const b = document.createElement('button');
         b.type = 'button';
-        b.textContent = t;
-        if (state.time === t) b.setAttribute('aria-pressed', 'true');
+        b.textContent = x.time;
+        if (state.time === x.time) b.setAttribute('aria-pressed', 'true');
         b.addEventListener('click', () => {
-          state.time = t;
+          state.time = x.time;
+          state.slot = x;
+          slotNotice = '';
           renderSlots();
           render();
         });
         grid.append(b);
       });
       box.append(g);
+    }
+    const more = all.length - recommended.length;
+    if (more > 0) {
+      const t = document.createElement('button');
+      t.type = 'button';
+      t.className = 'slot-more';
+      t.textContent = showAll ? 'Nur empfohlene Zeiten zeigen' : `Weitere Uhrzeiten anzeigen (${more})`;
+      t.addEventListener('click', () => {
+        showAll = !showAll;
+        renderSlots();
+      });
+      box.append(t);
     }
   }
 
@@ -1837,12 +1995,13 @@ const data = {
   // ——— Navigation ———
   const canProceed = () => {
     if (state.step === 1) return state.selected.size > 0;
-    if (state.step === 2) return !!state.date && !!state.time;
+    if (state.step === 2) return !!state.date && !!state.time && !!state.slot;
     if (state.step === 3) return true; // Validierung beim Klick
-    if (state.step === 4) return true;
+    if (state.step === 4) return !submitting;
     return false;
   };
-  const nextLabel = () => (state.step === 4 ? 'Termin anfragen' : 'Weiter');
+  let submitting = false;
+  const nextLabel = () => (state.step === 4 ? (submitting ? 'Wird gebucht …' : 'Termin buchen') : 'Weiter');
 
   function go(step: number) {
     state.step = step;
@@ -1857,8 +2016,7 @@ const data = {
     $('[data-m-sum]').hidden = step === 5;
     if (step === 2) {
       if (state.date) state.month = new Date(state.date.getFullYear(), state.date.getMonth(), 1);
-      renderCalendar();
-      renderSlots();
+      loadAvailability();
     }
     if (step === 4) renderReview();
     render();
@@ -1920,15 +2078,82 @@ const data = {
     });
   }
 
-  function submit() {
-    // Visuelle Demo – hier würde die Buchung an das Buchungssystem übergeben.
-    const name = String(new FormData(form).get('vorname') ?? '').trim();
-    const onlyConsult = selectedList().every((s) => s.id === 'beratungsgespraech');
-    $('[data-success-title]').textContent = `Danke${name ? ', ' + name : ''}! Deine Anfrage ist bei uns.`;
-    $('[data-success-text]').textContent = `Wir haben deinen Wunschtermin am ${whenText()} notiert und bestätigen ihn dir per E-Mail. ${
-      onlyConsult ? 'Bring einfach all deine Fragen mit – wir nehmen uns Zeit für dich.' : 'Wir freuen uns auf dich!'
-    }`;
-    go(5);
+  function bookingNotes(f: FormData) {
+    const list = selectedList();
+    const zonenField = $<HTMLTextAreaElement>('textarea[name=zonen]');
+    const zonen = zonenField.closest('[hidden]') ? '' : zonenField.value.trim();
+    const disc = discount();
+    const total = round05(subtotal() - disc);
+    const len = isConsultOnly() ? null : bookingLength();
+    const msg = String(f.get('nachricht') ?? '').trim();
+    return [
+      `Behandlung: ${list.map((s) => s.name).join(', ')}`,
+      zonen && `Gewählte Zonen: ${zonen}`,
+      `Dauer: ${fmtDur(totalMinutes())}${len && len !== totalMinutes() ? ` (eingeplant: ${fmtDur(len)})` : ''}`,
+      `Preis: ${fmtChf(total)}${disc > 0 ? ` (inkl. Code ${state.code}: –${fmtChf(round05(disc))})` : ''}`,
+      `Telefon: ${String(f.get('telefon') ?? '').trim()}`,
+      `Erster Besuch: ${state.returning ? 'nein' : 'ja'}`,
+      msg && `Nachricht: ${msg}`,
+      'Gebucht über die Website',
+    ]
+      .filter(Boolean)
+      .join('\n');
+  }
+
+  const submitError = $('[data-submit-error]');
+  function showSubmitError(html: string) {
+    submitError.innerHTML = html;
+    submitError.hidden = false;
+  }
+
+  async function submit() {
+    if (submitting || !state.slot) return;
+    const f = new FormData(form);
+    const slot = state.slot;
+    const pick = slot.staff.find((x) => x.adj) ?? slot.staff[0];
+    const name = `${String(f.get('vorname') ?? '').trim()} ${String(f.get('nachname') ?? '').trim()}`.trim();
+    submitError.hidden = true;
+    submitting = true;
+    render();
+    try {
+      const res = await fetch(`${data.booking.api}/bookings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'cal-api-version': '2024-08-13' },
+        body: JSON.stringify({
+          start: new Date(slot.iso).toISOString(),
+          eventTypeId: pick.eventTypeId,
+          attendee: { name, email: String(f.get('email') ?? '').trim(), timeZone: data.booking.timeZone, language: 'de' },
+          location: { type: 'address' },
+          bookingFieldsResponses: { notes: bookingNotes(f) },
+        }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || json.status !== 'success') throw json;
+
+      const first = String(f.get('vorname') ?? '').trim();
+      $('[data-success-title]').textContent = `Danke${first ? ', ' + first : ''}! Dein Termin steht.`;
+      $('[data-success-text]').textContent = `Wir haben deinen Termin am ${whenText()} fest für dich eingeplant. Du bekommst gleich eine Bestätigung per E-Mail – mit allen Infos und einem Link, falls du verschieben oder absagen musst. ${
+        isConsultOnly() ? 'Bring einfach all deine Fragen mit.' : 'Wir freuen uns auf dich!'
+      }`;
+      go(5);
+    } catch (err: any) {
+      const msg = String(err?.error?.message ?? err?.message ?? '');
+      if (/email/i.test(msg)) {
+        showSubmitError('Diese E-Mail-Adresse scheint keine Post empfangen zu können. Bitte prüfe sie <button type="button" class="link-btn" data-fix-mail>hier</button>.');
+        submitError.querySelector('[data-fix-mail]')?.addEventListener('click', () => go(3));
+      } else if (/avail|slot|booked|conflict|taken|no_available/i.test(msg)) {
+        slotNotice = 'Dieser Termin wurde gerade vergeben. Bitte wähle eine andere Uhrzeit.';
+        state.time = null;
+        state.slot = null;
+        avail.key = '';
+        go(2);
+      } else {
+        showSubmitError(`Das hat leider nicht geklappt. Bitte versuch es nochmals – oder melde dich per ${contactLinks()}.`);
+      }
+    } finally {
+      submitting = false;
+      render();
+    }
   }
 
   // ——— Zusammenfassung ———

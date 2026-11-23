@@ -53,7 +53,4 @@ export const promo = {
   label: '15 % auf deine erste Behandlung',
 } as const;
 
-// Solange die Buchung noch nicht an ein echtes Buchungssystem angebunden ist,
-// zeigt /termin einen dezenten Hinweis. Vor dem Livegang auf false setzen.
-export const BOOKING_DEMO = true;
 
