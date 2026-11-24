@@ -201,7 +201,6 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
   <!-- 8 · Kundenstimmen -->
   <section class="c-voices on-veil" data-c-voices aria-label="Kundenstimmen">
     <div class="c-voices-inner">
-      <button type="button" class="c-arrow c-arrow-l" aria-label="Vorherige Stimme" data-c-prev><span></span></button>
       <div class="c-voices-body reveal">
         <p class="c-voices-stars" aria-label={`${rating} von 5 Sternen`}>★★★★★</p>
         <div class="c-voices-quotes">
@@ -214,26 +213,26 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
             ))
           }
         </div>
+        <!-- Pfeile mit Zeitlinie dazwischen: zeigt, wann die nächste Stimme kommt -->
+        <div class="c-voices-nav">
+          <button type="button" class="c-arrow c-arrow-l" aria-label="Vorherige Stimme" data-c-prev><span></span></button>
+          <span class="c-timer" aria-hidden="true"><span data-c-timer></span></span>
+          <button type="button" class="c-arrow c-arrow-r" aria-label="Nächste Stimme" data-c-next><span></span></button>
+        </div>
+        <p class="c-voices-count" aria-hidden="true"><span data-c-count>1</span> / {voices.length}</p>
       </div>
-      <button type="button" class="c-arrow c-arrow-r" aria-label="Nächste Stimme" data-c-next><span></span></button>
     </div>
   </section>
 
-  <!-- 9 · Video für sich: grosses Close-up mit Rahmen, daneben eine Überschrift und ein Text -->
+  <!-- 9 · Video für sich: über die ganze Sectionhöhe, daneben eine Überschrift und ein Text -->
   <section class="c-film on-frost" aria-labelledby="film-titel">
-    <div class="c-film-grid">
-      <div class="c-film-text">
-        <h2 class="c-ttl reveal" id="film-titel">Licht, das die<br />Haarwurzel trifft.</h2>
-        <p class="reveal">Unser medizinischer Diodenlaser sendet gebündeltes Licht, das vom Farbstoff im Haar aufgenommen wird – gezielt und schonend.</p>
-        <p class="c-film-link reveal"><a class="c-link" href="/laserhaarentfernung">Zur Behandlung</a></p>
-      </div>
-      <figure class="c-film-media" data-anim="soft">
-        <div class="c-film-frame">
-          <LoopVideo name="laser-licht-gross" label="Close-up: Laser-Handstück mit Licht auf der Haut am Bein" pos="center 55%" />
-          <button type="button" class="c-film-toggle" data-film-toggle aria-label="Video anhalten"><span aria-hidden="true"></span></button>
-        </div>
-        <figcaption>Medizinischer Diodenlaser</figcaption>
-      </figure>
+    <div class="c-film-text">
+      <h2 class="c-ttl reveal" id="film-titel">Licht, das die<br />Haarwurzel trifft.</h2>
+      <p class="reveal">Unser medizinischer Diodenlaser sendet gebündeltes Licht, das vom Farbstoff im Haar aufgenommen wird – gezielt und schonend.</p>
+      <p class="c-film-link reveal"><a class="c-link" href="/laserhaarentfernung">Zur Behandlung</a></p>
+    </div>
+    <div class="c-film-media">
+      <LoopVideo name="laser-licht-gross" label="Close-up: Laser-Handstück mit Licht auf der Haut am Bein" pos="center 80%" />
     </div>
   </section>
 
@@ -288,28 +287,6 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
 </Base>
 
 <script>
-  // Video anhalten / abspielen
-  document.querySelectorAll<HTMLButtonElement>('[data-film-toggle]').forEach((btn) => {
-    const v = btn.parentElement?.querySelector('video');
-    if (!v) return;
-    const sync = () => {
-      btn.classList.toggle('is-paused', v.paused);
-      btn.setAttribute('aria-label', v.paused ? 'Video abspielen' : 'Video anhalten');
-    };
-    v.addEventListener('play', sync);
-    v.addEventListener('pause', sync);
-    btn.addEventListener('click', () => {
-      if (v.paused) {
-        delete v.dataset.held;
-        v.play().catch(() => {});
-      } else {
-        v.dataset.held = '1';
-        v.pause();
-      }
-    });
-    sync();
-  });
-
   // Kundenstimmen
   const voices = document.querySelector<HTMLElement>('[data-c-voices]');
   if (voices) {
@@ -322,23 +299,35 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
         if (k === i) q.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 700, easing: 'ease-out' });
       });
     };
-    // läuft von alleine weiter; pausiert bei Maus/Fokus, ausserhalb des Bildschirms und bei „Bewegung reduzieren“
+    // läuft von alleine weiter: die Zeitlinie zwischen den Pfeilen füllt sich, danach kommt die nächste Stimme.
+    // Pausiert bei Maus/Fokus und ausserhalb des Bildschirms; bei „Bewegung reduzieren“ nur per Pfeil.
     const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let timer: number | undefined;
+    const bar = voices.querySelector<HTMLElement>('[data-c-timer]');
+    const count = voices.querySelector<HTMLElement>('[data-c-count]');
     let visible = false;
     let hold = false;
-    const stop = () => window.clearInterval(timer);
-    const start = () => {
-      stop();
-      if (!still && visible && !hold) timer = window.setInterval(() => show(i + 1), 6500);
+    const restart = () => {
+      if (!bar || still) return;
+      bar.classList.remove('is-run');
+      void bar.offsetWidth;
+      bar.classList.add('is-run');
     };
-    voices.querySelector('[data-c-prev]')?.addEventListener('click', () => (show(i - 1), start()));
-    voices.querySelector('[data-c-next]')?.addEventListener('click', () => (show(i + 1), start()));
-    voices.addEventListener('mouseenter', () => ((hold = true), stop()));
-    voices.addEventListener('mouseleave', () => ((hold = false), start()));
-    voices.addEventListener('focusin', () => ((hold = true), stop()));
-    voices.addEventListener('focusout', () => ((hold = false), start()));
-    new IntersectionObserver(([e]) => ((visible = e.isIntersecting), start())).observe(voices);
+    const sync = () => voices.classList.toggle('is-held', hold || !visible);
+    const go = (n: number) => {
+      show(n);
+      if (count) count.textContent = String(i + 1);
+      restart();
+    };
+    bar?.addEventListener('animationend', () => go(i + 1));
+    voices.querySelector('[data-c-prev]')?.addEventListener('click', () => go(i - 1));
+    voices.querySelector('[data-c-next]')?.addEventListener('click', () => go(i + 1));
+    voices.addEventListener('mouseenter', () => ((hold = true), sync()));
+    voices.addEventListener('mouseleave', () => ((hold = false), sync()));
+    voices.addEventListener('focusin', () => ((hold = true), sync()));
+    voices.addEventListener('focusout', () => ((hold = false), sync()));
+    new IntersectionObserver(([e]) => ((visible = e.isIntersecting), sync())).observe(voices);
+    sync();
+    restart();
   }
 </script>
 
@@ -844,18 +833,15 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
     color: rgba(255, 255, 255, 0.94);
   }
 
-  /* ——— Video für sich ——— */
+  /* ——— Video für sich: ganze Sectionhöhe ——— */
   .c-film {
-    padding-block: clamp(140px, 14vw, 220px);
+    display: grid;
   }
 
-  .c-film-grid {
+  .c-film-text {
     display: grid;
-    gap: clamp(56px, 6vw, 100px);
-    align-items: center;
-    max-width: 1320px;
-    margin-inline: auto;
-    padding-inline: var(--gutter);
+    align-content: center;
+    padding: clamp(110px, 11vw, 170px) clamp(28px, 7vw, 120px);
   }
 
   .c-film-text .c-ttl {
@@ -872,65 +858,23 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
   }
 
   .c-film-media {
-    margin: 0;
-    justify-self: center;
-    width: min(100%, 560px);
-  }
-
-  .c-film-frame {
     position: relative;
-    padding: clamp(10px, 1vw, 14px);
-    border: 1px solid var(--line-strong);
+    min-height: 120vw;
+    overflow: hidden;
   }
 
-  .c-film-frame :global(video) {
-    aspect-ratio: 4 / 5;
-    height: auto;
-  }
-
-  .c-film-media figcaption {
-    margin-top: 18px;
-    font-size: 0.8rem;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    text-align: center;
-    color: var(--ink-2);
-  }
-
-  /* dezenter Pause-Knopf */
-  .c-film-toggle {
+  .c-film-media :global(video) {
     position: absolute;
-    right: clamp(22px, 2vw, 30px);
-    bottom: clamp(22px, 2vw, 30px);
-    width: 40px;
-    height: 40px;
-    display: grid;
-    place-items: center;
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    background: rgba(255, 255, 255, 0.12);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-    cursor: pointer;
-  }
-
-  .c-film-toggle span {
-    width: 10px;
-    height: 12px;
-    border-inline: 2px solid #fff;
-  }
-
-  .c-film-toggle.is-paused span {
-    width: 0;
-    height: 0;
-    border: 0;
-    border-left: 11px solid #fff;
-    border-block: 7px solid transparent;
-    margin-left: 3px;
+    inset: 0;
   }
 
   @media (min-width: 900px) {
-    .c-film-grid {
+    .c-film {
       grid-template-columns: 1fr 1fr;
+      min-height: clamp(700px, 96vh, 1080px);
+    }
+    .c-film-media {
+      min-height: 0;
     }
   }
 
@@ -943,10 +887,51 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
     max-width: 1360px;
     margin-inline: auto;
     padding-inline: var(--gutter);
-    display: grid;
-    grid-template-columns: auto 1fr auto;
+  }
+
+  .c-voices-nav {
+    display: flex;
     align-items: center;
-    gap: clamp(16px, 4vw, 64px);
+    justify-content: center;
+    gap: 18px;
+    margin-top: 44px;
+  }
+
+  .c-timer {
+    position: relative;
+    width: clamp(140px, 22vw, 260px);
+    height: 1px;
+    background: var(--line-strong);
+    overflow: hidden;
+  }
+
+  .c-timer span {
+    position: absolute;
+    inset: -1px 0;
+    background: var(--cta);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .c-timer span.is-run {
+    animation: c-time 6.5s linear forwards;
+  }
+
+  .is-held .c-timer span.is-run {
+    animation-play-state: paused;
+  }
+
+  @keyframes c-time {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  .c-voices-count {
+    margin: 14px 0 0;
+    font-size: 0.78rem;
+    letter-spacing: 0.24em;
+    color: var(--ink-2);
   }
 
   .c-voices-body {
@@ -1163,19 +1148,6 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
     }
     .c-line-min {
       display: none;
-    }
-    .c-voices-inner {
-      grid-template-columns: 1fr 1fr;
-    }
-    .c-voices-body {
-      grid-column: 1 / -1;
-      grid-row: 1;
-    }
-    .c-arrow-l {
-      justify-self: end;
-    }
-    .c-arrow-r {
-      justify-self: start;
     }
   }
 </style>
