@@ -1,27 +1,32 @@
 ---
-// USPs als Linienliste (nach Vorlage „Fun Facts“): links Überschrift, Mitte zwei versetzte
-// Bilder, rechts feine Linien mit „+“ zum Aufklappen.
+// Linienliste (nach Vorlage „Fun Facts“): links Überschrift, Mitte zwei versetzte
+// Bilder, rechts feine Linien mit „+“ zum Aufklappen. Standard: USPs; mit `items` z. B. FAQ.
 import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import { googleRating } from '../data/reviews';
-import imgA from '../assets/shoot/caro-sw.jpg';
-import imgB from '../assets/shoot/detail-relief.jpg';
+import defA from '../assets/shoot/caro-sw.jpg';
+import defB from '../assets/shoot/detail-relief.jpg';
 
 interface Props {
   title?: string;
+  items?: { title: string; text: string }[];
+  imgA?: ImageMetadata;
+  imgB?: ImageMetadata;
+  more?: { href: string; label: string };
+  id?: string;
 }
-const { title = 'Darauf kannst du dich verlassen.' } = Astro.props;
 const rating = googleRating.rating.toFixed(1).replace('.', ',');
-
-const items = [
+const usps = [
   { title: `${rating} Sterne auf Google`, text: `Aus ${googleRating.count} Bewertungen.` },
   { title: 'Medizinischer Diodenlaser', text: 'Präzise und schonend.' },
   { title: 'Geprüfte Sachkunde', text: 'Nach Schweizer Verordnung V-NISSG.' },
   { title: 'Bezahlt wird vor Ort', text: 'Keine Vorauszahlung.' },
   { title: 'Kostenlos absagen', text: 'Bis 24 Stunden vorher.' },
 ];
+const { title = 'Darauf kannst du dich verlassen.', items = usps, imgA = defA, imgB = defB, more, id } = Astro.props;
 ---
 
-<section class="usp">
+<section class="usp" id={id}>
   <div class="usp-grid">
     <h2 class="usp-title reveal">{title}</h2>
     <div class="usp-media" aria-hidden="true">
@@ -45,6 +50,13 @@ const items = [
             </details>
           </li>
         ))
+      }
+      {
+        more && (
+          <li class="usp-more">
+            <a href={more.href}>{more.label}</a>
+          </li>
+        )
       }
     </ul>
   </div>
@@ -148,6 +160,21 @@ const items = [
 
   details[open] .plus::after {
     transform: rotate(0deg);
+  }
+
+  .usp-list li.usp-more {
+    border-bottom: 0;
+    padding-top: 26px;
+  }
+
+  .usp-more a {
+    font-size: 0.82rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink);
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line-strong);
   }
 
   details p {
