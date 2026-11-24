@@ -86,7 +86,9 @@ const zoneCount = (g: Group) => byRegion(g).reduce((n, [, list]) => n + list.len
                         {duration(s.minutes)} · {s.note}
                       </span>
                     </div>
-                    <span class:list={['price', { free: s.price === null && !s.priceLabel }]}>{priceText(s)}</span>
+                    <span class:list={['price', { free: s.price === null && !s.priceLabel }]}>
+                      {s.was && <s class="was">{chf(s.was)}</s>} {priceText(s)}
+                    </span>
                     <a class="book" href={`/termin?behandlung=${s.id}&gruppe=${g.id}`} aria-label={`${s.name} buchen`}>
                       <Icon name="arrow" size={16} />
                     </a>
@@ -399,6 +401,11 @@ const zoneCount = (g: Group) => byRegion(g).reduce((n, [, list]) => n + list.len
   }
   .first .muted {
     color: var(--ink-2) !important;
+  }
+  .was {
+    margin-right: 6px;
+    font-size: 0.85em;
+    color: var(--muted);
   }
 </style>
 

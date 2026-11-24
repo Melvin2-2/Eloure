@@ -219,7 +219,6 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
           <span class="c-timer" aria-hidden="true"><span data-c-timer></span></span>
           <button type="button" class="c-arrow c-arrow-r" aria-label="Nächste Stimme" data-c-next><span></span></button>
         </div>
-        <p class="c-voices-count" aria-hidden="true"><span data-c-count>1</span> / {voices.length}</p>
       </div>
     </div>
   </section>
@@ -232,7 +231,7 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
       <p class="c-film-link reveal"><a class="c-link" href="/laserhaarentfernung">Zur Behandlung</a></p>
     </div>
     <div class="c-film-media">
-      <LoopVideo name="laser-licht-gross" label="Close-up: Laser-Handstück mit Licht auf der Haut am Bein" pos="center 80%" />
+      <LoopVideo name="laser-sequenz" label="Close-ups einer Laserbehandlung am Bein: Kühlgel auftragen, lasern" pos="center" />
     </div>
   </section>
 
@@ -299,34 +298,23 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
         if (k === i) q.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 700, easing: 'ease-out' });
       });
     };
-    // läuft von alleine weiter: die Zeitlinie zwischen den Pfeilen füllt sich, danach kommt die nächste Stimme.
-    // Pausiert bei Maus/Fokus und ausserhalb des Bildschirms; bei „Bewegung reduzieren“ nur per Pfeil.
-    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // läuft immer von alleine weiter: die Zeitlinie zwischen den Pfeilen füllt sich, dann kommt die nächste Stimme.
+    // Ein Pfeil-Klick springt sofort weiter und startet die Zeit neu. Nur ausserhalb des Bildschirms pausiert sie.
     const bar = voices.querySelector<HTMLElement>('[data-c-timer]');
-    const count = voices.querySelector<HTMLElement>('[data-c-count]');
-    let visible = false;
-    let hold = false;
     const restart = () => {
-      if (!bar || still) return;
+      if (!bar) return;
       bar.classList.remove('is-run');
       void bar.offsetWidth;
       bar.classList.add('is-run');
     };
-    const sync = () => voices.classList.toggle('is-held', hold || !visible);
     const go = (n: number) => {
       show(n);
-      if (count) count.textContent = String(i + 1);
       restart();
     };
     bar?.addEventListener('animationend', () => go(i + 1));
     voices.querySelector('[data-c-prev]')?.addEventListener('click', () => go(i - 1));
     voices.querySelector('[data-c-next]')?.addEventListener('click', () => go(i + 1));
-    voices.addEventListener('mouseenter', () => ((hold = true), sync()));
-    voices.addEventListener('mouseleave', () => ((hold = false), sync()));
-    voices.addEventListener('focusin', () => ((hold = true), sync()));
-    voices.addEventListener('focusout', () => ((hold = false), sync()));
-    new IntersectionObserver(([e]) => ((visible = e.isIntersecting), sync())).observe(voices);
-    sync();
+    new IntersectionObserver(([e]) => voices.classList.toggle('is-held', !e.isIntersecting)).observe(voices);
     restart();
   }
 </script>
@@ -899,7 +887,7 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
 
   .c-timer {
     position: relative;
-    width: clamp(140px, 22vw, 260px);
+    width: clamp(56px, 6vw, 84px);
     height: 1px;
     background: var(--line-strong);
     overflow: hidden;
@@ -914,11 +902,18 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
   }
 
   .c-timer span.is-run {
-    animation: c-time 6.5s linear forwards;
+    animation: c-time 4.5s linear forwards;
   }
 
   .is-held .c-timer span.is-run {
     animation-play-state: paused;
+  }
+
+  /* läuft bewusst auch bei „Bewegung reduzieren“ (nur eine feine Linie) */
+  @media (prefers-reduced-motion: reduce) {
+    .c-timer span.is-run {
+      animation-duration: 4.5s !important;
+    }
   }
 
   @keyframes c-time {
@@ -928,10 +923,7 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
   }
 
   .c-voices-count {
-    margin: 14px 0 0;
-    font-size: 0.78rem;
-    letter-spacing: 0.24em;
-    color: var(--ink-2);
+    display: none;
   }
 
   .c-voices-body {

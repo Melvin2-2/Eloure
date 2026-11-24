@@ -25,6 +25,19 @@ const byIdS = (id: string) => services.find((s) => s.id === id);
 const instead = (id: string) => (bundles[id] ? bundles[id].parts.reduce((a, x) => a + (byIdS(x)?.price ?? 0), 0) : 0);
 const exampleText = (id: string) => (bundles[id]?.example ? `z. B. ${bundles[id].parts.map((x) => byIdS(x)?.name).join(' + ')}` : '');
 const heroImg = { frauen: imgHeroF, maenner: imgHeroM };
+
+// Ganzkörper-Pakete: 3 Zonen deiner Wahl zum Paketpreis, jede weitere Zone mit Aufpreis.
+// Voreinstellung = klassische Kombination. Ist die Auswahl einzeln günstiger, wird einzeln berechnet.
+const packages = [
+  { id: 'ganzkoerper', group: 'frauen', name: 'Ganzkörper', price: 179, minutes: 75, extra: 10, extraMinutes: 0, legs: 'full', preset: ['beine-komplett', 'bikini-intim', 'achseln'] },
+  { id: 'ganzkoerper-halbes-bein', group: 'frauen', name: 'Ganzkörper halbes Bein', price: 169, minutes: 60, extra: 10, extraMinutes: 0, legs: 'half', preset: ['unterschenkel', 'bikini-intim', 'achseln'] },
+  { id: 'ganzkoerper-1', group: 'maenner', name: 'Ganzkörper', price: 249, minutes: 120, extra: 15, extraMinutes: 25, legs: 'any', preset: ['beine', 'ruecken-inkl-nacken', 'brust'] },
+];
+const pkgIds = new Set([...packages.map((x) => x.id), 'jede-weitere-zone-2']);
+const zoneRegions = (g: Group) =>
+  byRegion(g)
+    .map(([r, list]) => [r, list.filter((x) => !pkgIds.has(x.id))] as const)
+    .filter(([, list]) => list.length);
 const quick = (g: Group) => services.filter((s) => s.group === g && s.tag).sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
 const groups: { id: Group; label: string }[] = [
   { id: 'frauen', label: 'Frauen' },
@@ -39,11 +52,14 @@ const data = {
     minutes: s.minutes,
     price: s.price,
     priceLabel: s.priceLabel ?? null,
+    was: s.was ?? null,
+    tag: s.tag ?? null,
     single: !!s.single,
     requires: s.requires ?? [],
     note: s.note ?? '',
   })),
   opening: site.openingSpec,
+  packages,
   promo,
   cancellationHours: site.cancellationHours,
   booking: { api: booking.api, timeZone: booking.timeZone, windowDays: booking.windowDays, slotStep: booking.slotStep, durations: booking.durations, staff: booking.staff },
@@ -90,11 +106,22 @@ const data = {
           <!-- ——— Schritt 1: Behandlung ——— -->
           <div class="step" data-step="1">
             <h2 class="sr-only">Zonen wählen</h2>
-            <div class="seg" role="radiogroup" aria-label="Behandlung für">
+            <!-- zuerst: für wen? -->
+            <div class="who" data-who>
               {
-                groups.map((g, i) => (
+                groups.map((g) => (
+                  <button type="button" class:list={['who-tile', `who-${g.id}`]} data-who-pick={g.id}>
+                    <span class="who-name">{g.label}</span>
+                    <span class="who-go" aria-hidden="true">Angebote ansehen</span>
+                  </button>
+                ))
+              }
+            </div>
+            <div class="seg" role="radiogroup" aria-label="Behandlung für" data-seg hidden>
+              {
+                groups.map((g) => (
                   <label>
-                    <input type="radio" name="gruppe" value={g.id} checked={i === 0} data-group-input />
+                    <input type="radio" name="gruppe" value={g.id} data-group-input />
                     <span>{g.label}</span>
                   </label>
                 ))
@@ -103,13 +130,19 @@ const data = {
 
             {
               groups.map((g, gi) => (
-                <div class="group-panel" data-group-panel={g.id} hidden={gi !== 0}>
+                <div class="group-panel" data-group-panel={g.id} hidden>
                   <div class="quick">
                     {quick(g.id).map((s, i) => {
                       const was = instead(s.id);
                       const save = was - (s.price ?? 0);
                       return (
-                        <button type="button" class:list={['qk', { 'qk-hero': i === 0, 'qk-kombi': s.tag === 'Kombi' }]} data-quick={s.id} aria-pressed="false">
+                        <button
+                          type="button"
+                          class:list={['qk', { 'qk-hero': i === 0, 'qk-kombi': s.tag === 'Kombi' }]}
+                          data-quick={pkgIds.has(s.id) ? undefined : s.id}
+                          data-pkg={pkgIds.has(s.id) ? s.id : undefined}
+                          aria-pressed="false"
+                        >
                           {i === 0 && (
                             <span class="qk-img" aria-hidden="true">
                               <Image src={heroImg[g.id]} alt="" widths={[400, 700]} sizes="(min-width: 1000px) 22vw, 90vw" />
@@ -152,7 +185,8 @@ const data = {
                               <span class="fv-body">
                                 <strong>{s.name}</strong>
                                 <span class="fv-meta">
-                                  {duration(s.minutes)} · {s.price === null ? 'kostenlos' : chf(s.price)}
+                                  {duration(s.minutes)} · {s.was && <s>{chf(s.was)}</s>} {s.price === null ? 'kostenlos' : chf(s.price)}
+                                  {s.was && <em class="fv-deal">Neukunden –50 %</em>}
                                 </span>
                               </span>
                               <span class="tick" aria-hidden="true">
@@ -165,7 +199,7 @@ const data = {
                   </div>
 
                   <div class="zones">
-                    {byRegion(g.id).map(([region, list]) => (
+                    {zoneRegions(g.id).map(([region, list]) => (
                       <fieldset class="region">
                         <legend>{region}</legend>
                         {list.map((s) => (
@@ -190,6 +224,9 @@ const data = {
                       </fieldset>
                     ))}
                   </div>
+
+                  <!-- Ganzkörper: Ersparnis bzw. Hinweis, wenn sich ein Paket lohnt (klebt beim Auswählen unten) -->
+                  <div class="pkg-box" data-pkg-box hidden aria-live="polite"></div>
                 </div>
               ))
             }
@@ -270,7 +307,7 @@ const data = {
             <div class="code">
               <label for="code-input">Gutscheincode</label>
               <div class="code-row">
-                <input id="code-input" data-code-input autocomplete="off" placeholder="z. B. NEU26" />
+                <input id="code-input" data-code-input autocomplete="off"  />
                 <button type="button" class="btn btn-ghost" data-code-apply>Einlösen</button>
               </div>
               <p class="code-msg" data-code-msg aria-live="polite"></p>
@@ -534,6 +571,178 @@ const data = {
     margin: 0;
     font-size: 1.05rem;
     color: var(--ink-2);
+  }
+
+  /* Zuerst: für wen? */
+  .who {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .who[hidden],
+  .seg[hidden] {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    .who-tile {
+      min-height: 170px;
+      padding: 18px;
+    }
+    .who-name {
+      font-size: 1.5rem;
+      letter-spacing: 0.01em;
+    }
+    .who-go {
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+    }
+  }
+
+  .who-tile {
+    min-width: 0;
+    display: grid;
+    align-content: end;
+    gap: 14px;
+    min-height: clamp(220px, 26vw, 340px);
+    padding: clamp(24px, 3vw, 40px);
+    border: 0;
+    font: inherit;
+    text-align: left;
+    color: var(--ink);
+    cursor: pointer;
+    transition:
+      transform 0.4s var(--ease),
+      box-shadow 0.4s var(--ease);
+  }
+
+  .who-frauen {
+    background: var(--frost);
+  }
+
+  .who-maenner {
+    background: var(--veil);
+  }
+
+  .who-tile:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 44px -30px rgba(40, 50, 62, 0.55);
+  }
+
+  .who-tile:focus-visible {
+    outline: 2px solid var(--cta);
+    outline-offset: 3px;
+  }
+
+  .who-name {
+    font-weight: 200;
+    font-size: clamp(2.6rem, 5vw, 4.4rem);
+    line-height: 1;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .who-go {
+    justify-self: start;
+    padding-bottom: 5px;
+    font-size: 0.78rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    border-bottom: 1px solid currentColor;
+  }
+
+  /* Ganzkörper-Hinweis (klebt beim Auswählen unten) */
+  .pkg-box {
+    position: sticky;
+    bottom: 16px;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 4px 20px;
+    margin-top: 8px;
+    padding: 18px 22px;
+    background: var(--cta);
+    color: #fff;
+    box-shadow: 0 18px 40px -24px rgba(30, 44, 60, 0.7);
+  }
+
+  .pkg-box[hidden] {
+    display: none;
+  }
+
+  .pkg-box :global(.pkg-t) {
+    grid-column: 1;
+    margin: 0;
+    font-size: 1.05rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .pkg-box :global(.pkg-x) {
+    grid-column: 1;
+    margin: 0;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.88);
+  }
+
+  .pkg-box :global(.pkg-x b) {
+    font-weight: 500;
+    color: #fff;
+  }
+
+  .pkg-box :global(.pkg-save) {
+    margin-left: 8px;
+    padding: 2px 8px;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    background: #fff;
+    color: var(--cta);
+  }
+
+  .pkg-box :global(.pkg-btn) {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    padding: 14px 20px;
+    border: 1px solid #fff;
+    background: #fff;
+    font: inherit;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--cta);
+    cursor: pointer;
+  }
+
+  .pkg-box :global(.pkg-btn:hover) {
+    background: transparent;
+    color: #fff;
+  }
+
+  @media (max-width: 999px) {
+    .pkg-box {
+      bottom: calc(84px + env(safe-area-inset-bottom));
+    }
+  }
+
+  @media (max-width: 560px) {
+    .pkg-box {
+      gap: 2px 12px;
+      padding: 12px 14px;
+    }
+    .pkg-box :global(.pkg-t) {
+      font-size: 0.86rem;
+      letter-spacing: 0.05em;
+    }
+    .pkg-box :global(.pkg-x) {
+      font-size: 0.84rem;
+    }
+    .pkg-box :global(.pkg-btn) {
+      padding: 10px 12px;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+    }
   }
 
   /* Frauen / Männer */
@@ -923,9 +1132,9 @@ const data = {
     position: relative;
     display: grid;
     align-items: center;
-    min-height: 340px;
+    min-height: 0;
     margin: 16px 0 0;
-    padding: clamp(20px, 4vw, 56px);
+    padding: clamp(16px, 2.4vw, 32px);
     overflow: hidden;
     background: #6f7378;
     scroll-margin-top: 100px;
@@ -938,24 +1147,24 @@ const data = {
     height: 100%;
     object-fit: cover;
     object-position: center 40%;
-    filter: contrast(0.88) saturate(0.8);
+    filter: grayscale(0.5) contrast(0.85) blur(1px);
   }
 
   .first-visit::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(62, 74, 84, 0.32);
+    background: rgba(223, 226, 225, 0.62);
   }
 
   .fv-glass {
     position: relative;
     z-index: 1;
-    max-width: 560px;
-    padding: clamp(22px, 3vw, 34px);
-    color: #fff;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    max-width: 620px;
+    padding: clamp(18px, 2.4vw, 28px);
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.7);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
   }
@@ -963,17 +1172,17 @@ const data = {
   .fv-title {
     margin: 0 0 8px;
     font-weight: 300;
-    font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+    font-size: clamp(1.3rem, 1.9vw, 1.7rem);
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: #fff;
+    color: var(--ink);
   }
 
   .fv-sub {
-    margin: 0 0 20px;
-    font-size: 1rem;
+    margin: 0 0 16px;
+    font-size: 0.98rem;
     line-height: 1.55;
-    color: rgba(255, 255, 255, 0.92);
+    color: var(--ink-2);
   }
 
   .fv-grid {
@@ -992,7 +1201,8 @@ const data = {
     position: relative;
     display: flex;
     padding: 16px 48px 16px 18px;
-    background: rgba(255, 255, 255, 0.92);
+    background: #fff;
+    border: 1px solid rgba(69, 71, 75, 0.18);
     color: var(--ink);
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
@@ -1042,6 +1252,30 @@ const data = {
     color: #fff;
   }
 
+  .fv-meta s {
+    color: var(--muted);
+  }
+
+  .fv-deal {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 1px 7px;
+    font-style: normal;
+    font-size: 0.76rem;
+    letter-spacing: 0.04em;
+    background: var(--cta);
+    color: #fff;
+  }
+
+  .fv-card:has(input:checked) .fv-deal {
+    background: #fff;
+    color: var(--cta);
+  }
+
+  .fv-card:has(input:checked) .fv-meta s {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
   .fv-card:has(input:checked) .fv-meta {
     color: rgba(255, 255, 255, 0.85);
   }
@@ -1053,7 +1287,7 @@ const data = {
   }
 
   .fv-card:has(input:focus-visible) {
-    outline: 2px solid #fff;
+    outline: 2px solid var(--cta);
     outline-offset: 2px;
   }
 
@@ -1810,13 +2044,18 @@ const data = {
     minutes: number;
     price: number | null;
     priceLabel: string | null;
+    was: number | null;
+    tag: string | null;
     single: boolean;
     requires: string[];
     note: string;
   };
+  type Pkg = { id: string; group: 'frauen' | 'maenner'; name: string; price: number; minutes: number; extra: number; extraMinutes: number; legs: string; preset: string[] };
+  type Line = { id: string; name: string; price: number | null; minutes: number; priceLabel: string | null; single: boolean };
   type Data = {
     services: Svc[];
     opening: { days: number[]; open: string; close: string }[];
+    packages: Pkg[];
     promo: { code: string; percent: number; label: string };
     cancellationHours: number;
     booking: { api: string; timeZone: string; windowDays: number; slotStep: number; durations: number[]; staff: { id: string; name: string; hostId: string; treatment: string; consult: string }[] };
@@ -1831,8 +2070,9 @@ const data = {
 
   const state = {
     step: 1,
-    group: 'frauen' as 'frauen' | 'maenner',
+    group: null as 'frauen' | 'maenner' | null,
     selected: new Set<string>(),
+    pkgOn: false,
     date: null as Date | null,
     time: null as string | null,
     slot: null as Slot | null,
@@ -1853,13 +2093,40 @@ const data = {
   const maxDate = new Date(today);
   maxDate.setDate(maxDate.getDate() + data.booking.windowDays);
 
-  const selectedList = () => [...state.selected].map((id) => byId.get(id)!).filter(Boolean);
+  // ——— Preise: Zonen einzeln oder als Ganzkörper-Paket (nur wenn günstiger) ———
+  const pkgIdSet = new Set([...data.packages.map((x) => x.id), 'jede-weitere-zone-2']);
+  const eligible = (x: Svc) => !x.single && x.tag !== 'Kombi' && !pkgIdSet.has(x.id);
+  const pkgsFor = () => data.packages.filter((x) => x.group === state.group);
+  function pickPkg(zones: Svc[]) {
+    const list = pkgsFor();
+    if (list.length < 2) return list[0];
+    return zones.some((z) => z.id === 'beine-komplett') ? list.find((x) => x.legs === 'full') : list.find((x) => x.legs === 'half');
+  }
+  function pricing() {
+    const sel = [...state.selected].map((id) => byId.get(id)!).filter(Boolean);
+    const zones = sel.filter(eligible);
+    const rest = sel.filter((x) => !eligible(x));
+    const sum = zones.reduce((a, x) => a + (x.price ?? 0), 0);
+    const mins = zones.reduce((a, x) => a + x.minutes, 0);
+    const pk = zones.length ? pickPkg(zones) : undefined;
+    const n = zones.length;
+    const pkgPrice = pk && n >= 3 ? pk.price + (n - 3) * pk.extra : 0;
+    const save = pk && n >= 3 ? sum - pkgPrice : 0;
+    const apply = state.pkgOn && !!pk && n >= 3 && save > 0;
+    const asLine = (x: Svc): Line => ({ id: x.id, name: x.name, price: x.price, minutes: x.minutes, priceLabel: x.priceLabel, single: x.single });
+    const lines: Line[] = apply
+      ? [{ id: pk!.id, name: `${pk!.name} (${zones.map((z) => z.name).join(', ')})`, price: pkgPrice, minutes: Math.max(pk!.minutes + (n - 3) * pk!.extraMinutes, mins), priceLabel: null, single: false }]
+      : zones.map(asLine);
+    return { lines: [...lines, ...rest.map(asLine)], zones, pk, n, sum, pkgPrice, save, apply };
+  }
+  const selectedList = () => pricing().lines;
   const totalMinutes = () => selectedList().reduce((a, s) => a + s.minutes, 0);
   const subtotal = () => selectedList().reduce((a, s) => a + (s.price ?? 0), 0);
   // Rabatt pro Behandlung auf ganze Franken gerundet (identisch mit den Preisen auf der Landingpage)
   const discount = () => {
     if (!state.code || state.returning) return 0;
-    return selectedList().reduce((a, s) => a + (s.price ? s.price - Math.round((s.price * (100 - data.promo.percent)) / 100) : 0), 0);
+    // Erstbesuch-Angebote sind bereits vergünstigt und nicht kombinierbar
+    return selectedList().reduce((a, s) => a + (s.price && !s.single ? s.price - Math.round((s.price * (100 - data.promo.percent)) / 100) : 0), 0);
   };
 
   // ——— Schritt 1: Auswahl ———
@@ -1867,12 +2134,40 @@ const data = {
   const serviceInputs = $$<HTMLInputElement>('[data-service]');
 
   function setGroup(g: 'frauen' | 'maenner') {
-    if (state.group !== g) state.selected.clear();
+    if (state.group !== g) {
+      state.selected.clear();
+      state.pkgOn = false;
+    }
     state.group = g;
     groupInputs.forEach((i) => (i.checked = i.value === g));
     $$('[data-group-panel]').forEach((p) => (p.hidden = p.dataset.groupPanel !== g));
+    $('[data-who]').hidden = true;
+    $('[data-seg]').hidden = false;
     syncChecks();
   }
+  $$<HTMLButtonElement>('[data-who-pick]').forEach((b) => b.addEventListener('click', () => setGroup(b.dataset.whoPick as 'frauen' | 'maenner')));
+
+  // Ganzkörper wählen: klassische Zonen voreinstellen, danach frei anpassen
+  function applyPkg(id: string) {
+    const pk = data.packages.find((x) => x.id === id);
+    if (!pk) return;
+    const current = pricing().pk;
+    if (state.pkgOn && current?.id === id) {
+      state.pkgOn = false;
+      [...state.selected].forEach((x) => eligible(byId.get(x)!) && state.selected.delete(x));
+    } else {
+      [...state.selected].forEach((x) => {
+        const v = byId.get(x);
+        if (!v || v.single || eligible(v)) state.selected.delete(x);
+      });
+      pk.preset.forEach((x) => state.selected.add(x));
+      state.pkgOn = true;
+    }
+    state.time = null;
+    state.slot = null;
+    syncChecks();
+  }
+  $$<HTMLButtonElement>('[data-pkg]').forEach((b) => b.addEventListener('click', () => applyPkg(b.dataset.pkg!)));
 
   function syncChecks() {
     serviceInputs.forEach((i) => {
@@ -1887,8 +2182,8 @@ const data = {
         }
       }
     });
-    const needsZones = [...state.selected].some((id) => id.startsWith('ganzkoerper'));
-    $('[data-zones-note]').hidden = !needsZones;
+    if (!pricing().n) state.pkgOn = false;
+    $('[data-zones-note]').hidden = true;
     render();
   }
 
@@ -1897,8 +2192,10 @@ const data = {
     i.addEventListener('change', () => {
       const svc = byId.get(i.value)!;
       if (i.checked) {
-        if (svc.single) state.selected.clear();
-        else [...state.selected].forEach((id) => byId.get(id)?.single && state.selected.delete(id));
+        if (svc.single) {
+          state.selected.clear();
+          state.pkgOn = false;
+        } else [...state.selected].forEach((id) => byId.get(id)?.single && state.selected.delete(id));
         state.selected.add(svc.id);
       } else {
         state.selected.delete(svc.id);
@@ -2070,7 +2367,12 @@ const data = {
       return;
     }
     const all = avail.days.get(ymd(state.date)) ?? [];
-    const recommended = all.filter((x) => x.adj);
+    // Tag noch ganz frei (durchgehend ab Öffnung)? Dann jede volle Stunde anbieten, damit Termine um feste Zeiten wachsen.
+    const op = data.opening.find((o) => o.days.includes(state.date!.getDay()));
+    const stepMin = data.booking.slotStep;
+    const contiguous = all.every((x, k) => k === 0 || toMin(x.time) - toMin(all[k - 1].time) === stepMin);
+    const emptyDay = !!op && all.length > 0 && all[0].time === op.open && contiguous;
+    const recommended = emptyDay ? all.filter((x) => toMin(x.time) % 60 === 0) : all.filter((x) => x.adj);
     const list = showAll ? all : recommended;
     const title = state.date.toLocaleDateString('de-CH', { weekday: 'long', day: 'numeric', month: 'long' });
     const parts: [string, (m: number) => boolean][] = [
@@ -2452,6 +2754,38 @@ const data = {
     }
   }
 
+  // Ganzkörper-Hinweis: Ersparnis zeigen oder Paket vorschlagen
+  function renderPkgBox() {
+    const box = root.querySelector<HTMLElement>(`[data-group-panel="${state.group}"] [data-pkg-box]`);
+    $$('[data-pkg-box]').forEach((b) => b !== box && (b.hidden = true));
+    if (!box) return;
+    const pr = pricing();
+    let html = '';
+    if (state.pkgOn && pr.pk) {
+      if (pr.n < 3) {
+        html = `<p class="pkg-t">${pr.pk.name}</p><p class="pkg-x">Wähle noch ${3 - pr.n} ${3 - pr.n === 1 ? 'Zone' : 'Zonen'} in der Liste.</p>`;
+      } else if (pr.apply) {
+        html = `<p class="pkg-t">${pr.pk.name} · ${pr.n} Zonen <span class="pkg-save">– ${fmtChf(pr.save)}</span></p>
+          <p class="pkg-x"><b>${fmtChf(pr.pkgPrice)}</b> statt einzeln <s>${fmtChf(pr.sum)}</s>. Zonen frei anpassbar, jede weitere + ${fmtChf(pr.pk.extra)}.</p>`;
+      } else {
+        html = `<p class="pkg-t">Einzeln günstiger</p><p class="pkg-x">Diese Zonen kosten einzeln ${fmtChf(pr.sum)} – wir berechnen sie einzeln.</p>`;
+      }
+    } else if (pr.pk && pr.n >= 3 && pr.save > 0) {
+      html = `<p class="pkg-t">Als ${pr.pk.name} sparst du ${fmtChf(pr.save)}</p>
+        <p class="pkg-x"><b>${fmtChf(pr.pkgPrice)}</b> statt ${fmtChf(pr.sum)} für deine ${pr.n} Zonen.</p>
+        <button type="button" class="pkg-btn" data-pkg-on>Übernehmen</button>`;
+    }
+    box.hidden = !html;
+    box.classList.toggle('is-offer', !state.pkgOn);
+    box.innerHTML = html;
+    box.querySelector('[data-pkg-on]')?.addEventListener('click', () => {
+      state.pkgOn = true;
+      state.time = null;
+      state.slot = null;
+      render();
+    });
+  }
+
   // ——— Zusammenfassung ———
   function render() {
     const list = selectedList();
@@ -2492,6 +2826,13 @@ const data = {
     $<HTMLButtonElement>('[data-m-next]').disabled = !enabled;
     $<HTMLButtonElement>('[data-next-sum]').disabled = !enabled;
     $('[data-sum-cta-label]').textContent = nextLabel();
+    renderPkgBox();
+    const pr = pricing();
+    root.querySelectorAll<HTMLElement>('[data-pkg]').forEach((b) => {
+      const on = state.pkgOn && pr.pk?.id === b.dataset.pkg;
+      b.classList.toggle('is-on', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
     root.querySelectorAll<HTMLElement>('[data-quick]').forEach((b) => {
       const on = state.selected.has(b.dataset.quick!);
       b.classList.toggle('is-on', on);
@@ -2505,9 +2846,11 @@ const data = {
   const params = new URLSearchParams(location.search);
   const pre = params.get('behandlung');
   const preSvc = pre ? byId.get(pre) : undefined;
-  const preGroup = (params.get('gruppe') as 'frauen' | 'maenner' | null) ?? preSvc?.group ?? 'frauen';
-  setGroup(preGroup === 'maenner' ? 'maenner' : 'frauen');
-  if (preSvc && (preSvc.group === state.group || preSvc.id === 'beratungsgespraech')) {
+  const preGroup = (params.get('gruppe') as 'frauen' | 'maenner' | null) ?? (preSvc && !preSvc.single ? preSvc.group : null);
+  if (preGroup) setGroup(preGroup === 'maenner' ? 'maenner' : 'frauen');
+  else if (preSvc?.single) setGroup('frauen');
+  if (preSvc && pkgIdSet.has(preSvc.id)) applyPkg(preSvc.id);
+  else if (preSvc && (preSvc.group === state.group || preSvc.id === 'beratungsgespraech')) {
     state.selected.add(preSvc.id);
     syncChecks();
     requestAnimationFrame(() => {

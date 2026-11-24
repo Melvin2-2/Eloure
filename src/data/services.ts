@@ -11,6 +11,7 @@ export interface Service {
   minutes: number;
   price: number | null; // null = kostenlos
   priceLabel?: string; // überschreibt die Preisanzeige
+  was?: number; // regulärer Preis, wenn ein Neukunden-Rabatt gilt
   note?: string;
   single?: boolean; // kann nur einzeln gebucht werden
   requires?: string[]; // nur in Verbindung mit …
@@ -35,8 +36,9 @@ export const firstVisit: Service[] = [
     group: 'frauen',
     region: 'Erster Besuch',
     minutes: 30,
-    price: 49, // wie Achseln (Vorgabe Eloure)
-    note: 'Exklusiv für Laserjungfrauen – kann nur einzeln gebucht werden.',
+    price: 24.5, // 50 % Neukunden-Rabatt auf CHF 49
+    was: 49,
+    note: 'Für Neukundinnen 50 % günstiger – kann nur einzeln gebucht werden.',
     single: true,
   },
 ];
