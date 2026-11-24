@@ -1,33 +1,32 @@
 ---
-// Startseite – kantig, ruhig, hochwertig.
-// Aufbau nach Moodboard (Nerea, Blue Mind, evnia, Speechless, Salvia):
-// breites Startbild mit Glas-Karte, Signet-Musterband, Raster mit feinen Linien (Kacheln),
-// feine Typografie mit kursiven Akzenten, Salvia Blue / Creme / Deep Indigo,
-// rechteckige Buttons, Frosted-Glass-Elemente auf Bildern, sanfte Einblendungen.
+// Startseite – reduziert, fast kahl.
+// Grossbuchstaben, keine Kursiven, Salvia Blue / Creme / Deep Indigo, grosse Signets.
+// Drei Elemente 1:1 aus den Vorlagen (Nerea):
+//   1. breites Startbild mit Schrift und Link unten links
+//   2. Kachelraster mit feinen Linien (eine Kachel als Bild)
+//   3. Text links, breites Bild rechts
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import Icon from '../components/Icon.astro';
 import StudioCalm from '../components/StudioCalm.astro';
-import { services, chf, duration, type Group } from '../data/services';
+import { services, chf, type Group } from '../data/services';
 import { googleRating, pickReview } from '../data/reviews';
 import { site } from '../data/site';
 
 import imgHero from '../assets/shoot/laser-achsel-quer.jpg';
 import imgTuecher from '../assets/shoot/detail-tuecher.jpg';
 import imgRaum from '../assets/shoot/raum-weit.jpg';
-import imgAdieu from '../assets/shoot/relief-sessel.jpg';
 import imgStep1 from '../assets/shoot/beratung-haende.jpg';
-import imgStep2 from '../assets/shoot/gel-achsel.jpg';
+import imgStep2 from '../assets/shoot/detail-pflanze.jpg';
 import imgStep3 from '../assets/shoot/kundin-brille.jpg';
 import imgStep4 from '../assets/shoot/caro-beratung-2.jpg';
 
 const rating = googleRating.rating.toFixed(1).replace('.', ',');
 
-const chapters = [
-  { img: imgStep1, title: 'Reden', alt: 'Hände mit Tablet beim Beratungsgespräch', pos: 'center 40%', text: 'Erst Fragen, dann Laser. Ehrlich und ohne Zeitdruck.' },
-  { img: imgStep2, title: 'Vorbereiten', alt: 'Kühlendes Gel wird auf die Achsel aufgetragen', pos: 'center 50%', text: 'Frische Tücher, kühles Gel, jeder Schritt erklärt.' },
-  { img: imgStep3, title: 'Lasern', alt: 'Kundin mit Schutzbrille bei der Behandlung', pos: 'center 30%', text: 'Medizinischer Diodenlaser. Kurz, sanft gekühlt.' },
-  { img: imgStep4, title: 'Dranbleiben', alt: 'Caro im Gespräch mit einer Kundin', pos: 'center 30%', text: 'Folgetermine im Takt deines Haarzyklus.' },
+const steps = [
+  { img: imgStep1, title: 'Beratung', alt: 'Hände mit Tablet beim Beratungsgespräch', pos: 'center 40%' },
+  { img: imgStep2, title: 'Vorbereitung', alt: 'Grüne Pflanze im Studio', pos: 'center 50%' },
+  { img: imgStep3, title: 'Behandlung', alt: 'Kundin mit Schutzbrille bei der Behandlung', pos: 'center 30%' },
+  { img: imgStep4, title: 'Begleitung', alt: 'Caro im Gespräch mit einer Kundin', pos: 'center 30%' },
 ];
 
 const pick: Record<Group, string[]> = {
@@ -46,18 +45,17 @@ const groups: { id: Group; label: string }[] = [
 
 const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy H.'].map(pickReview).filter(Boolean);
 
-// Signet als Muster (Salvia Blue)
+// Grosses Signet als eng gesetzte, sehr transparente Linie (Deep Indigo)
 const signetPaths = [
   'M165.63 2.986c10.504 0 25.65 8.292 25.871 35.711h9.398C200.899 6.634 178.787 0 165.519 0c-13.156 0-35.27 6.634-35.27 38.698h9.397c.222-27.42 15.37-35.712 25.984-35.712zM220.729 0h9.397v38.698h-9.397zM136.703 77.394c13.269 0 35.38-6.632 35.38-38.696h-9.397c-.221 27.419-15.367 35.712-25.872 35.712-10.613 0-25.762-8.293-25.982-35.712h-9.398c-.001 32.064 22.113 38.696 35.269 38.696z',
   'M224.118 77.394c22.887 0 26.093-23.771 26.203-36.816v-1.88h-2.984v1.88c-.221 27.308-12.716 33.833-23.219 33.833-10.505 0-22.998-6.524-23.219-33.833v-2.383l-9.398.503v1.991c0 31.841 19.459 36.705 32.617 36.705z',
 ];
-const signetSvg = (vb: string, fill: string) =>
+const signetSvg = (vb: string) =>
   `url("data:image/svg+xml,${encodeURIComponent(
-    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='${vb}'><g fill='${fill}'>${signetPaths.map((d) => `<path d='${d}'/>`).join('')}</g></svg>`,
+    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='${vb}'><g fill='#2b2f40'>${signetPaths.map((d) => `<path d='${d}'/>`).join('')}</g></svg>`,
   )}")`;
-const signetPattern = signetSvg('92 -8 168 94', '#9baec9');
-const signetBig = signetSvg('96 -2 160 82', '#2b2f40');
-const signetOne = signetSvg('100 0 151 78', '#2b2f40');
+const signetRow = signetSvg('96 -2 160 82');
+const signetOne = signetSvg('100 0 151 78');
 ---
 
 <Base
@@ -67,45 +65,35 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
   theme="calm"
   announce={false}
 >
-  <!-- 1 · Start: breites Bild, Glas-Karte unten links -->
+  <!-- 1 · Breites Startbild, Schrift unten links (Nerea) -->
   <section class="c-hero">
     <div class="c-hero-img" data-anim="soft">
       <Image src={imgHero} alt="Laserhaarentfernung an der Achsel – Kundin mit Schutzbrille" widths={[1200, 1800, 2400]} sizes="100vw" loading="eager" />
     </div>
-    <div class="c-glass c-hero-card" data-slide="left">
-      <h1 class="c-kicker">Laserhaarentfernung · Amriswil</h1>
-      <p class="c-hero-claim">Glatt.<br /><em>Ganz ohne Rasierer.</em></p>
-      <a class="c-link c-link-light" href="/termin">Ersten Termin buchen</a>
+    <div class="c-hero-text" data-slide="left">
+      <h1 class="c-ttl c-hero-title">Laserhaarentfernung<br />in Amriswil</h1>
+      <a class="c-link c-link-light" href="/termin">Termin buchen</a>
     </div>
   </section>
-
-  <!-- Signet-Musterband (wie bei Nerea) -->
-  <div class="c-pattern" aria-hidden="true" style={`--signet:${signetPattern}`}></div>
 
   <!-- 2 · Haltung -->
   <section class="c-intro">
     <div class="c-narrow">
-      <h2 class="c-display reveal">Weniger Haare.<br /><em>Mehr du.</em></h2>
-      <p class="reveal">
-        Kein Beauty-Allerlei. Eloure macht genau eine Sache: Laserhaarentfernung – mit medizinischem Diodenlaser, ehrlicher
-        Beratung und viel Ruhe.
-      </p>
+      <h2 class="c-ttl reveal">Ein Studio.<br />Eine Sache.</h2>
+      <p class="reveal">Laserhaarentfernung mit medizinischem Diodenlaser – und sonst nichts.</p>
     </div>
   </section>
 
-  <!-- 3 · Beliebte Zonen als Kachelraster -->
+  <!-- 3 · Kachelraster (Nerea) -->
   <section class="c-grid-sec" id="zonen" data-c-prices>
-    <div class="c-grid-head c-wrap">
-      <h2 class="c-display c-display-s reveal">Beliebte <em>Zonen</em></h2>
-      <div class="c-tabs reveal" role="tablist" aria-label="Zonen für">
-        {
-          groups.map((g, i) => (
-            <button type="button" role="tab" aria-selected={String(i === 0)} data-c-tab={g.id}>
-              {g.label}
-            </button>
-          ))
-        }
-      </div>
+    <div class="c-tabs c-wrap reveal" role="tablist" aria-label="Zonen für">
+      {
+        groups.map((g, i) => (
+          <button type="button" role="tab" aria-selected={String(i === 0)} data-c-tab={g.id}>
+            {g.label}
+          </button>
+        ))
+      }
     </div>
     {
       groups.map((g, gi) => (
@@ -120,26 +108,15 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
               <li class="c-cell">
                 <a href={`/termin?behandlung=${s!.id}&gruppe=${g.id}`}>
                   <span class="c-cell-name">{s!.name}</span>
-                  <span class="c-cell-meta">
-                    <span>{chf(s!.price)}</span>
-                    <span>{duration(s!.minutes)}</span>
-                  </span>
-                  <span class="c-cell-go">
-                    Buchen <Icon name="arrow" size={14} />
-                  </span>
+                  <span class="c-cell-price">{chf(s!.price)}</span>
                 </a>
               </li>
             </>
           ))}
           <li class="c-cell c-cell-all">
             <a href="/preise">
-              <span class="c-cell-name">Über 30 Zonen</span>
-              <span class="c-cell-meta">
-                <span>ab CHF 29</span>
-              </span>
-              <span class="c-cell-go">
-                Alle Preise <Icon name="arrow" size={14} />
-              </span>
+              <span class="c-cell-name">Alle Zonen</span>
+              <span class="c-cell-price">ab CHF 29</span>
             </a>
           </li>
         </ul>
@@ -147,59 +124,44 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
     }
   </section>
 
-  <!-- 4 · Split: Text links, Bild rechts mit Glas-Hinweis -->
+  <!-- 4 · Text links, Bild rechts (Nerea) -->
   <section class="c-split">
     <div class="c-wrap c-split-grid">
       <div class="c-split-text">
-        <h2 class="c-display c-display-m reveal">
-          Ein Raum, der sich nicht nach <em>Klinik</em> anfühlt – aber genauso <em>sauber</em> ist.
-        </h2>
-        <a class="c-link reveal" href="/studio">Das Studio ansehen</a>
+        <h2 class="c-ttl reveal">Kein Klinikgefühl.<br />Nur Ruhe.</h2>
+        <a class="c-link reveal" href="/studio">Das Studio</a>
       </div>
       <figure class="c-split-img" data-slide="right">
-        <Image src={imgRaum} alt="Heller Behandlungsraum mit Liege und Laser" widths={[700, 1100, 1600]} sizes="(min-width: 900px) 46vw, 100vw" />
-        <figcaption class="c-glass c-tag">Geprüfte Sachkunde nach V-NISSG</figcaption>
+        <Image src={imgRaum} alt="Heller Behandlungsraum mit Liege und Laser" widths={[700, 1100, 1600]} sizes="(min-width: 900px) 50vw, 100vw" />
       </figure>
     </div>
   </section>
 
   <!-- Signet-Linie über die Section-Grenze -->
-  <div class="c-band" aria-hidden="true" style={`--signet:${signetBig}`}><div class="c-band-strip"></div></div>
+  <div class="c-band" aria-hidden="true" style={`--signet:${signetRow}`}><div class="c-band-strip"></div></div>
 
-  <!-- 5 · Adieu, Rasierer -->
-  <section class="c-word on-salvia" aria-label="Adieu, Rasierer">
-    <figure class="c-word-img" data-anim="soft">
-      <Image src={imgAdieu} alt="Helle Lounge mit weissem Sessel und Reliefwand" widths={[700, 1100, 1500]} sizes="(min-width: 900px) 38vw, 80vw" style="object-position:center 30%" />
-      <figcaption class="c-glass c-word-card">Für Frauen und Männer.<br />Einzeln oder als Kombi.</figcaption>
-    </figure>
-    <p class="c-word-text" aria-hidden="true" data-anim="up"><span>Adieu,</span><em>Rasierer.</em></p>
-  </section>
-
-  <!-- 6 · Vier Kapitel -->
-  <section class="c-chapters">
-    <div class="c-wrap c-chapters-head">
-      <h2 class="c-display c-display-s reveal">Vier Kapitel <em>bis glatt.</em></h2>
-    </div>
-    <ol class="c-chapter-row">
+  <!-- 5 · Ablauf in vier Bildern -->
+  <section class="c-steps on-salvia">
+    <ol class="c-steps-row">
       {
-        chapters.map((c, i) => (
-          <li class="c-chapter" data-anim="soft">
-            <span class="c-chip">Kapitel 0{i + 1}</span>
-            <figure>
-              <Image src={c.img} alt={c.alt} widths={[500, 800, 1100]} sizes="(min-width: 900px) 25vw, 50vw" style={`object-position:${c.pos}`} />
+        steps.map((s, i) => (
+          <li class="c-step" data-anim="soft">
+            <figure class="c-step-img">
+              <Image src={s.img} alt={s.alt} widths={[500, 800, 1100]} sizes="(min-width: 900px) 25vw, 50vw" style={`object-position:${s.pos}`} />
             </figure>
-            <h3>{c.title}</h3>
-            <p>{c.text}</p>
+            <h3 class="c-step-title">
+              <small>0{i + 1}</small> {s.title}
+            </h3>
           </li>
         ))
       }
     </ol>
   </section>
 
-  <!-- 7 · Ruhepunkt -->
+  <!-- 6 · Ruhepunkt -->
   <StudioCalm />
 
-  <!-- 8 · Kundenstimmen -->
+  <!-- 7 · Kundenstimmen -->
   <section class="c-voices" data-c-voices aria-label="Kundenstimmen">
     <div class="c-voices-inner">
       <button type="button" class="c-arrow c-arrow-l" aria-label="Vorherige Stimme" data-c-prev><span></span></button>
@@ -210,25 +172,23 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
             voices.map((v, i) => (
               <figure class="c-quote" data-c-quote hidden={i !== 0}>
                 <blockquote>«{v!.short ?? v!.text}»</blockquote>
-                <figcaption>— {v!.name} —</figcaption>
+                <figcaption>{v!.name}</figcaption>
               </figure>
             ))
           }
         </div>
-        <a class="c-link" href={site.googleReviewsUrl} target="_blank" rel="noopener">{rating} · {googleRating.count} Google-Bewertungen</a>
       </div>
       <button type="button" class="c-arrow c-arrow-r" aria-label="Nächste Stimme" data-c-next><span></span></button>
     </div>
   </section>
 
-  <!-- 9 · Abschluss -->
+  <!-- 8 · Abschluss -->
   <section class="c-end on-salvia" style={`--signet:${signetOne}`}>
     <div class="c-end-signet" aria-hidden="true"></div>
     <div class="c-narrow c-end-inner">
-      <h2 class="c-display reveal">Bereit, den Rasierer<br /><em>abzugeben?</em></h2>
+      <h2 class="c-ttl reveal">Bereit für<br />glatte Haut?</h2>
       <div class="c-end-btns reveal">
         <a class="c-btn c-btn-dark" href="/termin">Termin buchen</a>
-        <a class="c-btn c-btn-line" href="/termin?behandlung=beratungsgespraech">Kostenlos beraten lassen</a>
       </div>
     </div>
   </section>
@@ -262,44 +222,19 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
 </script>
 
 <style>
-  /* ——— Typografie: fein, gemischt mit kursiven Akzenten ——— */
-  .c-display {
+  /* ——— Grundlagen: immer Grossbuchstaben, fein, keine Kursiven ——— */
+  .c-ttl {
     font-family: var(--sans);
-    font-weight: 250;
+    font-weight: 300;
+    font-style: normal;
     font-stretch: 100%;
-    text-transform: none;
-    letter-spacing: -0.01em;
-    line-height: 1.08;
-    font-size: clamp(2.6rem, 5vw, 5rem);
-    color: var(--head);
-    margin: 0 0 0.6em;
-    text-wrap: balance;
-  }
-
-  .c-display em,
-  .c-hero-claim em,
-  .c-word-text em {
-    font-style: italic;
-    font-weight: 250;
-  }
-
-  .c-display-s {
-    font-size: clamp(2.2rem, 3.6vw, 3.6rem);
-  }
-
-  .c-display-m {
-    font-size: clamp(2rem, 3.2vw, 3.2rem);
-    line-height: 1.18;
-  }
-
-  .c-kicker {
-    margin: 0 0 18px;
-    hyphens: none;
-    font-family: var(--sans);
-    font-weight: 400;
-    font-size: 0.82rem;
-    letter-spacing: 0.26em;
     text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1.06;
+    font-size: clamp(2.5rem, 4.6vw, 4.6rem);
+    color: var(--head);
+    margin: 0 0 0.55em;
+    text-wrap: balance;
   }
 
   p {
@@ -319,7 +254,7 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
   .c-narrow {
     position: relative;
     z-index: 2;
-    max-width: 780px;
+    max-width: 760px;
     margin-inline: auto;
     padding-inline: var(--gutter);
     text-align: center;
@@ -334,7 +269,6 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
     --line-strong: rgba(43, 47, 64, 0.45);
   }
 
-  /* Rechteckige Buttons */
   .c-btn {
     display: inline-flex;
     align-items: center;
@@ -350,7 +284,6 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
     border: 1px solid;
     transition:
       background 0.4s ease,
-      color 0.4s ease,
       border-color 0.4s ease;
   }
 
@@ -363,16 +296,6 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
   .c-btn-dark:hover {
     background: var(--indigo-soft);
     border-color: var(--indigo-soft);
-  }
-
-  .c-btn-line {
-    color: var(--indigo);
-    border-color: var(--indigo);
-  }
-
-  .c-btn-line:hover {
-    background: var(--indigo);
-    color: #fff;
   }
 
   .c-link {
@@ -393,20 +316,10 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
 
   .c-link-light {
     color: #fff;
-    border-color: rgba(255, 255, 255, 0.55);
+    border-color: rgba(255, 255, 255, 0.6);
   }
 
-  /* Frosted Glass wie im Ruhepunkt – leicht getönt, feine weisse Kante */
-  .c-glass {
-    background: rgba(28, 30, 42, 0.16);
-    -webkit-backdrop-filter: blur(14px) saturate(1.1);
-    backdrop-filter: blur(14px) saturate(1.1);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    color: #fff;
-    --head: #fff;
-  }
-
-  /* ——— 1 · Start ——— */
+  /* ——— 1 · Breites Startbild (Nerea) ——— */
   .c-hero {
     position: relative;
     height: 100svh;
@@ -433,71 +346,39 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(180deg, rgba(17, 19, 28, 0.32) 0%, rgba(17, 19, 28, 0) 22%),
-      linear-gradient(20deg, rgba(17, 19, 28, 0.35) 0%, rgba(17, 19, 28, 0) 50%);
+      linear-gradient(180deg, rgba(17, 19, 28, 0.3) 0%, rgba(17, 19, 28, 0) 22%),
+      linear-gradient(20deg, rgba(17, 19, 28, 0.45) 0%, rgba(17, 19, 28, 0) 55%);
   }
 
-  .c-hero-card {
+  .c-hero-text {
     position: absolute;
     z-index: 2;
     left: var(--gutter);
-    bottom: var(--gutter);
-    width: min(520px, calc(100% - 2 * var(--gutter)));
-    padding: clamp(28px, 3vw, 44px);
-  }
-
-  .c-hero-claim {
-    margin: 0 0 28px;
-    font-weight: 250;
-    font-size: clamp(2.6rem, 4.6vw, 4.6rem);
-    line-height: 1.04;
-    letter-spacing: -0.01em;
+    bottom: clamp(48px, 9vh, 110px);
     color: #fff;
+    --head: #fff;
   }
 
-  /* ——— Signet-Musterband ——— */
-  .c-pattern {
-    height: clamp(44px, 4.4vw, 64px);
-    border-block: 1px solid var(--line);
-    background-image: var(--signet);
-    background-repeat: repeat-x;
-    background-size: auto 62%;
-    background-position: center;
-    opacity: 0.9;
+  .c-hero-title {
+    font-size: clamp(2.4rem, 4.6vw, 4.8rem);
+    margin-bottom: 0.7em;
   }
 
   /* ——— 2 · Haltung ——— */
   .c-intro {
-    padding-block: clamp(130px, 14vw, 210px);
+    padding-block: clamp(140px, 15vw, 220px);
   }
 
   .c-intro p {
-    max-width: 34em;
-    margin-inline: auto;
-  }
-
-  /* ——— 3 · Kachelraster ——— */
-  .c-grid-sec {
-    padding-top: clamp(40px, 5vw, 80px);
-    border-top: 1px solid var(--line);
-  }
-
-  .c-grid-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 16px 40px;
-    margin-bottom: clamp(32px, 4vw, 56px);
-  }
-
-  .c-grid-head .c-display {
     margin: 0;
   }
 
+  /* ——— 3 · Kachelraster (Nerea) ——— */
   .c-tabs {
     display: flex;
+    justify-content: flex-end;
     gap: 32px;
+    margin-bottom: 20px;
   }
 
   .c-tabs button {
@@ -545,8 +426,11 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
     inset: 0;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: clamp(20px, 2.2vw, 34px);
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    padding: clamp(20px, 2.4vw, 36px);
+    text-align: center;
     text-decoration: none;
     color: var(--ink);
     transition: background 0.5s ease;
@@ -557,48 +441,17 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
   }
 
   .c-cell-name {
-    font-weight: 250;
-    font-size: clamp(1.4rem, 2.2vw, 2.2rem);
-    line-height: 1.12;
-  }
-
-  .c-cell-meta {
-    display: grid;
-    gap: 4px;
-    font-size: 0.86rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-2);
-  }
-
-  .c-cell-meta span:first-child {
-    font-size: 1.05rem;
-    letter-spacing: 0.08em;
-    color: var(--ink);
-  }
-
-  .c-cell-go {
-    position: absolute;
-    right: clamp(20px, 2.2vw, 34px);
-    bottom: clamp(20px, 2.2vw, 34px);
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.78rem;
+    font-weight: 400;
+    font-size: clamp(0.86rem, 1vw, 0.98rem);
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--indigo);
-    opacity: 0;
-    transform: translateX(-6px);
-    transition:
-      opacity 0.4s ease,
-      transform 0.4s var(--ease);
   }
 
-  .c-cell a:hover .c-cell-go,
-  .c-cell a:focus-visible .c-cell-go {
-    opacity: 1;
-    transform: none;
+  .c-cell-price {
+    text-transform: uppercase;
+    font-size: 0.95rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-2);
   }
 
   .c-cell-img :global(img) {
@@ -615,14 +468,9 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
     background: var(--salvia-deep);
   }
 
-  .c-cell-all .c-cell-go {
-    opacity: 1;
-    transform: none;
-  }
-
-  /* ——— 4 · Split ——— */
+  /* ——— 4 · Text links, Bild rechts (Nerea) ——— */
   .c-split {
-    padding-block: clamp(130px, 14vw, 210px);
+    padding-block: clamp(140px, 15vw, 220px) clamp(160px, 16vw, 240px);
   }
 
   .c-split-grid {
@@ -631,12 +479,7 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
     align-items: center;
   }
 
-  .c-split-text .c-display {
-    margin-bottom: 1em;
-  }
-
   .c-split-img {
-    position: relative;
     margin: 0;
     aspect-ratio: 3 / 2;
     overflow: hidden;
@@ -648,17 +491,7 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
     object-fit: cover;
   }
 
-  .c-tag {
-    position: absolute;
-    left: 20px;
-    bottom: 20px;
-    padding: 12px 18px;
-    font-size: 0.8rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-  }
-
-  /* Signet-Linie über die Grenze */
+  /* Signet-Linie: gross, eng gesetzt, sehr transparent */
   .c-band {
     position: relative;
     z-index: 6;
@@ -679,128 +512,50 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
     opacity: 0.07;
   }
 
-  /* ——— 5 · Adieu, Rasierer ——— */
-  .c-word {
-    position: relative;
-    height: clamp(640px, 64vw, 940px);
-    overflow: hidden;
+  /* ——— 5 · Ablauf ——— */
+  .c-steps {
+    padding-block: clamp(140px, 14vw, 200px);
   }
 
-  .c-word-img {
-    position: absolute;
-    left: 50%;
-    width: 36%;
-    top: 10%;
-    bottom: 10%;
-    margin: 0;
-    overflow: hidden;
-    z-index: 1;
-  }
-
-  .c-word-img :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .c-word-card {
-    position: absolute;
-    right: 20px;
-    bottom: 20px;
-    z-index: 2;
-    padding: 18px 22px;
-    font-size: 1rem;
-    line-height: 1.55;
-  }
-
-  .c-word-text {
-    position: absolute;
-    left: var(--gutter);
-    top: 50%;
-    margin: -0.94em 0 0;
-    z-index: 2;
-    font-weight: 250;
-    font-size: clamp(3.6rem, 10.4vw, 11.5rem);
-    line-height: 0.94;
-    letter-spacing: -0.02em;
-    color: var(--indigo);
-    pointer-events: none;
-  }
-
-  .c-word-text span,
-  .c-word-text em {
-    display: block;
-  }
-
-  .c-word-text em {
-    padding-left: 1.1em;
-  }
-
-  /* ——— 6 · Kapitel ——— */
-  .c-chapters {
-    padding-block: clamp(130px, 14vw, 210px) 0;
-  }
-
-  .c-chapters-head {
-    margin-bottom: clamp(44px, 5vw, 72px);
-  }
-
-  .c-chapter-row {
+  .c-steps-row {
     list-style: none;
-    margin: 0;
-    padding: 0;
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+    max-width: 1520px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    border-top: 1px solid var(--line-strong);
-    border-bottom: 1px solid var(--line-strong);
+    gap: clamp(14px, 1.6vw, 24px);
   }
 
-  .c-chapter {
-    padding: clamp(20px, 2.2vw, 32px);
-    border-right: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-  }
-
-  .c-chip {
-    display: inline-block;
-    margin-bottom: 18px;
-    padding: 6px 12px;
-    border: 1px solid var(--line-strong);
-    font-size: 0.74rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--ink-2);
-  }
-
-  .c-chapter figure {
+  .c-step-img {
     margin: 0;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 3 / 4;
     overflow: hidden;
   }
 
-  .c-chapter :global(img) {
+  .c-step-img :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 
-  .c-chapter h3 {
-    margin: 22px 0 6px;
+  .c-step-title {
+    margin: 22px 0 0;
     font-family: var(--sans);
-    font-weight: 250;
-    font-size: clamp(1.6rem, 2.2vw, 2.1rem);
-    letter-spacing: -0.005em;
+    font-weight: 400;
+    font-size: clamp(0.92rem, 1.1vw, 1.05rem);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
     color: var(--ink);
   }
 
-  .c-chapter p {
-    margin: 0;
-    font-size: clamp(1rem, 1.1vw, 1.1rem);
-    line-height: 1.6;
+  .c-step-title small {
+    font-size: 0.85em;
+    margin-right: 8px;
     color: var(--ink-2);
   }
 
-  /* ——— 8 · Kundenstimmen ——— */
+  /* ——— 7 · Kundenstimmen ——— */
   .c-voices {
     padding-block: clamp(140px, 14vw, 210px);
   }
@@ -816,7 +571,7 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
   }
 
   .c-voices-body {
-    max-width: 840px;
+    max-width: 820px;
     margin-inline: auto;
     text-align: center;
   }
@@ -829,7 +584,7 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
   }
 
   .c-voices-quotes {
-    min-height: 8.5em;
+    min-height: 8em;
     display: grid;
     align-items: center;
   }
@@ -840,10 +595,10 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
 
   .c-quote blockquote {
     margin: 0 0 26px;
-    font-weight: 250;
-    font-style: italic;
-    font-size: clamp(1.6rem, 2.6vw, 2.4rem);
-    line-height: 1.38;
+    font-weight: 350;
+    font-style: normal;
+    font-size: clamp(1.4rem, 2.2vw, 2rem);
+    line-height: 1.45;
     color: var(--ink);
     text-wrap: balance;
   }
@@ -852,11 +607,6 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
     font-size: 0.86rem;
     letter-spacing: 0.24em;
     text-transform: uppercase;
-    color: var(--ink-2);
-  }
-
-  .c-voices .c-link {
-    margin-top: 36px;
     color: var(--ink-2);
   }
 
@@ -915,7 +665,7 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
     transform: translateX(4px);
   }
 
-  /* ——— 9 · Abschluss ——— */
+  /* ——— 8 · Abschluss ——— */
   .c-end {
     position: relative;
     padding-block: clamp(150px, 15vw, 220px);
@@ -938,10 +688,6 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
   }
 
   .c-end-btns {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 16px;
     margin-top: 44px;
   }
 
@@ -953,17 +699,11 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
     .c-cell:nth-child(4n) {
       border-right: 0;
     }
-    .c-chapter-row {
-      grid-template-columns: repeat(4, 1fr);
-    }
-    .c-chapter:nth-child(4n) {
-      border-right: 0;
-    }
-    .c-chapter {
-      border-bottom: 0;
-    }
     .c-split-grid {
-      grid-template-columns: 0.9fr 1.1fr;
+      grid-template-columns: 0.8fr 1.2fr;
+    }
+    .c-steps-row {
+      grid-template-columns: repeat(4, 1fr);
     }
   }
 
@@ -971,52 +711,8 @@ const signetOne = signetSvg('100 0 151 78', '#2b2f40');
     .c-cell:nth-child(2n) {
       border-right: 0;
     }
-    .c-cell-go {
-      position: static;
-      margin-top: 10px;
-      opacity: 1;
-      transform: none;
-      font-size: 0.72rem;
-    }
-    .c-cell a {
-      justify-content: flex-start;
-    }
-    .c-cell-name {
-      flex: 1;
-    }
-    .c-kicker {
-      letter-spacing: 0.18em;
-    }
-    .c-chapter:nth-child(2n) {
-      border-right: 0;
-    }
     .c-hero-img :global(img) {
       object-position: 70% 40%;
-    }
-    .c-word {
-      height: auto;
-      padding-block: 80px;
-      display: grid;
-      gap: 32px;
-    }
-    .c-word-img {
-      position: relative;
-      left: auto;
-      top: auto;
-      bottom: auto;
-      width: auto;
-      margin-inline: var(--gutter);
-      aspect-ratio: 4 / 5;
-      order: 2;
-    }
-    .c-word-text {
-      position: relative;
-      left: auto;
-      top: auto;
-      margin: 0;
-      padding-inline: var(--gutter);
-      font-size: 17vw;
-      order: 1;
     }
     .c-band-strip {
       height: 70px;
