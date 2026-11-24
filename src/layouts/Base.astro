@@ -18,7 +18,9 @@ interface Props {
   ctaLabel?: string;
   mobileNote?: string;
   /** dark = Header liegt transparent über dunklem/bildlastigem Hero */
-  headerTone?: 'light' | 'dark' | 'paper';
+  headerTone?: 'light' | 'dark' | 'paper' | 'calm';
+  /** calm: ruhige, helle Gestaltung (Startseite) */
+  theme?: 'calm';
   announce?: { text: string; href: string; cta: string } | false;
   schema?: Record<string, unknown>[];
   ogImage?: string;
@@ -34,6 +36,7 @@ const {
   ctaLabel = 'Termin buchen',
   mobileNote,
   headerTone = 'light',
+  theme,
   announce = { text: 'Laserhaarentfernung in Amriswil · Bezahlt wird erst vor Ort', href: '/termin', cta: 'Termin buchen' },
   schema = [],
   ogImage = '/og-image.jpg',
@@ -100,7 +103,7 @@ const localBusiness = {
       })();
     </script>
   </head>
-  <body data-variant={variant}>
+  <body data-variant={variant} class:list={[theme && `theme-${theme}`]}>
     <a class="skip-link" href="#main">Zum Inhalt springen</a>
     {announce && <AnnounceBar {...announce} />}
     <Header variant={variant} ctaHref={ctaHref} ctaLabel={ctaLabel} tone={headerTone} />

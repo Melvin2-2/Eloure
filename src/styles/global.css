@@ -267,6 +267,13 @@ b {
   background: var(--sand);
 }
 
+/* Ruhige Gestaltung (Startseite): warmes Off-White */
+body.theme-calm {
+  --bg: #fbfaf6;
+  --paper: #fbfaf6;
+  background: var(--bg);
+}
+
 .bg-mist {
   background: var(--mist);
 }

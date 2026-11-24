@@ -8,7 +8,8 @@ interface Props {
   ctaHref: string;
   ctaLabel: string;
   /** dark: transparent über dunklem Hero (helle Schrift); paper: transparent über hellem Hero (dunkle Schrift); light: feste dunkle Leiste */
-  tone?: 'dark' | 'light' | 'paper';
+  /** calm: Startseite – transparent über dem Video, Logo mittig, beim Scrollen hell */
+  tone?: 'dark' | 'light' | 'paper' | 'calm';
 }
 const { variant, ctaHref, ctaLabel, tone = 'dark' } = Astro.props;
 
@@ -22,7 +23,37 @@ const nav = [
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---
 
-<header class:list={['site-header', tone === 'dark' ? 'is-over' : tone === 'paper' ? 'is-paper' : 'is-solid']} data-header>
+<header
+  class:list={['site-header', tone === 'calm' ? 'is-calm' : tone === 'dark' ? 'is-over' : tone === 'paper' ? 'is-paper' : 'is-solid']}
+  data-header
+>
+  {
+    tone === 'calm' && variant === 'full' && (
+      <div class="calm-bar">
+        <nav class="calm-nav calm-l" aria-label="Hauptnavigation">
+          {nav.slice(0, 3).map((n) => (
+            <a href={n.href}>{n.label}</a>
+          ))}
+        </nav>
+        <a href="/" class="logo calm-logo" aria-label={`${site.name} – Startseite`}>
+          <Logo />
+        </a>
+        <div class="calm-r">
+          <nav class="calm-nav" aria-label="Weitere Seiten">
+            {nav.slice(3).map((n) => (
+              <a href={n.href}>{n.label}</a>
+            ))}
+          </nav>
+          <a class="calm-cta" href={ctaHref}>{ctaLabel}</a>
+          <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" data-menu-toggle>
+            <span class="sr-only">Menü öffnen</span>
+            <span class="burger" aria-hidden="true" />
+          </button>
+        </div>
+      </div>
+    )
+  }
+  {!(tone === 'calm' && variant === 'full') && (
   <div class="bar">
     <a href="/" class="logo" aria-label={`${site.name} – Startseite`}>
       <Logo />
@@ -63,6 +94,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       }
     </div>
   </div>
+  )}
 
   {
     variant === 'full' && (
@@ -156,6 +188,145 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 
   .is-over:not(:global(.is-scrolled)) {
     background: linear-gradient(180deg, rgba(17, 19, 28, 0.45), rgba(17, 19, 28, 0));
+  }
+
+  /* ——— Startseite: ruhige, helle Leiste mit mittigem Logo ——— */
+  .is-calm {
+    position: fixed;
+    color: #fff;
+    --head: currentColor;
+    background: linear-gradient(180deg, rgba(17, 19, 28, 0.28), rgba(17, 19, 28, 0));
+  }
+
+  .is-calm:global(.is-scrolled),
+  .is-calm:global(.menu-open) {
+    background: rgba(251, 250, 246, 0.94);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    color: var(--ink);
+    box-shadow: 0 1px 0 var(--line);
+  }
+
+  .calm-bar {
+    height: var(--header-h);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 24px;
+    padding-inline: var(--gutter);
+  }
+
+  .calm-nav {
+    display: flex;
+    gap: clamp(18px, 2.2vw, 36px);
+  }
+
+  .calm-nav a,
+  .calm-cta {
+    font-size: 0.8rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .calm-nav a {
+    position: relative;
+    padding: 6px 0;
+  }
+
+  .calm-nav a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s var(--ease);
+  }
+
+  .calm-nav a:hover::after {
+    transform: scaleX(1);
+  }
+
+  .calm-logo :global(svg) {
+    height: 30px;
+  }
+
+  .calm-r {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: clamp(18px, 2.2vw, 36px);
+  }
+
+  .calm-cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 0 22px;
+    border: 1px solid currentColor;
+    transition:
+      background 0.3s ease,
+      color 0.3s ease;
+  }
+
+  .calm-cta:hover {
+    background: currentColor;
+  }
+
+  .calm-cta:hover {
+    color: var(--indigo);
+    background: #fff;
+  }
+
+  .is-calm:global(.is-scrolled) .calm-cta:hover {
+    color: #fff;
+    background: var(--indigo);
+  }
+
+  .is-calm .mobile-nav {
+    background: #fbfaf6;
+    color: var(--ink);
+  }
+
+  .is-calm .mobile-nav li a {
+    font-family: var(--sans);
+    font-weight: 300;
+    font-stretch: 100%;
+    letter-spacing: 0.06em;
+    font-size: 1.9rem;
+    border-bottom-color: var(--line);
+  }
+
+  @media (max-width: 1080px) {
+    .calm-bar {
+      grid-template-columns: 1fr auto 1fr;
+    }
+    .calm-l,
+    .calm-r .calm-nav,
+    .calm-r .calm-cta {
+      display: none;
+    }
+    .calm-logo {
+      grid-column: 2;
+    }
+    .calm-r {
+      grid-column: 3;
+    }
+    .is-calm .menu-btn {
+      display: grid;
+      border-color: transparent;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .calm-logo :global(svg) {
+      height: 24px;
+    }
   }
 
   .bar {
