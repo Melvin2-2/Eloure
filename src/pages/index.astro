@@ -5,7 +5,6 @@
 // Farbfolge: Bild → Creme → Veil → Creme (USP + Signet) → Frost (Ablauf) → Creme (Bestseller) → Bilder (Studio)
 // → Veil (Stimmen) → Creme (Exhale) → Ruhepunkt → Veil (Team) → Creme (FAQ) → Texturbild (Abschluss)
 import { Image } from 'astro:assets';
-import type { ImageMetadata } from 'astro';
 import Base from '../layouts/Base.astro';
 import StudioCalm from '../components/StudioCalm.astro';
 import UspLines from '../components/UspLines.astro';
@@ -18,6 +17,7 @@ import imgHero from '../assets/shoot/relief-sessel.jpg';
 import imgLeaf from '../assets/shoot/detail-pflanze.jpg';
 import imgTalk from '../assets/shoot/cd-beratung-lounge.jpg';
 import imgHands from '../assets/shoot/beratung-haende.jpg';
+import imgGel from '../assets/shoot/gel-achsel.jpg';
 import imgBehandlung from '../assets/shoot/laser-achsel.jpg';
 import imgDisplay from '../assets/shoot/display.jpg';
 import imgExhale from '../assets/shoot/raum-exhale.jpg';
@@ -37,10 +37,10 @@ import imgRelief from '../assets/shoot/detail-relief.jpg';
 const rating = googleRating.rating.toFixed(1).replace('.', ',');
 
 // Ablauf (nach Vorlage „Values“): vier Bilder, darunter Titel + eine Zeile
-const steps: { img: ImageMetadata; video?: string; title: string; text: string; alt: string; pos: string }[] = [
+const steps = [
   { img: imgHands, title: 'Beratung', text: 'Wir schauen Haut und Haare an und sagen ehrlich, was realistisch ist.', alt: 'Hände mit Tablet beim Beratungsgespräch', pos: 'center 40%' },
-  { img: imgBehandlung, video: 'kuehlgel', title: 'Vorbereitung', text: 'Kühlgel auftragen, Schutzbrille auf – jeder Schritt wird erklärt.', alt: 'Kühlgel wird mit einem Spatel auf das Bein aufgetragen', pos: 'center 50%' },
-  { img: imgBehandlung, video: 'laser-licht', title: 'Behandlung', text: 'Du gibst das Tempo vor. Pausen sind jederzeit okay.', alt: 'Laser-Handstück mit Licht auf der Haut am Bein', pos: 'center 55%' },
+  { img: imgGel, title: 'Vorbereitung', text: 'Kühlgel auftragen, Schutzbrille auf – jeder Schritt wird erklärt.', alt: 'Kühlgel wird auf die Achsel aufgetragen', pos: 'center 50%' },
+  { img: imgBehandlung, title: 'Behandlung', text: 'Du gibst das Tempo vor. Pausen sind jederzeit okay.', alt: 'Laserhaarentfernung an der Achsel', pos: 'center 35%' },
   { img: imgDisplay, title: 'Dranbleiben', text: 'Folgetermine nach deinem Haarzyklus, Einstellungen laufend angepasst.', alt: 'Einstellungen am Display des Diodenlasers', pos: 'center 40%' },
 ];
 
@@ -56,10 +56,10 @@ const groups: { id: Group; label: string }[] = [
 const svc = (id: string) => services.find((s) => s.id === id);
 
 // Studio in vier Bildern – mit Inhalt statt nur Raumnamen
-const rooms: { img: ImageMetadata; video?: string; title: string; text: string; alt: string }[] = [
+const rooms = [
   { img: imgLounge, title: 'Studio', text: 'Hier beginnt jeder Termin – mit einem Gespräch, nicht mit dem Laser.', alt: 'Lounge mit weissen Sesseln' },
   { img: imgLiege, title: 'Behandlungsraum', text: 'Geschlossen, hell und diskret. Nur du und deine Behandlerin.', alt: 'Behandlungsliege am Fenster' },
-  { img: imgGeraet, video: 'handstueck', title: 'Diodenlaser', text: 'Medizinischer Laser statt IPL – gezielt auf die Haarwurzel.', alt: 'Medizinischer Diodenlaser' },
+  { img: imgGeraet, title: 'Diodenlaser', text: 'Medizinischer Laser statt IPL – gezielt auf die Haarwurzel.', alt: 'Medizinischer Diodenlaser' },
   { img: imgObjekte, title: 'Ruhe', text: 'Kein Zeitdruck, keine Hektik. Jede Frage ist willkommen.', alt: 'Dekorative Objekte im Studio' },
 ];
 
@@ -132,11 +132,7 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
         steps.map((st) => (
           <li class="c-step" data-anim="soft">
             <figure>
-              {st.video ? (
-                <LoopVideo name={st.video} label={st.alt} pos={st.pos} />
-              ) : (
-                <Image src={st.img} alt={st.alt} widths={[400, 700, 900]} sizes="(min-width: 900px) 25vw, 50vw" style={`object-position:${st.pos}`} />
-              )}
+              <Image src={st.img} alt={st.alt} widths={[400, 700, 900]} sizes="(min-width: 900px) 25vw, 50vw" style={`object-position:${st.pos}`} />
             </figure>
             <div class="c-step-text">
               <h3>{st.title}</h3>
@@ -192,7 +188,7 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
     {
       rooms.map((r) => (
         <a class="c-col" href="/studio" data-anim="soft">
-          {r.video ? <LoopVideo name={r.video} label={r.alt} /> : <Image src={r.img} alt={r.alt} widths={[500, 800, 1100]} sizes="(min-width: 900px) 25vw, 50vw" />}
+          <Image src={r.img} alt={r.alt} widths={[500, 800, 1100]} sizes="(min-width: 900px) 25vw, 50vw" />
           <span class="c-col-cap">
             <strong>{r.title}</strong>
             <span>{r.text}</span>
@@ -223,7 +219,25 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
     </div>
   </section>
 
-  <!-- 9 · Grossformat: Exhale -->
+  <!-- 9 · Video für sich: grosses Close-up mit Rahmen, daneben eine Überschrift und ein Text -->
+  <section class="c-film on-frost" aria-labelledby="film-titel">
+    <div class="c-film-grid">
+      <div class="c-film-text">
+        <h2 class="c-ttl reveal" id="film-titel">Licht, das die<br />Haarwurzel trifft.</h2>
+        <p class="reveal">Unser medizinischer Diodenlaser sendet gebündeltes Licht, das vom Farbstoff im Haar aufgenommen wird – gezielt und schonend.</p>
+        <p class="c-film-link reveal"><a class="c-link" href="/laserhaarentfernung">Zur Behandlung</a></p>
+      </div>
+      <figure class="c-film-media" data-anim="soft">
+        <div class="c-film-frame">
+          <LoopVideo name="laser-licht-gross" label="Close-up: Laser-Handstück mit Licht auf der Haut am Bein" pos="center 55%" />
+          <button type="button" class="c-film-toggle" data-film-toggle aria-label="Video anhalten"><span aria-hidden="true"></span></button>
+        </div>
+        <figcaption>Medizinischer Diodenlaser</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 10 · Grossformat: Exhale -->
   <section class="c-big">
     <figure class="c-big-img" data-anim="soft">
       <Image src={imgExhale} alt="Heller Raum mit weissem Sessel und Kunstwerk an der Wand" widths={[800, 1200, 1800]} sizes="(min-width: 900px) 55vw, 100vw" />
@@ -274,6 +288,28 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
 </Base>
 
 <script>
+  // Video anhalten / abspielen
+  document.querySelectorAll<HTMLButtonElement>('[data-film-toggle]').forEach((btn) => {
+    const v = btn.parentElement?.querySelector('video');
+    if (!v) return;
+    const sync = () => {
+      btn.classList.toggle('is-paused', v.paused);
+      btn.setAttribute('aria-label', v.paused ? 'Video abspielen' : 'Video anhalten');
+    };
+    v.addEventListener('play', sync);
+    v.addEventListener('pause', sync);
+    btn.addEventListener('click', () => {
+      if (v.paused) {
+        delete v.dataset.held;
+        v.play().catch(() => {});
+      } else {
+        v.dataset.held = '1';
+        v.pause();
+      }
+    });
+    sync();
+  });
+
   // Kundenstimmen
   const voices = document.querySelector<HTMLElement>('[data-c-voices]');
   if (voices) {
@@ -806,6 +842,96 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
     font-size: clamp(0.98rem, 1.05vw, 1.06rem);
     line-height: 1.55;
     color: rgba(255, 255, 255, 0.94);
+  }
+
+  /* ——— Video für sich ——— */
+  .c-film {
+    padding-block: clamp(140px, 14vw, 220px);
+  }
+
+  .c-film-grid {
+    display: grid;
+    gap: clamp(56px, 6vw, 100px);
+    align-items: center;
+    max-width: 1320px;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .c-film-text .c-ttl {
+    font-size: clamp(2.8rem, 5.2vw, 6rem);
+  }
+
+  .c-film-text p {
+    max-width: 24em;
+    margin: 0;
+  }
+
+  .c-film-text .c-film-link {
+    margin-top: 36px;
+  }
+
+  .c-film-media {
+    margin: 0;
+    justify-self: center;
+    width: min(100%, 560px);
+  }
+
+  .c-film-frame {
+    position: relative;
+    padding: clamp(10px, 1vw, 14px);
+    border: 1px solid var(--line-strong);
+  }
+
+  .c-film-frame :global(video) {
+    aspect-ratio: 4 / 5;
+    height: auto;
+  }
+
+  .c-film-media figcaption {
+    margin-top: 18px;
+    font-size: 0.8rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--ink-2);
+  }
+
+  /* dezenter Pause-Knopf */
+  .c-film-toggle {
+    position: absolute;
+    right: clamp(22px, 2vw, 30px);
+    bottom: clamp(22px, 2vw, 30px);
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.12);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    cursor: pointer;
+  }
+
+  .c-film-toggle span {
+    width: 10px;
+    height: 12px;
+    border-inline: 2px solid #fff;
+  }
+
+  .c-film-toggle.is-paused span {
+    width: 0;
+    height: 0;
+    border: 0;
+    border-left: 11px solid #fff;
+    border-block: 7px solid transparent;
+    margin-left: 3px;
+  }
+
+  @media (min-width: 900px) {
+    .c-film-grid {
+      grid-template-columns: 1fr 1fr;
+    }
   }
 
   /* ——— 10 · Kundenstimmen ——— */

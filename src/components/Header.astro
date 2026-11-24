@@ -53,7 +53,18 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       </div>
     )
   }
-  {!((tone === 'calm' || tone === 'calm-ink') && variant === 'full') && (
+  {
+    variant === 'minimal' && (
+      <div class="min-bar">
+        <a class="min-link min-back" href="/">Zur Website</a>
+        <a href="/" class="logo min-logo" aria-label={`${site.name} – Startseite`}>
+          <Logo />
+        </a>
+        <a class="min-link min-help" href={ctaHref}>{ctaLabel}</a>
+      </div>
+    )
+  }
+  {variant === 'full' && !(tone === 'calm' || tone === 'calm-ink') && (
   <div class="bar">
     <a href="/" class="logo" aria-label={`${site.name} – Startseite`}>
       <Logo />
@@ -338,6 +349,56 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   @media (max-width: 640px) {
     .calm-logo :global(svg) {
       height: 40px;
+    }
+  }
+
+  /* Minimal: Logo mittig, links zurück, rechts Hilfe – nur Text */
+  .min-bar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 16px;
+    height: 76px;
+    padding-inline: var(--gutter);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .min-logo :global(svg) {
+    height: 40px;
+    width: auto;
+  }
+
+  .min-link {
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+
+  .min-link:hover {
+    color: var(--ink);
+  }
+
+  .min-help {
+    justify-self: end;
+  }
+
+  @media (max-width: 640px) {
+    .min-bar {
+      grid-template-columns: auto 1fr;
+      height: 64px;
+    }
+    .min-back {
+      display: none;
+    }
+    .min-logo :global(svg) {
+      height: 32px;
+    }
+    .min-help {
+      letter-spacing: 0.12em;
     }
   }
 

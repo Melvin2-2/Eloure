@@ -7,7 +7,15 @@ import { googleRating } from '../data/reviews';
 import { services, firstVisit, byRegion, chf, duration, type Group } from '../data/services';
 
 const rating = googleRating.rating.toFixed(1).replace('.', ',');
-const quick = (g: Group) => services.filter((s) => s.group === g && s.tag);
+// Topseller & Kombis, teuerste zuerst – mit Ersparnis gegenüber den Einzelzonen
+const bundles: Record<string, string[]> = {
+  'kombi-intim-achseln': ['bikini-intim', 'achseln'],
+  'beine-komplett': ['unterschenkel', 'oberschenkel'],
+  'brust-bauch': ['brust', 'bauch-1'],
+};
+const single = (id: string) => services.find((s) => s.id === id)?.price ?? 0;
+const instead = (id: string) => (bundles[id] ? bundles[id].reduce((a, x) => a + single(x), 0) : 0);
+const quick = (g: Group) => services.filter((s) => s.group === g && s.tag).sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
 const groups: { id: Group; label: string }[] = [
   { id: 'frauen', label: 'Frauen' },
   { id: 'maenner', label: 'Männer' },
@@ -43,24 +51,25 @@ const data = {
   ctaLabel={`Fragen? ${site.phone}`}
 >
   <section class="booking" data-booking>
-    <div class="b-band bg-mist">
-      <div class="wrap">
-        <header class="b-head">
-          <div>
-            <h1>Dein Termin bei Eloure.</h1>
-            <ul class="b-trust">
-              <li><span class="stars">★★★★★</span> <b>{rating}</b> aus {googleRating.count} Google-Bewertungen</li>
-              <li><Icon name="check" size={16} /> Bezahlt wird erst vor Ort</li>
-              <li><Icon name="check" size={16} /> Kostenlos absagen bis {site.cancellationHours} Std. vorher</li>
-            </ul>
-          </div>
-          <ol class="stepper" aria-label="Fortschritt">
-            <li data-stepper="1" class="is-current"><span>1</span> Behandlung</li>
-            <li data-stepper="2"><span>2</span> Termin</li>
-            <li data-stepper="3"><span>3</span> Angaben</li>
-            <li data-stepper="4"><span>4</span> Bestätigen</li>
-          </ol>
-        </header>
+    <div class="b-top wrap">
+      <h1>Termin buchen</h1>
+      <p class="b-trust">
+        <span><span class="stars" aria-hidden="true">★★★★★</span> {rating} aus {googleRating.count} Bewertungen</span>
+        <span>Bezahlt wird vor Ort</span>
+        <span>Kostenlos absagen bis {site.cancellationHours} Std. vorher</span>
+      </p>
+    </div>
+
+    <!-- Fortschritt: bleibt oben stehen, zeigt immer, was zu tun ist -->
+    <div class="b-steps" data-steps-bar>
+      <div class="wrap b-steps-in">
+        <ol class="stepper" aria-label="Fortschritt">
+          <li data-stepper="1" class="is-current">Behandlung</li>
+          <li data-stepper="2">Termin</li>
+          <li data-stepper="3">Angaben</li>
+          <li data-stepper="4">Bestätigen</li>
+        </ol>
+        <p class="b-todo" data-todo aria-live="polite"></p>
       </div>
     </div>
 
@@ -70,8 +79,8 @@ const data = {
           <!-- ——— Schritt 1: Behandlung ——— -->
           <div class="step" data-step="1">
             <div class="step-head">
-              <h2>Was dürfen wir für dich tun?</h2>
-              <p class="muted">Wähle eine oder mehrere Zonen. Du kannst alles beim Termin noch mit uns anpassen.</p>
+              <h2>Welche Zonen?</h2>
+              <p class="muted">Wähle eine oder mehrere Zonen. Anpassen kannst du beim Termin jederzeit.</p>
             </div>
 
             <div class="seg" role="radiogroup" aria-label="Behandlung für">
@@ -90,19 +99,26 @@ const data = {
                 <div class="group-panel" data-group-panel={g.id} hidden={gi !== 0}>
                   <p class="quick-title">Topseller & Kombis</p>
                   <div class="quick">
-                    {quick(g.id).map((s) => (
-                      <button type="button" class:list={['qk', s.tag === 'Kombi' ? 'qk-k' : 'qk-t']} data-quick={s.id}>
+                    {quick(g.id).map((s, i) => (
+                      <button type="button" class:list={['qk', { 'qk-hero': i === 0 }]} data-quick={s.id} aria-pressed="false">
                         <span class="qk-badge">{s.tag}</span>
                         <span class="qk-name">{s.name}</span>
-                        <span class="qk-meta">{duration(s.minutes)}</span>
-                        <span class="qk-price">{chf(s.price)}</span>
+                        <span class="qk-meta">
+                          {duration(s.minutes)}
+                          {s.note && <> · {s.note}</>}
+                        </span>
+                        <span class="qk-price">
+                          {instead(s.id) > (s.price ?? 0) && <s class="qk-was">{chf(instead(s.id))}</s>}
+                          {chf(s.price)}
+                        </span>
+                        {instead(s.id) > (s.price ?? 0) && <span class="qk-save">Du sparst {chf(instead(s.id) - (s.price ?? 0))}</span>}
                         <span class="qk-check" aria-hidden="true"><Icon name="check" size={14} /></span>
                       </button>
                     ))}
                   </div>
                   <p class="quick-title">Alle Zonen</p>
                   <a class="unsure" href={`#erstbesuch-${g.id}`}>
-                    <Icon name="chat" size={16} /> Noch unsicher? Starte mit einer kostenlosen Beratung
+                    Noch unsicher? Starte mit einer kostenlosen Beratung
                   </a>
 
                   {byRegion(g.id).map(([region, list]) => (
@@ -196,7 +212,7 @@ const data = {
           <!-- ——— Schritt 3: Angaben ——— -->
           <form class="step form" data-step="3" hidden data-details novalidate>
             <div class="step-head">
-              <h2>Fast geschafft. Wer kommt zu uns?</h2>
+              <h2>Deine Angaben</h2>
               <p class="muted">Wir nutzen deine Angaben nur für deinen Termin – versprochen.</p>
             </div>
             <div class="row2">
@@ -221,9 +237,7 @@ const data = {
             <label class="consent">
               <input type="checkbox" name="agb" required />
               <span>
-                Ich akzeptiere die <a href="/agb" target="_blank">AGB</a> und die
-                <a href="/datenschutz" target="_blank">Datenschutzerklärung</a>. Falls ich nicht kann, sage ich mindestens
-                {site.cancellationHours} Std. vorher ab.
+                Ich akzeptiere die <a href="/agb" target="_blank">AGB</a>{' und die '}<a href="/datenschutz" target="_blank">Datenschutzerklärung</a>.{' '}Falls ich nicht kann, sage ich mindestens {site.cancellationHours} Std. vorher ab.
               </span>
             </label>
             <p class="form-error" data-form-error hidden>Bitte fülle alle Pflichtfelder aus.</p>
@@ -284,9 +298,10 @@ const data = {
           </div>
 
           <div class="b-nav" data-nav>
-            <button type="button" class="btn btn-ghost" data-back hidden>Zurück</button>
+            <button type="button" class="b-back" data-back hidden>Zurück</button>
+            <p class="b-hint" data-hint></p>
             <button type="button" class="btn btn-primary" data-next disabled>
-              <span data-next-label>Weiter</span><span class="arrow"><Icon name="arrow" size={15} /></span>
+              <span data-next-label>Weiter</span>
             </button>
           </div>
         </div>
@@ -305,12 +320,13 @@ const data = {
               <div class="sum-total"><span>Total</span><span data-sum-total>CHF 0</span></div>
             </div>
             <button type="button" class="btn btn-primary btn-block sum-cta" data-next-sum disabled>
-              <span data-sum-cta-label>Weiter</span><span class="arrow"><Icon name="arrow" size={16} /></span>
+              <span data-sum-cta-label>Weiter</span>
             </button>
+            <p class="sum-hint" data-sum-hint></p>
             <ul class="sum-trust">
-              <li><Icon name="check" size={15} /> Bezahlt wird vor Ort – bar, TWINT oder Karte</li>
-              <li><Icon name="check" size={15} /> Kostenlos absagen bis {site.cancellationHours} Std. vorher</li>
-              <li><Icon name="check" size={15} /> Persönliche Beratung inklusive</li>
+              <li>Bezahlt wird vor Ort – bar, TWINT oder Karte</li>
+              <li>Kostenlos absagen bis {site.cancellationHours} Std. vorher</li>
+              <li>Persönliche Beratung inklusive</li>
             </ul>
           </div>
           <p class="sum-help">
@@ -327,7 +343,7 @@ const data = {
         <small data-m-count>Keine Auswahl</small>
       </div>
       <button type="button" class="btn btn-primary" data-m-next disabled>
-        <span data-m-next-label>Weiter</span><span class="arrow"><Icon name="arrow" size={15} /></span>
+        <span data-m-next-label>Weiter</span>
       </button>
     </div>
   </section>
@@ -336,116 +352,169 @@ const data = {
 </Base>
 
 <style>
+  /* ——— Buchung im Eloure-Stil: hell, Linien, feine Grossbuchstaben, ein klarer nächster Schritt ——— */
   .booking {
-    padding-block: clamp(24px, 4vw, 48px) 120px;
+    padding-bottom: 140px;
+    --sel: rgba(62, 92, 124, 0.07);
   }
 
-  .b-head {
+  .booking :global(h2),
+  .booking :global(h3) {
+    font-family: var(--sans);
+    font-style: normal;
+  }
+
+  /* Kopf */
+  .b-top {
+    padding-block: clamp(40px, 5vw, 72px) clamp(24px, 3vw, 36px);
+    text-align: center;
+  }
+
+  .b-top h1 {
+    margin: 0 0 16px;
+    font-weight: 200;
+    font-size: clamp(2.4rem, 4.6vw, 4.4rem);
+    letter-spacing: 0.01em;
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .b-trust {
     display: flex;
     flex-wrap: wrap;
-    align-items: end;
-    justify-content: space-between;
-    gap: 16px 40px;
-    margin-bottom: 32px;
+    justify-content: center;
+    gap: 6px 28px;
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--ink-2);
   }
 
-  .b-head h1 {
-    font-size: clamp(2.4rem, 5vw, 3.6rem);
-    margin: 0;
+  .stars {
+    margin-right: 6px;
+    letter-spacing: 2px;
+    color: var(--cta);
+  }
+
+  /* Fortschritt – klebt oben */
+  .b-steps {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    margin-bottom: clamp(32px, 4vw, 56px);
+    background: rgba(236, 235, 230, 0.94);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-block: 1px solid var(--line);
+  }
+
+  .b-steps-in {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 32px;
+    min-height: 60px;
   }
 
   .stepper {
     list-style: none;
     display: flex;
-    gap: 6px;
+    gap: clamp(14px, 3vw, 40px);
     margin: 0;
     padding: 0;
-    font-size: 0.94rem;
-    font-weight: 600;
-    color: var(--muted);
+    counter-reset: st;
   }
 
   .stepper li {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 12px 6px 6px;
-    border-radius: 0;
-    background: var(--linen);
+    position: relative;
+    padding: 20px 0 18px;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
   }
 
-  .stepper span {
-    display: grid;
-    place-items: center;
-    width: 24px;
-    height: 24px;
-    border-radius: 0;
-    background: var(--paper);
-    font-size: 0.85rem;
+  .stepper li::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: transparent;
+  }
+
+  .stepper .is-done {
+    color: var(--ink-2);
   }
 
   .stepper .is-current {
-    background: var(--ink);
-    color: var(--paper);
-    --head: currentColor;
-  }
-
-  .stepper .is-current span {
-    background: var(--linen);
     color: var(--ink);
   }
 
-  .stepper .is-done span {
-    background: var(--ink);
-    color: var(--paper);
-    --head: currentColor;
+  .stepper .is-current::after {
+    background: var(--cta);
   }
 
-  @media (max-width: 720px) {
-    .stepper li:not(.is-current) {
-      font-size: 0;
-      gap: 0;
-      padding: 6px;
-    }
-    .stepper li:not(.is-current) span {
-      font-size: 0.85rem;
-    }
+  .b-todo {
+    margin: 0;
+    font-size: 0.98rem;
+    color: var(--cta);
   }
 
+  .b-todo:empty {
+    display: none;
+  }
+
+  /* Raster */
   .b-grid {
     display: grid;
-    gap: 32px;
+    gap: 40px;
     align-items: start;
   }
 
   @media (min-width: 1000px) {
     .b-grid {
-      grid-template-columns: 1fr 360px;
-      gap: 48px;
+      grid-template-columns: 1fr 340px;
+      gap: clamp(48px, 5vw, 88px);
     }
-  }
-
-  .step-head {
-    margin-bottom: 24px;
-  }
-
-  .step-head h2 {
-    font-size: clamp(1.9rem, 3.4vw, 2.6rem);
-    margin-bottom: 0.2em;
   }
 
   .step[hidden] {
     display: none;
   }
 
-  /* Segment */
+  .step {
+    scroll-margin-top: 90px;
+  }
+
+  .step-head {
+    margin-bottom: 32px;
+  }
+
+  .step-head h2 {
+    margin: 0 0 10px;
+    font-weight: 200;
+    font-size: clamp(2rem, 3.4vw, 3.2rem);
+    line-height: 1.02;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .step-head p {
+    margin: 0;
+    font-size: 1.05rem;
+    color: var(--ink-2);
+  }
+
+  /* Frauen / Männer */
   .seg {
     display: inline-flex;
     flex-wrap: wrap;
-    padding: 5px;
-    border-radius: 0;
-    background: var(--linen);
-    margin-bottom: 28px;
+    gap: 32px;
+    margin-bottom: 40px;
   }
 
   .seg label {
@@ -460,71 +529,326 @@ const data = {
 
   .seg span {
     display: block;
-    padding: 10px 24px;
-    border-radius: 0;
-    font-weight: 500;
+    padding: 4px 0 8px;
+    font-weight: 300;
+    font-size: clamp(1.2rem, 1.6vw, 1.5rem);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
     color: var(--muted);
+    border-bottom: 1px solid transparent;
     cursor: pointer;
-    transition: background 0.2s, color 0.2s;
+    transition: color 0.2s, border-color 0.2s;
   }
 
   .seg input:checked + span {
-    background: var(--paper);
     color: var(--ink);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 4px 12px -4px rgba(0, 0, 0, 0.12);
+    border-color: var(--ink);
   }
 
   .seg input:focus-visible + span {
-    outline: 3px solid var(--ink);
-    outline-offset: 2px;
+    outline: 2px solid var(--cta);
+    outline-offset: 4px;
   }
 
   .seg.small {
-    border-radius: 0;
+    gap: 10px;
     margin: 0;
   }
 
   .seg.small span {
-    padding: 10px 16px;
-    font-size: 0.92rem;
-    border-radius: 0;
+    padding: 12px 18px;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    font-weight: 400;
+    border: 1px solid var(--line-strong);
   }
 
-  /* Erster Besuch */
-  .first-visit {
-    padding: 20px;
-    border-radius: 0;
-    background: var(--linen);
-    margin: 8px 0 28px;
-    scroll-margin-top: calc(var(--header-h) + 24px);
+  .seg.small input:checked + span {
+    border-color: var(--cta);
+    background: var(--sel);
   }
 
-  .fv-sub {
+  /* Topseller & Kombis */
+  .quick-title {
+    margin: 0 0 16px;
+    font-size: 0.8rem;
+    font-weight: 400;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  .quick {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 56px;
+  }
+
+  @media (min-width: 640px) {
+    .quick {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .qk-hero {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .qk {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 4px 16px;
+    padding: 22px 22px 20px;
+    text-align: left;
+    font: inherit;
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    cursor: pointer;
+    transition: border-color 0.25s, background 0.25s;
+  }
+
+  .qk:hover {
+    border-color: var(--ink-2);
+  }
+
+  .qk-hero {
+    padding: clamp(26px, 3vw, 38px);
+    background: var(--frost);
+    border-color: var(--frost);
+    --ink-2: #3a3d41;
+  }
+
+  .qk-badge {
+    grid-column: 1 / -1;
+    margin-bottom: 14px;
+    font-size: 0.74rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--cta);
+  }
+
+  .qk-hero .qk-badge {
+    color: #2f4862;
+  }
+
+  .qk-name {
+    grid-column: 1;
+    font-weight: 300;
+    font-size: clamp(1.3rem, 1.8vw, 1.6rem);
+    line-height: 1.15;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .qk-hero .qk-name {
+    font-weight: 200;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+  }
+
+  .qk-meta {
+    grid-column: 1;
     font-size: 0.92rem;
     color: var(--ink-2);
-    margin-bottom: 14px;
+  }
+
+  .qk-price {
+    grid-column: 2;
+    grid-row: 2 / 4;
+    display: grid;
+    justify-items: end;
+    font-size: 1.3rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .qk-hero .qk-price {
+    font-size: 1.6rem;
+  }
+
+  .qk-was {
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+
+  .qk-save {
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin-top: 10px;
+    font-size: 0.86rem;
+    letter-spacing: 0.04em;
+    color: var(--cta);
+  }
+
+  .qk-check {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--line-strong);
+    color: transparent;
+  }
+
+  .qk.is-on {
+    border-color: var(--cta);
+    background: var(--sel);
+  }
+
+  .qk-hero.is-on {
+    background: var(--frost);
+    box-shadow: inset 0 0 0 1px var(--cta);
+  }
+
+  .qk.is-on .qk-check {
+    background: var(--cta);
+    border-color: var(--cta);
+    color: #fff;
+  }
+
+  .qk:focus-visible {
+    outline: 2px solid var(--cta);
+    outline-offset: 2px;
   }
 
   .unsure {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin: -8px 0 24px;
-    font-size: 0.9rem;
-    font-weight: 600;
+    display: inline-block;
+    margin: -4px 0 32px;
+    font-size: 0.95rem;
     color: var(--ink-2);
     text-decoration: underline;
     text-decoration-color: var(--line-strong);
-    text-underline-offset: 4px;
+    text-underline-offset: 5px;
+  }
+
+  /* Alle Zonen als Linien */
+  .region {
+    border: 0;
+    padding: 0;
+    margin: 0 0 40px;
+  }
+
+  .region legend {
+    margin-bottom: 10px;
+    padding: 0;
+    font-size: 0.8rem;
+    font-weight: 400;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  .opt {
+    position: relative;
+    display: grid;
+    grid-template-columns: 20px 1fr auto;
+    gap: 18px;
+    align-items: center;
+    padding: 16px 10px;
+    border-top: 1px solid var(--line-strong);
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+  }
+
+  .opt:last-child {
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .opt:hover {
+    background: rgba(255, 255, 255, 0.35);
+  }
+
+  .opt input {
+    position: absolute;
+    opacity: 0;
+  }
+
+  .box {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--line-strong);
+    color: transparent;
+    transition: background 0.2s;
+  }
+
+  .opt:has(input:checked) {
+    background: var(--sel);
+  }
+
+  .opt:has(input:checked) .box {
+    background: var(--cta);
+    border-color: var(--cta);
+    color: #fff;
+  }
+
+  .opt:has(input:focus-visible) {
+    outline: 2px solid var(--cta);
+    outline-offset: -2px;
+  }
+
+  .opt:has(input:disabled) {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .o-name {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-weight: 350;
+    font-size: 1.1rem;
+    color: var(--ink);
+  }
+
+  .o-name small {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .o-tag {
+    margin-left: 10px;
+    font-style: normal;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    vertical-align: 2px;
+    color: var(--cta);
+  }
+
+  .o-price {
+    font-size: 1.08rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    color: var(--ink);
+  }
+
+  /* Erstbesuch */
+  .first-visit {
+    margin: 16px 0 32px;
+    padding: clamp(22px, 3vw, 34px);
+    background: var(--veil);
+    scroll-margin-top: 100px;
   }
 
   .fv-title {
-    font-family: var(--sans);
-    line-height: 1;
-    margin-bottom: 6px;
-    font-size: 1.3rem;
-    font-weight: 500;
-    letter-spacing: -0.01em;
+    margin: 0 0 6px;
+    font-weight: 300;
+    font-size: 1.5rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .fv-sub {
+    margin: 0 0 18px;
+    font-size: 0.98rem;
+    color: var(--ink-2);
   }
 
   .fv-grid {
@@ -541,11 +865,9 @@ const data = {
   .fv-card {
     position: relative;
     display: flex;
-    gap: 12px;
-    padding: 16px 48px 16px 16px;
-    border-radius: 0;
-    border: 1.5px solid transparent;
-    background: var(--paper);
+    padding: 18px 50px 18px 18px;
+    border: 1px solid var(--line-strong);
+    background: var(--bg);
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s;
   }
@@ -561,47 +883,50 @@ const data = {
     gap: 4px;
   }
 
+  .fv-body strong {
+    font-weight: 400;
+  }
+
   .fv-body small {
+    font-size: 0.92rem;
+    line-height: 1.45;
     color: var(--muted);
-    font-size: 0.94rem;
-    line-height: 1.4;
   }
 
   .fv-meta {
-    font-size: 0.94rem;
+    font-size: 0.92rem;
+    color: var(--ink-2);
   }
 
   .fv-meta b {
-    color: var(--ok);
+    font-weight: 400;
+    color: var(--cta);
   }
 
   .tick {
     position: absolute;
-    right: 14px;
-    top: 16px;
+    right: 16px;
+    top: 18px;
     display: grid;
     place-items: center;
-    width: 24px;
-    height: 24px;
-    border-radius: 0;
-    border: 1.5px solid var(--line-strong);
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--line-strong);
     color: transparent;
   }
 
   .fv-card:has(input:checked) {
-    border-color: var(--ink);
-    background: var(--paper);
+    border-color: var(--cta);
   }
 
   .fv-card:has(input:checked) .tick {
-    background: var(--ink);
-    border-color: var(--ink);
-    color: var(--paper);
-    --head: currentColor;
+    background: var(--cta);
+    border-color: var(--cta);
+    color: #fff;
   }
 
   .fv-card:has(input:focus-visible) {
-    outline: 3px solid var(--ink);
+    outline: 2px solid var(--cta);
     outline-offset: 2px;
   }
 
@@ -609,8 +934,8 @@ const data = {
     display: flex;
     gap: 8px;
     align-items: flex-start;
-    margin: 14px 0 0;
-    font-size: 0.94rem;
+    margin: 16px 0 0;
+    font-size: 0.92rem;
     color: var(--ink-2);
   }
 
@@ -619,101 +944,10 @@ const data = {
     margin-top: 3px;
   }
 
-  /* Zonen */
-  .region {
-    border: 0;
-    padding: 0;
-    margin: 0 0 28px;
-  }
-
-  .region legend {
-    font-family: var(--sans);
-    margin-bottom: 8px;
-    padding: 0;
-    font-size: 1.3rem;
-    font-weight: 500;
-    letter-spacing: -0.01em;
-  }
-
-  .opt {
-    position: relative;
-    display: grid;
-    grid-template-columns: 24px 1fr auto;
-    gap: 14px;
-    align-items: center;
-    padding: 14px 16px;
-    margin-bottom: 6px;
-    border-radius: 0;
-    background: var(--paper);
-    border: 1.5px solid transparent;
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s, opacity 0.2s;
-  }
-
-  .opt:hover {
-    border-color: var(--line-strong);
-  }
-
-  .opt input {
-    position: absolute;
-    opacity: 0;
-  }
-
-  .box {
-    display: grid;
-    place-items: center;
-    width: 24px;
-    height: 24px;
-    border-radius: 0;
-    border: 1.5px solid var(--line-strong);
-    color: transparent;
-    transition: background 0.2s;
-  }
-
-  .opt:has(input:checked) {
-    border-color: var(--ink);
-  }
-
-  .opt:has(input:checked) .box {
-    background: var(--ink);
-    border-color: var(--ink);
-    color: var(--paper);
-    --head: currentColor;
-  }
-
-  .opt:has(input:focus-visible) {
-    outline: 3px solid var(--ink);
-    outline-offset: 2px;
-  }
-
-  .opt:has(input:disabled) {
-    opacity: 0.45;
-    cursor: not-allowed;
-  }
-
-  .o-name {
-    display: flex;
-    flex-direction: column;
-    font-weight: 500;
-  }
-
-  .o-name small {
-    font-weight: 500;
-    color: var(--muted);
-    font-size: 0.94rem;
-  }
-
-  .o-price {
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
-
   .zones-note {
     display: grid;
     gap: 8px;
-    font-weight: 600;
-    font-size: 0.93rem;
+    font-size: 0.95rem;
   }
 
   .zones-note[hidden] {
@@ -721,14 +955,13 @@ const data = {
   }
 
   .opt-t {
-    font-weight: 400;
     color: var(--muted);
   }
 
   /* Kalender */
   .cal-wrap {
     display: grid;
-    gap: 20px;
+    gap: 16px;
   }
 
   @media (min-width: 760px) {
@@ -738,25 +971,29 @@ const data = {
     }
   }
 
-  .cal {
-    padding: 20px;
-    border-radius: 0;
-    background: var(--paper);
-    border: 1px solid var(--line);
+  .cal,
+  .slots {
+    padding: 22px;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+  }
+
+  .slots {
+    min-height: 200px;
   }
 
   .cal-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
   }
 
   .cal-top strong {
-    font-family: var(--sans);
-    font-size: 1.15rem;
-    font-weight: 500;
-    letter-spacing: -0.01em;
+    font-weight: 400;
+    font-size: 0.86rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
   }
 
   .cal-nav {
@@ -764,9 +1001,9 @@ const data = {
     place-items: center;
     width: 40px;
     height: 40px;
-    border-radius: 0;
     border: 1px solid var(--line-strong);
     background: transparent;
+    color: var(--ink);
     cursor: pointer;
   }
 
@@ -788,29 +1025,31 @@ const data = {
   }
 
   .cal-dow {
-    font-size: 0.85rem;
-    font-weight: 500;
+    margin-bottom: 8px;
+    font-size: 0.74rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 6px;
   }
 
   .cal-days :global(button) {
+    position: relative;
     aspect-ratio: 1;
     border: 0;
-    border-radius: 0;
     background: transparent;
-    font-weight: 600;
-    cursor: pointer;
-    position: relative;
+    font: inherit;
+    font-size: 1rem;
+    color: var(--ink);
     font-variant-numeric: tabular-nums;
+    cursor: pointer;
   }
 
   .cal-days :global(button:not(:disabled):hover) {
-    background: var(--linen);
+    background: var(--veil);
   }
 
   .cal-days :global(button:disabled) {
-    color: rgba(43, 47, 64, 0.28);
+    color: rgba(69, 71, 75, 0.3);
     cursor: default;
   }
 
@@ -819,96 +1058,45 @@ const data = {
     position: absolute;
     left: 50%;
     bottom: 6px;
-    width: 5px;
-    height: 5px;
-    border-radius: 0;
-    background: var(--ok);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--cta);
     transform: translateX(-50%);
   }
 
   .cal-days :global(button[aria-pressed='true']) {
-    background: var(--ink);
-    color: var(--paper);
-    --head: currentColor;
+    background: var(--cta);
+    color: #fff;
   }
 
   .cal-days :global(button[aria-pressed='true']::after) {
-    background: var(--linen);
-  }
-
-  .slots {
-    padding: 20px;
-    border-radius: 0;
-    background: var(--paper);
-    border: 1px solid var(--line);
-    min-height: 200px;
-  }
-
-  .slots :global(h3) {
-    font-size: 0.95rem;
-    margin-bottom: 12px;
-  }
-
-  .slots :global(.slot-group) {
-    margin-bottom: 16px;
-  }
-
-  .slots :global(.slot-notice) {
-    margin: 0 0 14px;
-    padding: 10px 14px;
-    background: var(--lime);
-    color: var(--espresso);
-    font-weight: 600;
-    font-size: 0.95rem;
-  }
-
-  .slots :global(.slots-empty a),
-  .b-main :global([data-submit-error] a) {
-    font-weight: 700;
-    text-decoration: underline;
-  }
-
-  .slots :global(.slot-more) {
-    margin-top: 8px;
-    padding: 0;
-    border: 0;
-    background: none;
-    color: var(--ink);
-    font: inherit;
-    font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    text-decoration: underline;
-    text-underline-offset: 5px;
-    cursor: pointer;
-  }
-
-  .slots :global([data-retry]) {
-    margin-top: 12px;
+    background: #fff;
   }
 
   .cal-days:global(.is-loading) {
     opacity: 0.45;
   }
 
-  .b-main :global(.link-btn) {
-    padding: 0;
-    border: 0;
-    background: none;
-    font: inherit;
-    font-weight: 700;
-    text-decoration: underline;
-    cursor: pointer;
+  .slots :global(h3) {
+    margin: 0 0 16px;
+    font-weight: 400;
+    font-size: 0.86rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .slots :global(.slot-group) {
+    margin-bottom: 18px;
   }
 
   .slots :global(.slot-label) {
-    font-size: 0.85rem;
-    font-weight: 500;
+    margin: 0 0 8px;
+    font-size: 0.74rem;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
     color: var(--muted);
-    margin-bottom: 8px;
   }
 
   .slots :global(.slot-grid) {
@@ -918,13 +1106,13 @@ const data = {
   }
 
   .slots :global(.slot-grid button) {
-    padding: 10px 0;
-    border-radius: 0;
-    border: 1.5px solid var(--line-strong);
+    padding: 11px 0;
+    border: 1px solid var(--line-strong);
     background: transparent;
-    font-weight: 500;
-    cursor: pointer;
+    font: inherit;
+    color: var(--ink);
     font-variant-numeric: tabular-nums;
+    cursor: pointer;
   }
 
   .slots :global(.slot-grid button:hover) {
@@ -932,21 +1120,65 @@ const data = {
   }
 
   .slots :global(.slot-grid button[aria-pressed='true']) {
-    background: var(--ink);
-    border-color: var(--ink);
-    color: var(--paper);
-    --head: currentColor;
+    background: var(--cta);
+    border-color: var(--cta);
+    color: #fff;
+  }
+
+  .slots :global(.slot-notice) {
+    margin: 0 0 16px;
+    padding: 12px 14px;
+    background: var(--veil);
+    font-size: 0.95rem;
+  }
+
+  .slots :global(.slots-empty) {
+    margin: 0;
+    color: var(--ink-2);
+  }
+
+  .slots :global(.slots-empty a),
+  .b-main :global([data-submit-error] a) {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+
+  .slots :global(.slot-more) {
+    margin-top: 8px;
+    padding: 0 0 4px;
+    border: 0;
+    border-bottom: 1px solid var(--line-strong);
+    background: none;
+    font: inherit;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .slots :global([data-retry]) {
+    margin-top: 14px;
+  }
+
+  .b-main :global(.link-btn) {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
   }
 
   /* Formular */
   .form {
     display: grid;
-    gap: 16px;
+    gap: 20px;
   }
 
   .row2 {
     display: grid;
-    gap: 16px;
+    gap: 20px;
   }
 
   @media (min-width: 560px) {
@@ -957,9 +1189,11 @@ const data = {
 
   .form label:not(.consent):not(.seg label) {
     display: grid;
-    gap: 6px;
-    font-weight: 600;
-    font-size: 0.92rem;
+    gap: 8px;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
   }
 
   .form input:not([type='checkbox']):not([type='radio']),
@@ -967,23 +1201,26 @@ const data = {
   .code input {
     width: 100%;
     padding: 14px 16px;
-    border-radius: 0;
     border: 1px solid var(--line-strong);
-    background: var(--paper);
-    font-weight: 500;
-    font-size: 1rem;
+    border-radius: 0;
+    background: rgba(255, 255, 255, 0.45);
+    font: inherit;
+    font-size: 1.02rem;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--ink);
   }
 
   .form input:focus,
   textarea:focus,
   .code input:focus {
     outline: none;
-    border-color: var(--ink);
-    box-shadow: 0 0 0 4px var(--linen);
+    border-color: var(--cta);
+    box-shadow: 0 0 0 3px rgba(62, 92, 124, 0.14);
   }
 
   .form .is-invalid {
-    border-color: #b4483a !important;
+    border-color: #a8483c !important;
   }
 
   .newbie {
@@ -993,78 +1230,77 @@ const data = {
   }
 
   .newbie legend {
-    font-weight: 600;
-    font-size: 0.92rem;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     padding: 0;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
   }
 
   .consent {
     display: grid;
     grid-template-columns: 20px 1fr;
-    gap: 10px;
-    font-size: 0.94rem;
+    gap: 12px;
+    font-size: 0.95rem;
     color: var(--ink-2);
   }
 
   .consent input {
     width: 18px;
     height: 18px;
-    margin-top: 2px;
-    accent-color: var(--ink);
+    margin-top: 3px;
+    accent-color: var(--cta);
   }
 
   .form-error {
-    color: #b4483a;
-    font-weight: 600;
-    font-size: 0.9rem;
+    margin: 0;
+    color: #a8483c;
+    font-size: 0.95rem;
   }
 
   .form-error[hidden] {
     display: none;
   }
 
-  /* Review */
+  /* Übersicht */
   .review {
-    margin: 0 0 24px;
-    border-radius: 0;
-    background: var(--paper);
-    border: 1px solid var(--line);
-    padding: 8px 20px;
+    margin: 0 0 32px;
+    border-top: 1px solid var(--line-strong);
   }
 
   .review :global(div) {
     display: grid;
-    grid-template-columns: 130px 1fr auto;
-    gap: 12px;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--line);
+    grid-template-columns: 140px 1fr auto;
+    gap: 14px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line-strong);
     align-items: start;
   }
 
-  .review :global(div:last-child) {
-    border-bottom: 0;
-  }
-
   .review :global(dt) {
-    font-weight: 500;
-    font-size: 0.94rem;
+    font-size: 0.76rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
     color: var(--muted);
+    padding-top: 3px;
   }
 
   .review :global(dd) {
     margin: 0;
-    font-weight: 600;
+    color: var(--ink);
   }
 
   .review :global(button) {
+    padding: 0;
     border: 0;
     background: none;
-    font-weight: 500;
-    font-size: 0.94rem;
+    font: inherit;
+    font-size: 0.9rem;
+    color: var(--ink-2);
     text-decoration: underline;
+    text-underline-offset: 4px;
     cursor: pointer;
-    padding: 0;
   }
 
   @media (max-width: 520px) {
@@ -1079,8 +1315,11 @@ const data = {
 
   .code label {
     display: block;
-    font-weight: 500;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
   }
 
   .code-row {
@@ -1089,65 +1328,60 @@ const data = {
   }
 
   .code-row input {
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
   }
 
   .code-row .btn {
-    min-height: 50px;
+    min-height: 52px;
   }
 
   .code-msg {
     margin-top: 10px;
-    font-size: 0.9rem;
-    font-weight: 600;
     min-height: 1.4em;
+    font-size: 0.92rem;
   }
 
   .code-msg.ok {
-    color: var(--ok);
+    color: var(--cta);
   }
 
   .code-msg.err {
-    color: #b4483a;
+    color: #a8483c;
   }
 
   /* Erfolg */
   .success {
-    padding: clamp(24px, 4vw, 48px);
-    border-radius: 0;
-    background: var(--paper);
-    border: 1px solid var(--line);
+    padding: clamp(28px, 4vw, 56px);
+    background: var(--veil);
   }
 
   .ok-icon {
     display: grid;
     place-items: center;
-    width: 64px;
-    height: 64px;
-    border-radius: 0;
-    background: var(--linen);
-    margin-bottom: 24px;
+    width: 56px;
+    height: 56px;
+    margin-bottom: 26px;
+    border: 1px solid var(--cta);
+    color: var(--cta);
   }
 
   .success h2 {
-    font-size: clamp(2rem, 4vw, 3rem);
+    margin: 0 0 14px;
+    font-weight: 200;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.04;
+    text-transform: uppercase;
+    color: var(--ink);
   }
 
-  .add-cal {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 12px 16px;
-    margin-top: 24px;
-  }
-
+  .add-cal,
   .manage {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 12px 16px;
-    margin-top: 16px;
+    margin-top: 22px;
   }
 
   .add-cal[hidden],
@@ -1156,7 +1390,9 @@ const data = {
   }
 
   .add-cal-label {
-    font-size: 0.94rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
     color: var(--ink-2);
   }
 
@@ -1171,94 +1407,144 @@ const data = {
     align-items: center;
     min-height: 44px;
     padding: 0 18px;
-    border: 1px solid var(--line, rgba(43, 47, 64, 0.2));
-    background: var(--paper);
+    border: 1px solid var(--line-strong);
     color: var(--ink);
-    font-size: 0.94rem;
+    font-size: 0.95rem;
     text-decoration: none;
-    transition: border-color 0.2s, background 0.2s;
+    transition: border-color 0.2s;
   }
 
   .add-cal-btn:hover {
     border-color: var(--ink);
-    background: var(--cream);
   }
 
   .prep {
-    margin: 28px 0;
-    padding: 24px;
-    border-radius: 0;
-    background: var(--bg);
+    margin: 32px 0;
+    padding-top: 26px;
+    border-top: 1px solid var(--line-strong);
   }
 
-  /* Navigation */
+  .prep h3 {
+    margin: 0 0 14px;
+    font-weight: 400;
+    font-size: 0.86rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  /* Navigation unter dem Schritt */
   .b-nav {
     display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    margin-top: 32px;
-    padding-top: 24px;
-    border-top: 1px solid var(--line);
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 24px;
+    margin-top: 40px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .b-nav[hidden] {
+    display: none;
+  }
+
+  .b-back {
+    padding: 0 0 4px;
+    border: 0;
+    border-bottom: 1px solid var(--line-strong);
+    background: none;
+    font: inherit;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    cursor: pointer;
+  }
+
+  .b-back[hidden] {
+    display: none;
+  }
+
+  .b-hint {
+    margin: 0 0 0 auto;
+    font-size: 0.95rem;
+    color: var(--cta);
+  }
+
+  .b-hint:empty {
+    display: none;
   }
 
   .b-nav [data-next] {
     margin-left: auto;
   }
 
+  .b-hint:not(:empty) + [data-next] {
+    margin-left: 0;
+  }
+
   .btn:disabled {
-    opacity: 0.4;
+    opacity: 0.38;
     cursor: not-allowed;
     transform: none;
   }
 
-  /* Summary */
+  /* Zusammenfassung */
+  .summary[hidden] {
+    display: none;
+  }
+
+  .b-grid.is-done {
+    grid-template-columns: minmax(0, 860px);
+    justify-content: center;
+  }
+
   .summary {
     position: sticky;
-    top: calc(var(--header-h) + 24px);
+    top: 84px;
   }
 
   .sum-card {
-    padding: 24px;
-    border-radius: 0;
-    background: var(--paper);
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow);
+    padding: 28px;
+    border: 1px solid var(--line-strong);
   }
 
   .sum-title {
-    font-size: 1.7rem;
-    margin-bottom: 14px;
+    margin: 0 0 18px;
+    font-weight: 300;
+    font-size: 1.3rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink);
   }
 
   .sum-list {
     list-style: none;
-    margin: 0 0 12px;
+    margin: 0;
     padding: 0;
+    border-top: 1px solid var(--line-strong);
   }
 
   .sum-list :global(li) {
     display: flex;
     justify-content: space-between;
     gap: 12px;
-    padding: 8px 0;
-    border-bottom: 1px dashed var(--line-strong);
-    font-size: 0.94rem;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.98rem;
+    color: var(--ink);
   }
 
   .sum-list :global(.sum-empty) {
     color: var(--muted);
-    border: 0;
   }
 
   .sum-when {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     align-items: center;
-    font-weight: 600;
-    font-size: 0.92rem;
-    padding: 10px 12px;
-    border-radius: 0;
-    background: var(--linen);
+    margin: 14px 0 0;
+    font-size: 0.95rem;
+    color: var(--ink);
   }
 
   .sum-when[hidden] {
@@ -1268,8 +1554,9 @@ const data = {
   .sum-totals {
     display: grid;
     gap: 6px;
-    margin-top: 12px;
-    font-size: 0.94rem;
+    margin-top: 16px;
+    font-size: 0.95rem;
+    color: var(--ink-2);
   }
 
   .sum-totals div {
@@ -1278,8 +1565,7 @@ const data = {
   }
 
   .sum-discount {
-    color: var(--ok);
-    font-weight: 500;
+    color: var(--cta);
   }
 
   .sum-discount[hidden] {
@@ -1287,47 +1573,52 @@ const data = {
   }
 
   .sum-total {
-    padding-top: 10px;
-    margin-top: 4px;
+    margin-top: 6px;
+    padding-top: 14px;
     border-top: 1px solid var(--line-strong);
-    font-weight: 600;
-    font-size: 1.15rem;
+    font-size: 1.3rem;
+    color: var(--ink);
+  }
+
+  .sum-cta {
+    width: 100%;
+    margin-top: 22px;
+  }
+
+  .sum-hint {
+    margin: 12px 0 0;
+    font-size: 0.92rem;
+    text-align: center;
+    color: var(--cta);
+  }
+
+  .sum-hint:empty {
+    display: none;
   }
 
   .sum-trust {
     list-style: none;
-    margin: 18px 0 0;
-    padding: 16px 0 0;
-    border-top: 1px solid var(--line);
     display: grid;
     gap: 6px;
-    font-size: 0.94rem;
+    margin: 22px 0 0;
+    padding: 18px 0 0;
+    border-top: 1px solid var(--line);
+    font-size: 0.9rem;
     color: var(--ink-2);
   }
 
-  .sum-trust li {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .sum-trust :global(svg) {
-    color: var(--ok);
-  }
-
   .sum-help {
-    margin-top: 14px;
-    font-size: 0.94rem;
-    color: var(--muted);
+    margin-top: 16px;
     text-align: center;
+    font-size: 0.92rem;
+    color: var(--muted);
   }
 
   .sum-help a {
     color: var(--ink);
-    font-weight: 500;
   }
 
-  /* Mobile Summary */
+  /* Mobile: Leiste unten mit Total und nächstem Schritt */
   .m-sum {
     display: none;
   }
@@ -1336,8 +1627,22 @@ const data = {
     .summary {
       position: static;
     }
-    .b-nav [data-next] {
+    .sum-cta,
+    .sum-hint,
+    .b-nav [data-next],
+    .b-hint {
+      display: none !important;
+    }
+    .b-todo {
       display: none;
+    }
+    .b-steps-in {
+      min-height: 52px;
+    }
+    .stepper li {
+      padding: 17px 0 15px;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
     }
     .m-sum {
       position: fixed;
@@ -1348,326 +1653,33 @@ const data = {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 14px;
       padding: 12px var(--gutter) calc(12px + env(safe-area-inset-bottom));
-      background: rgba(250, 251, 252, 0.96);
-      backdrop-filter: blur(12px);
+      background: rgba(236, 235, 230, 0.97);
       -webkit-backdrop-filter: blur(12px);
-      border-top: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--line-strong);
     }
     .m-sum-info {
       display: flex;
       flex-direction: column;
-      line-height: 1.2;
+      min-width: 0;
+      line-height: 1.25;
+    }
+    .m-sum-info strong {
+      font-weight: 400;
+      font-size: 1.15rem;
+      color: var(--ink);
     }
     .m-sum-info small {
-      color: var(--muted);
-      font-size: 0.94rem;
+      font-size: 0.86rem;
+      color: var(--cta);
+    }
+    .m-sum .btn {
+      padding-inline: 20px;
+      white-space: nowrap;
     }
     .m-sum[hidden] {
-      display: none;
-    }
-  }
-
-  /* ——— Verkaufsstarkes Redesign ——— */
-  .booking {
-    padding-top: 0;
-  }
-
-  .b-band {
-    padding-block: clamp(36px, 5vw, 64px);
-    margin-bottom: clamp(32px, 4vw, 56px);
-  }
-
-  .b-band .b-head {
-    align-items: flex-end;
-    margin: 0;
-  }
-
-  .b-band h1 {
-    color: var(--ink);
-    --head: currentColor;
-    font-size: clamp(2.6rem, 5vw, 4.6rem);
-    margin-bottom: 18px;
-  }
-
-  .b-trust {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 26px;
-    color: var(--ink-2);
-    font-size: 1rem;
-  }
-
-  .b-trust li {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .b-trust :global(svg),
-  .b-trust .stars {
-    color: var(--salvia-ink);
-  }
-
-  .b-trust .stars {
-    letter-spacing: 2px;
-  }
-
-  .b-band .stepper li {
-    background: var(--paper);
-    color: var(--ink-2);
-  }
-
-  .b-band .stepper span {
-    background: var(--gray-soft);
-    color: var(--ink);
-    --head: currentColor;
-  }
-
-  .b-band .stepper .is-current {
-    background: var(--lime);
-    color: var(--espresso);
-  }
-
-  .b-band .stepper .is-current span {
-    background: var(--espresso);
-    color: var(--lime);
-  }
-
-  .b-band .stepper .is-done span {
-    background: var(--lime);
-    color: var(--espresso);
-  }
-
-  .stepper {
-    font-size: 0.94rem;
-  }
-
-  .step-head h2 {
-    font-size: clamp(2rem, 3.4vw, 3rem);
-  }
-
-  .quick-title {
-    margin: 4px 0 12px;
-    font-size: 0.94rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--mocha);
-  }
-
-  .quick {
-    display: grid;
-    gap: 8px;
-    margin-bottom: 36px;
-  }
-
-  @media (min-width: 640px) {
-    .quick {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 1200px) {
-    .quick {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .qk {
-    position: relative;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 2px 12px;
-    padding: 18px 18px 16px;
-    text-align: left;
-    border: 1.5px solid var(--line-strong);
-    background: var(--paper);
-    cursor: pointer;
-    transition:
-      background 0.25s,
-      border-color 0.25s,
-      transform 0.25s var(--ease);
-  }
-
-  .qk:hover {
-    transform: translateY(-2px);
-    border-color: var(--espresso);
-  }
-
-  .qk-k {
-    background: var(--lime);
-    border-color: var(--lime);
-  }
-
-  .qk-badge {
-    grid-column: 1 / -1;
-    justify-self: start;
-    margin-bottom: 8px;
-    padding: 3px 8px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    border: 1px solid currentColor;
-    color: var(--mocha);
-  }
-
-  .qk-k .qk-badge {
-    background: var(--espresso);
-    border-color: var(--espresso);
-    color: var(--lime);
-  }
-
-  .qk-name {
-    font-size: 1.25rem;
-    font-weight: 600;
-    line-height: 1.15;
-  }
-
-  .qk-meta {
-    grid-row: 3;
-    font-size: 0.94rem;
-    opacity: 0.75;
-  }
-
-  .qk-price {
-    grid-column: 2;
-    grid-row: 2 / 4;
-    align-self: end;
-    font-size: 1.5rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-  }
-
-  .qk-check {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    display: grid;
-    place-items: center;
-    width: 26px;
-    height: 26px;
-    border: 1.5px solid var(--line-strong);
-    color: transparent;
-  }
-
-  .qk.is-on {
-    background: var(--espresso);
-    border-color: var(--espresso);
-    color: var(--cream);
-    --head: currentColor;
-  }
-
-  .qk.is-on .qk-badge {
-    background: var(--lime);
-    border-color: var(--lime);
-    color: var(--espresso);
-  }
-
-  .qk.is-on .qk-check {
-    background: var(--lime);
-    border-color: var(--lime);
-    color: var(--espresso);
-  }
-
-  .o-tag {
-    margin-left: 8px;
-    padding: 2px 7px;
-    font-style: normal;
-    font-size: 0.85rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    vertical-align: middle;
-  }
-
-  .o-k {
-    background: var(--lime);
-    color: var(--espresso);
-  }
-
-  .o-t {
-    border: 1px solid currentColor;
-    color: var(--mocha);
-  }
-
-  .o-name {
-    font-size: 1.1rem;
-  }
-
-  .o-price {
-    font-size: 1.15rem;
-  }
-
-  .opt:has(input:checked) {
-    background: rgba(155, 174, 201, 0.35);
-    border-color: var(--espresso);
-  }
-
-  .sum-card {
-    background: var(--espresso);
-    color: var(--cream);
-    --head: currentColor;
-    border: 0;
-    box-shadow: var(--shadow-l);
-  }
-
-  .sum-title {
-    color: var(--cream);
-    --head: currentColor;
-  }
-
-  .sum-list :global(li) {
-    border-color: var(--line-light);
-  }
-
-  .sum-list :global(.sum-empty) {
-    color: rgba(244, 246, 247, 0.6);
-  }
-
-  .sum-when {
-    background: rgba(244, 246, 247, 0.1);
-  }
-
-  .sum-totals div {
-    color: rgba(244, 246, 247, 0.85);
-  }
-
-  .sum-discount {
-    color: var(--lime) !important;
-  }
-
-  .sum-total {
-    border-color: var(--line-light) !important;
-    color: var(--cream) !important;
-    font-size: 1.4rem !important;
-  }
-
-  .sum-total span:last-child {
-    color: var(--lime);
-  }
-
-  .sum-cta {
-    margin-top: 20px;
-    --btn-border: var(--lime);
-  }
-
-  .sum-trust {
-    border-color: var(--line-light);
-    color: rgba(244, 246, 247, 0.82);
-  }
-
-  .sum-trust :global(svg) {
-    color: var(--lime);
-  }
-
-  @media (max-width: 999px) {
-    .sum-cta {
       display: none;
     }
   }
@@ -2062,7 +2074,16 @@ const data = {
     return false;
   };
   let submitting = false;
-  const nextLabel = () => (state.step === 4 ? (submitting ? 'Wird gebucht …' : 'Termin buchen') : 'Weiter');
+  const nextLabel = () =>
+    state.step === 4 ? (submitting ? 'Wird gebucht …' : 'Termin verbindlich buchen') : (['', 'Weiter zum Termin', 'Weiter zu den Angaben', 'Weiter zur Übersicht'][state.step] ?? 'Weiter');
+  // Was ist jetzt zu tun – und was kommt danach?
+  const todo = () => {
+    if (state.step === 1) return state.selected.size ? 'Zonen gewählt – weiter zum Termin.' : 'Wähle eine oder mehrere Zonen.';
+    if (state.step === 2) return state.time ? 'Termin gewählt – weiter zu deinen Angaben.' : state.date ? 'Wähle eine Uhrzeit.' : 'Wähle einen Tag.';
+    if (state.step === 3) return 'Trag deine Kontaktdaten ein.';
+    if (state.step === 4) return 'Prüfe alles und buche verbindlich.';
+    return '';
+  };
 
   function go(step: number) {
     state.step = step;
@@ -2075,13 +2096,21 @@ const data = {
     $('[data-back]').hidden = step === 1 || step === 5;
     $('[data-nav]').hidden = step === 5;
     $('[data-m-sum]').hidden = step === 5;
+    $('[data-summary]').hidden = step === 5;
+    root.querySelector('.b-grid')?.classList.toggle('is-done', step === 5);
     if (step === 2) {
       if (state.date) state.month = new Date(state.date.getFullYear(), state.date.getMonth(), 1);
       loadAvailability();
     }
     if (step === 4) renderReview();
     render();
-    root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // nur so weit scrollen, dass der neue Schritt direkt unter der Fortschrittsleiste beginnt
+    const el = root.querySelector<HTMLElement>(`[data-step="${step}"]`);
+    const bar = root.querySelector<HTMLElement>('[data-steps-bar]');
+    if (el) {
+      const top = el.getBoundingClientRect().top - (bar?.offsetHeight ?? 0) - 20;
+      if (top < 0 || top > window.innerHeight * 0.45) window.scrollBy({ top, behavior: 'smooth' });
+    }
   }
 
   function next() {
@@ -2331,18 +2360,27 @@ const data = {
     $('[data-sum-total]').textContent = fmtChf(total);
 
     $('[data-m-total]').textContent = list.length ? fmtChf(total) : 'CHF 0';
-    $('[data-m-count]').textContent = list.length
-      ? `${list.length} ${list.length === 1 ? 'Behandlung' : 'Behandlungen'} · ${fmtDur(totalMinutes())}`
-      : 'Keine Auswahl';
+    $('[data-m-count]').textContent = canProceed()
+      ? list.length
+        ? `${list.length} ${list.length === 1 ? 'Zone' : 'Zonen'} · ${fmtDur(totalMinutes())}`
+        : ''
+      : todo();
+    $('[data-todo]').textContent = todo();
+    $('[data-hint]').textContent = canProceed() ? '' : todo();
+    $('[data-sum-hint]').textContent = canProceed() ? '' : todo();
 
     const enabled = canProceed();
     $<HTMLButtonElement>('[data-next]').disabled = !enabled;
     $<HTMLButtonElement>('[data-m-next]').disabled = !enabled;
     $<HTMLButtonElement>('[data-next-sum]').disabled = !enabled;
     $('[data-sum-cta-label]').textContent = nextLabel();
-    root.querySelectorAll<HTMLElement>('[data-quick]').forEach((b) => b.classList.toggle('is-on', state.selected.has(b.dataset.quick!)));
+    root.querySelectorAll<HTMLElement>('[data-quick]').forEach((b) => {
+      const on = state.selected.has(b.dataset.quick!);
+      b.classList.toggle('is-on', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
     $('[data-next-label]').textContent = nextLabel();
-    $('[data-m-next-label]').textContent = nextLabel();
+    $('[data-m-next-label]').textContent = state.step === 4 ? (submitting ? 'Wird gebucht …' : 'Verbindlich buchen') : 'Weiter';
   }
 
   // ——— Start: URL-Parameter (?behandlung=…&gruppe=…&code=…) ———
