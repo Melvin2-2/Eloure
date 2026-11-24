@@ -40,6 +40,26 @@ function init() {
       }),
   });
 
+  // 1b) Sanft: Bilder/Elemente blenden ein, das Motiv setzt sich leicht (Startseite)
+  ScrollTrigger.batch('[data-anim="soft"]', {
+    start: 'top 92%',
+    once: true,
+    onEnter: (els) => {
+      gsap.to(els, { opacity: 1, y: 0, duration: 1.5, ease: 'power2.out', stagger: 0.12 });
+      els.forEach((el) => {
+        const img = (el as HTMLElement).querySelector('img');
+        if (img) gsap.fromTo(img, { scale: 1.06 }, { scale: 1, duration: 2.2, ease: 'power2.out' });
+      });
+    },
+  });
+
+  // 1c) Leichtes Einschieben von links/rechts
+  ScrollTrigger.batch('[data-slide]', {
+    start: 'top 90%',
+    once: true,
+    onEnter: (els) => gsap.to(els, { opacity: 1, x: 0, duration: 1.4, ease: 'power2.out', stagger: 0.1 }),
+  });
+
   // 2) Headlines zeilenweise aus einer Maske
   gsap.utils.toArray<HTMLElement>('[data-anim="lines"]').forEach((el) => {
     gsap.to(el.querySelectorAll('.line > span'), {

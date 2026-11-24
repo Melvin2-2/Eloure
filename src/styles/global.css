@@ -269,8 +269,8 @@ b {
 
 /* Ruhige Gestaltung (Startseite): warmes Off-White */
 body.theme-calm {
-  --bg: #fbfaf6;
-  --paper: #fbfaf6;
+  --bg: #f8f5ee;
+  --paper: #f8f5ee;
   background: var(--bg);
 }
 
@@ -671,6 +671,27 @@ body.theme-calm {
 .motion [data-anim='up'] {
   opacity: 0;
   transform: translateY(40px);
+}
+
+/* Sanftes Einblenden: Bilder/Elemente (soft) und leichtes Einschieben von der Seite (slide) */
+.motion [data-anim='soft'] {
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+.motion [data-slide='left'] {
+  opacity: 0;
+  transform: translateX(-36px);
+}
+
+.motion [data-slide='right'] {
+  opacity: 0;
+  transform: translateX(36px);
+}
+
+.no-motion [data-slide] {
+  opacity: 1 !important;
+  transform: none !important;
 }
 
 /* Startseite: noch ruhiger einblenden */
