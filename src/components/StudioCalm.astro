@@ -9,7 +9,7 @@ import imgLeft from '../assets/shoot/sessel.jpg';
 import imgRight from '../assets/shoot/detail-tuecher.jpg';
 ---
 
-<section class="calm bg-paper" data-calm>
+<section class="calm" data-calm>
   <div class="stage">
     <div class="side left" data-calm-side="-1">
       <Image src={imgLeft} alt="" widths={[400, 700]} sizes="22vw" />
@@ -21,11 +21,11 @@ import imgRight from '../assets/shoot/detail-tuecher.jpg';
       <Image src={imgMain} alt="Blick durch die offene Tür in die helle Lounge des Eloure Studios" widths={[900, 1400, 2000, 2400]} sizes="100vw" />
       <div class="shade"></div>
     </div>
-    <p class="word" data-calm-word aria-hidden="true">Ruhepunkt.</p>
-    <div class="card glass" data-calm-card>
-      <h2>Hier darfst du ankommen.</h2>
+    <p class="word" data-calm-word aria-hidden="true">Ruhepunkt</p>
+    <div class="card" data-calm-card>
+      <h2>Hier darfst du<br />ankommen</h2>
       <p>Helle Räume, warmes Holz, keine Hektik. Bevor es losgeht, setzt du dich in die Lounge und kommst erst einmal an.</p>
-      <a class="text-link" href="/studio">Das Studio ansehen <Icon name="arrow" size={16} /></a>
+      <a class="card-link" href="/studio">Das Studio ansehen <Icon name="arrow" size={14} /></a>
     </div>
   </div>
 </section>
@@ -92,43 +92,68 @@ import imgRight from '../assets/shoot/detail-tuecher.jpg';
     left: var(--gutter);
     top: 17vh;
     margin: 0;
-    font-family: var(--serif);
-    font-weight: var(--display-weight);
-    font-stretch: var(--display-stretch);
+    font-family: var(--sans);
+    font-weight: 200;
     text-transform: uppercase;
-    font-size: clamp(3rem, 9vw, 9.6rem);
-    line-height: 0.8;
-    letter-spacing: var(--display-ls);
-    color: var(--cream);
+    font-size: clamp(3rem, 10vw, 10.5rem);
+    line-height: 0.9;
+    letter-spacing: 0.06em;
+    color: #fff;
     --head: currentColor;
     white-space: nowrap;
     pointer-events: none;
   }
 
+  /* Frosted Glass in hellem Off-White */
   .card {
     position: absolute;
     z-index: 4;
     right: var(--gutter);
     bottom: var(--gutter);
-    max-width: 440px;
-    padding: clamp(24px, 3vw, 36px);
-    background: rgba(27, 30, 42, 0.6);
+    max-width: 420px;
+    padding: clamp(28px, 3.2vw, 44px);
+    background: rgba(251, 250, 246, 0.62);
+    -webkit-backdrop-filter: blur(22px) saturate(1.2);
+    backdrop-filter: blur(22px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    color: var(--ink);
+    --head: var(--ink);
   }
 
   .card h2 {
-    font-size: clamp(1.9rem, 2.8vw, 2.6rem);
+    font-family: var(--sans);
+    font-weight: 300;
+    font-stretch: 100%;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    line-height: 1.1;
+    font-size: clamp(1.5rem, 2.1vw, 2rem);
+    margin: 0 0 18px;
   }
 
   .card p {
-    color: rgba(244, 246, 247, 0.88);
-    margin-bottom: 18px;
+    font-weight: 300;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--ink-body);
+    margin-bottom: 24px;
   }
 
-  .card .text-link {
+  .card-link {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    color: var(--lime);
+    gap: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line-strong);
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink);
+  }
+
+  .card-link:hover {
+    border-color: var(--ink);
   }
 
   @media (min-width: 900px) {
@@ -159,8 +184,8 @@ import imgRight from '../assets/shoot/detail-tuecher.jpg';
       bottom: auto;
       max-width: none;
       margin: 0;
-      padding: 32px var(--gutter) 56px;
-      background: var(--espresso);
+      padding: 36px var(--gutter) 64px;
+      background: var(--bg);
       -webkit-backdrop-filter: none;
       backdrop-filter: none;
       border: 0;

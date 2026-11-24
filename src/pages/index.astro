@@ -1,22 +1,30 @@
 ---
 // Startseite – ruhig, hell, klinisch-hochwertig.
-// Feine Schrift (Source Sans 3 Light, Grossbuchstaben), warmes Off-White,
-// Deep Indigo für Schrift, Salvia Blue als leiser Akzent, das Eloure-Signet als Trenner.
+// Feine Schrift (Source Sans 3 Light, Grossbuchstaben), warmes Off-White, Deep Indigo für Schrift,
+// Salvia Blue als leiser Akzent, das Eloure-Signet als durchlaufende Linie, Frosted-Glass-Elemente
+// und zurückhaltende Scroll-Effekte (Parallaxe, wandernde Typo, schwebende Detailbilder).
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import Signet from '../components/Signet.astro';
 import StudioCalm from '../components/StudioCalm.astro';
 import { services, chf, duration, type Group } from '../data/services';
+import { googleRating, pickReview } from '../data/reviews';
+import { site } from '../data/site';
 
 import imgGel from '../assets/shoot/gel-achsel.jpg';
 import imgRelief from '../assets/shoot/detail-relief.jpg';
+import imgTulpen from '../assets/shoot/detail-tulpen.jpg';
+import imgObjekte from '../assets/shoot/detail-objekte.jpg';
+import imgPflanze from '../assets/shoot/detail-pflanze.jpg';
+import imgSessel from '../assets/shoot/sessel.jpg';
+import imgLiege from '../assets/shoot/liege-fenster.jpg';
+import imgLounge from '../assets/shoot/lounge.jpg';
 import imgStep1 from '../assets/shoot/beratung-haende.jpg';
 import imgStep2 from '../assets/shoot/detail-tuecher.jpg';
 import imgStep3 from '../assets/shoot/laser-achsel.jpg';
 import imgStep4 from '../assets/shoot/caro-beratung-2.jpg';
-import imgCaro from '../assets/shoot/caro-laechelt.jpg';
-import imgCaroSw from '../assets/shoot/caro-sw.jpg';
+
+const rating = googleRating.rating.toFixed(1).replace('.', ',');
 
 const steps = [
   { img: imgStep1, title: 'Beratung', alt: 'Hände mit Tablet beim Beratungsgespräch', pos: 'center 40%', text: 'Wir lernen dich, deine Haut und deine Wünsche kennen – ehrlich und ohne Zeitdruck.' },
@@ -34,6 +42,17 @@ const groups: { id: Group; label: string }[] = [
   { id: 'frauen', label: 'Frauen' },
   { id: 'maenner', label: 'Männer' },
 ];
+
+const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy H.'].map(pickReview).filter(Boolean);
+
+// Signet als feines, wiederholtes Linienmuster (Salvia Blue)
+const signetPaths = [
+  'M165.63 2.986c10.504 0 25.65 8.292 25.871 35.711h9.398C200.899 6.634 178.787 0 165.519 0c-13.156 0-35.27 6.634-35.27 38.698h9.397c.222-27.42 15.37-35.712 25.984-35.712zM220.729 0h9.397v38.698h-9.397zM136.703 77.394c13.269 0 35.38-6.632 35.38-38.696h-9.397c-.221 27.419-15.367 35.712-25.872 35.712-10.613 0-25.762-8.293-25.982-35.712h-9.398c-.001 32.064 22.113 38.696 35.269 38.696z',
+  'M224.118 77.394c22.887 0 26.093-23.771 26.203-36.816v-1.88h-2.984v1.88c-.221 27.308-12.716 33.833-23.219 33.833-10.505 0-22.998-6.524-23.219-33.833v-2.383l-9.398.503v1.991c0 31.841 19.459 36.705 32.617 36.705z',
+];
+const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' viewBox='20 -4 311 86'><g fill='#9baec9'>${signetPaths.map((d) => `<path d='${d}'/>`).join('')}</g></svg>`,
+)}")`;
 ---
 
 <Base
@@ -43,43 +62,84 @@ const groups: { id: Group; label: string }[] = [
   theme="calm"
   announce={false}
 >
-  <!-- 1 · Start: ruhiges Video, ein Satz, ein Weg -->
+  <!-- 1 · Start: Video-Fenster, grosse feine Typo darüber, schwebende Details, Glas-Karte -->
   <section class="c-hero">
-    <video class="c-hero-video" autoplay muted loop playsinline preload="auto" poster="/video/studio-2026.jpg" aria-label="Einblick in das Eloure Studio in Amriswil">
-      <source src="/video/studio-2026.mp4" type="video/mp4" />
-    </video>
-    <div class="c-hero-shade"></div>
-    <div class="c-hero-inner">
-      <h1 class="c-ttl c-hero-title" data-anim="up">Laserhaarentfernung<br />in Amriswil</h1>
-      <p class="c-hero-text" data-anim="up">Medizinischer Diodenlaser · persönlich begleitet von Caro</p>
-      <a class="c-btn c-btn-light" href="/termin" data-anim="up">Termin buchen</a>
+    <figure class="c-float c-float-l" data-drift-y="-30">
+      <Image src={imgTulpen} alt="" widths={[300, 500]} sizes="14vw" />
+    </figure>
+    <figure class="c-float c-float-r" data-drift-y="-55">
+      <Image src={imgObjekte} alt="" widths={[300, 500]} sizes="12vw" />
+    </figure>
+
+    <h1 class="c-hero-type">
+      <span class="c-hl c-hl1"><span data-drift="-4">Laserhaar</span></span>
+      <span class="c-hl c-hl2"><span data-drift="4">entfernung</span></span>
+      <span class="sr-only"> in Amriswil</span>
+    </h1>
+
+    <div class="c-hero-panel">
+      <video autoplay muted loop playsinline preload="auto" poster="/video/studio-2026.jpg" aria-label="Einblick in das Eloure Studio in Amriswil" data-parallax="10">
+        <source src="/video/studio-2026.mp4" type="video/mp4" />
+      </video>
+      <p class="c-hero-type c-hero-type-in" aria-hidden="true">
+        <span class="c-hl c-hl1"><span data-drift="-4">Laserhaar</span></span>
+        <span class="c-hl c-hl2"><span data-drift="4">entfernung</span></span>
+      </p>
+    </div>
+
+    <p class="c-hero-meta" data-anim="up">
+      <span>In Amriswil</span>
+      <span>{site.address.street} · {site.address.zip} {site.address.city}</span>
+      <span>Mo–Fr 10–20 · Sa 10–16</span>
+    </p>
+
+    <div class="c-glass c-hero-card" data-anim="up">
+      <a class="c-hero-rating" href={site.googleReviewsUrl} target="_blank" rel="noopener">
+        <span class="c-stars">★★★★★</span>
+        <span><b>{rating}</b> · {googleRating.count} Google-Bewertungen</span>
+      </a>
+      <p>Medizinischer Diodenlaser, persönlich begleitet von Caro. Bezahlt wird erst vor Ort.</p>
+      <div class="c-hero-actions">
+        <a class="c-btn c-btn-dark" href="/termin">Termin buchen</a>
+        <a class="c-link" href="#zonen">Zonen & Preise</a>
+      </div>
     </div>
   </section>
 
-  <!-- 2 · Haltung -->
+  <!-- 2 · Haltung, umrahmt von schwebenden Details -->
   <section class="c-intro">
+    <figure class="c-intro-img c-intro-img-l" data-drift-y="-18">
+      <Image src={imgPflanze} alt="" widths={[300, 500]} sizes="16vw" />
+    </figure>
+    <figure class="c-intro-img c-intro-img-r" data-drift-y="-34">
+      <Image src={imgSessel} alt="" widths={[300, 500]} sizes="14vw" />
+    </figure>
     <div class="c-narrow">
-      <h2 class="c-ttl reveal">Ein Studio. Eine Sache.</h2>
+      <h2 class="c-ttl reveal">Ein Studio.<br />Eine Sache.</h2>
       <p class="reveal">
         Eloure ist auf Laserhaarentfernung spezialisiert – und auf nichts anderes. Jede Behandlung beginnt mit einem ehrlichen
         Gespräch und einem Plan, der zu deiner Haut passt.
       </p>
-      <p class="reveal">Helle Räume, medizinische Technik, viel Ruhe. Bezahlt wird erst vor Ort.</p>
+      <p class="reveal">Helle Räume, medizinische Technik, viel Ruhe.</p>
     </div>
-    <div class="c-divider" aria-hidden="true"><span></span><Signet class="c-signet" /><span></span></div>
   </section>
+
+  <!-- Signet-Linie über beide Sections -->
+  <div class="c-band" aria-hidden="true" style={`--signet:${signetPattern}`}><div class="c-band-strip" data-drift="6"></div></div>
 
   <!-- 3 · Grosses Wort über Bild und Textur -->
   <section class="c-word" aria-label="Glatte Haut">
     <div class="c-texture" aria-hidden="true">
-      <Image src={imgRelief} alt="" widths={[1200, 2000]} sizes="100vw" />
+      <Image src={imgRelief} alt="" widths={[1200, 2000]} sizes="100vw" data-parallax="12" />
     </div>
-    <p class="c-word-text" aria-hidden="true">Glatte Haut</p>
-    <figure class="c-word-img" data-anim="img">
-      <Image src={imgGel} alt="Kühlendes Gel wird vor der Laserbehandlung auf die Achsel aufgetragen" widths={[700, 1100, 1500]} sizes="(min-width: 900px) 40vw, 80vw" />
-      <p class="c-word-text c-word-text-in" aria-hidden="true">Glatte Haut</p>
+    <p class="c-word-text" aria-hidden="true"><span data-drift="5">Glatte Haut</span></p>
+    <figure class="c-word-img">
+      <Image src={imgGel} alt="Kühlendes Gel wird vor der Laserbehandlung auf die Achsel aufgetragen" widths={[700, 1100, 1500]} sizes="(min-width: 900px) 40vw, 80vw" data-parallax="10" />
+      <p class="c-word-text c-word-text-in" aria-hidden="true"><span data-drift="5">Glatte Haut</span></p>
     </figure>
-    <p class="c-word-note reveal">Für Frauen und Männer · über 30 Zonen · einzeln oder als Kombi</p>
+    <div class="c-glass c-word-note reveal">
+      <p>Für Frauen und Männer. Über 30 Zonen, einzeln oder als Kombi – sanft gekühlt und medizinisch präzise.</p>
+    </div>
   </section>
 
   <!-- 4 · Ablauf in vier Bildern -->
@@ -93,23 +153,34 @@ const groups: { id: Group; label: string }[] = [
         steps.map((s, i) => (
           <li class="c-step reveal" style={`--d:${i * 90}ms`}>
             <figure class="c-step-img">
-              <Image src={s.img} alt={s.alt} widths={[500, 800, 1100]} sizes="(min-width: 900px) 25vw, 50vw" style={`object-position:${s.pos}`} />
-              <span class="c-step-title">{s.title}</span>
+              <Image src={s.img} alt={s.alt} widths={[500, 800, 1100]} sizes="(min-width: 900px) 25vw, 50vw" style={`object-position:${s.pos}`} data-parallax="8" />
+              <span class="c-step-title">
+                {s.title}
+                <small>0{i + 1}</small>
+              </span>
             </figure>
             <p>{s.text}</p>
           </li>
         ))
       }
     </ol>
-    <div class="c-divider" aria-hidden="true"><span></span><Signet class="c-signet" /><span></span></div>
   </section>
 
-  <!-- 5 · Beliebte Zonen als ruhige Liste -->
+  <div class="c-band" aria-hidden="true" style={`--signet:${signetPattern}`}><div class="c-band-strip" data-drift="-6"></div></div>
+
+  <!-- 5 · Beliebte Zonen: Bild mit Glas-Hinweis + ruhige Liste -->
   <section class="c-prices" id="zonen" data-c-prices>
     <div class="c-wrap c-prices-grid">
-      <div class="c-prices-intro">
+      <div class="c-prices-media">
+        <figure class="c-prices-img">
+          <Image src={imgLiege} alt="Behandlungsliege am Fenster im hellen Behandlungsraum" widths={[600, 900, 1300]} sizes="(min-width: 900px) 34vw, 90vw" data-parallax="10" />
+        </figure>
+        <div class="c-glass c-prices-note reveal">
+          <p>Bezahlt wird erst vor Ort. Kostenlos absagen bis 24 Stunden vorher.</p>
+        </div>
+      </div>
+      <div class="c-prices-list">
         <h2 class="c-ttl reveal">Beliebte Zonen</h2>
-        <p class="reveal">Preise pro Sitzung. Bezahlt wird erst vor Ort, absagen kannst du kostenlos bis 24 Stunden vorher.</p>
         <div class="c-tabs reveal" role="tablist" aria-label="Zonen für">
           {
             groups.map((g, i) => (
@@ -119,9 +190,6 @@ const groups: { id: Group; label: string }[] = [
             ))
           }
         </div>
-        <a class="c-link reveal" href="/preise">Alle Zonen & Preise</a>
-      </div>
-      <div class="c-lists">
         {
           groups.map((g, i) => (
             <ul class="c-list" data-c-list={g.id} hidden={i !== 0}>
@@ -140,51 +208,48 @@ const groups: { id: Group; label: string }[] = [
             </ul>
           ))
         }
+        <a class="c-link c-prices-all reveal" href="/preise">Alle Zonen & Preise</a>
       </div>
     </div>
   </section>
 
-  <!-- 6 · Ruhepunkt (bleibt wie er ist) -->
+  <!-- 6 · Ruhepunkt -->
   <StudioCalm />
 
-  <!-- 7 · Über Caro -->
-  <section class="c-about">
-    <div class="c-wrap c-about-grid">
-      <div class="c-about-media">
-        <figure class="c-about-big" data-anim="img">
-          <Image src={imgCaro} alt="Caro, Gründerin von Eloure" widths={[600, 900, 1300]} sizes="(min-width: 900px) 34vw, 80vw" />
-        </figure>
-        <figure class="c-about-small" data-drift-y="-8">
-          <Image src={imgCaroSw} alt="Caro im Studio, schwarz-weiss" widths={[300, 500]} sizes="(min-width: 900px) 14vw, 36vw" />
-        </figure>
+  <!-- 7 · Kundenstimmen: Glas-Karte über der Lounge -->
+  <section class="c-voices" data-c-voices aria-label="Kundenstimmen">
+    <div class="c-voices-bg" aria-hidden="true">
+      <Image src={imgLounge} alt="" widths={[1200, 2000, 2600]} sizes="100vw" data-parallax="14" />
+    </div>
+    <div class="c-glass c-voices-card reveal">
+      <p class="c-voices-score">{rating}</p>
+      <p class="c-voices-meta"><span class="c-stars">★★★★★</span> {googleRating.count} Bewertungen auf Google</p>
+      <div class="c-voices-quotes">
+        {
+          voices.map((v, i) => (
+            <figure class="c-quote" data-c-quote hidden={i !== 0}>
+              <blockquote>«{v!.short ?? v!.text}»</blockquote>
+              <figcaption>{v!.name}</figcaption>
+            </figure>
+          ))
+        }
       </div>
-      <div class="c-about-text">
-        <h2 class="c-ttl c-about-title reveal">Hallo,<br />ich bin Caro</h2>
-        <p class="reveal">
-          Ich habe Eloure gegründet, weil ich mir ein Studio gewünscht habe, in dem man sich wohlfühlt – nicht wie in einer Klinik,
-          aber mit genau dieser Sorgfalt.
-        </p>
-        <p class="reveal">
-          Von der ersten Frage bis zum Ergebnis bin ich deine Ansprechpartnerin. Ich nehme mir Zeit, sage dir ehrlich, was
-          realistisch ist, und passe jede Behandlung an dich an.
-        </p>
-        <ul class="c-facts reveal">
-          <li>Gründerin & Inhaberin</li>
-          <li>Fünf Jahre Erfahrung in der Laserhaarentfernung</li>
-          <li>Eigenes Studio in Amriswil</li>
-        </ul>
-        <a class="c-link reveal" href="/studio">Studio & Team kennenlernen</a>
+      <div class="c-voices-nav">
+        <button type="button" aria-label="Vorherige Stimme" data-c-prev><span class="c-flip"><Icon name="arrow" size={16} /></span></button>
+        <span data-c-count>01 / 0{voices.length}</span>
+        <button type="button" aria-label="Nächste Stimme" data-c-next><Icon name="arrow" size={16} /></button>
       </div>
+      <a class="c-link" href={site.googleReviewsUrl} target="_blank" rel="noopener">Alle Bewertungen</a>
     </div>
   </section>
 
   <!-- 8 · Abschluss -->
-  <section class="c-end">
+  <section class="c-end" style={`--signet:${signetPattern}`}>
     <div class="c-texture" aria-hidden="true">
-      <Image src={imgRelief} alt="" widths={[1200, 2000]} sizes="100vw" />
+      <Image src={imgRelief} alt="" widths={[1200, 2000]} sizes="100vw" data-parallax="12" />
     </div>
+    <div class="c-end-band" aria-hidden="true"></div>
     <div class="c-narrow c-end-inner">
-      <Signet class="c-signet c-signet-end" />
       <h2 class="c-ttl reveal">Bereit für<br />glatte Haut?</h2>
       <p class="reveal">Buche deinen Termin direkt online – oder komm zuerst zu einem kostenlosen Beratungsgespräch.</p>
       <div class="c-end-btns reveal">
@@ -196,13 +261,32 @@ const groups: { id: Group; label: string }[] = [
 </Base>
 
 <script>
-  const root = document.querySelector<HTMLElement>('[data-c-prices]');
-  root?.querySelectorAll<HTMLButtonElement>('[data-c-tab]').forEach((btn) => {
+  // Frauen / Männer
+  const prices = document.querySelector<HTMLElement>('[data-c-prices]');
+  prices?.querySelectorAll<HTMLButtonElement>('[data-c-tab]').forEach((btn) => {
     btn.addEventListener('click', () => {
-      root.querySelectorAll<HTMLButtonElement>('[data-c-tab]').forEach((b) => b.setAttribute('aria-selected', String(b === btn)));
-      root.querySelectorAll<HTMLElement>('[data-c-list]').forEach((l) => (l.hidden = l.dataset.cList !== btn.dataset.cTab));
+      prices.querySelectorAll<HTMLButtonElement>('[data-c-tab]').forEach((b) => b.setAttribute('aria-selected', String(b === btn)));
+      prices.querySelectorAll<HTMLElement>('[data-c-list]').forEach((l) => (l.hidden = l.dataset.cList !== btn.dataset.cTab));
     });
   });
+
+  // Kundenstimmen
+  const voices = document.querySelector<HTMLElement>('[data-c-voices]');
+  if (voices) {
+    const quotes = [...voices.querySelectorAll<HTMLElement>('[data-c-quote]')];
+    const count = voices.querySelector<HTMLElement>('[data-c-count]')!;
+    let i = 0;
+    const show = (n: number) => {
+      i = (n + quotes.length) % quotes.length;
+      quotes.forEach((q, k) => {
+        q.hidden = k !== i;
+        if (k === i) q.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 600, easing: 'ease-out' });
+      });
+      count.textContent = `${String(i + 1).padStart(2, '0')} / ${String(quotes.length).padStart(2, '0')}`;
+    };
+    voices.querySelector('[data-c-prev]')?.addEventListener('click', () => show(i - 1));
+    voices.querySelector('[data-c-next]')?.addEventListener('click', () => show(i + 1));
+  }
 </script>
 
 <style>
@@ -235,6 +319,8 @@ const groups: { id: Group; label: string }[] = [
   }
 
   .c-narrow {
+    position: relative;
+    z-index: 2;
     max-width: 640px;
     margin-inline: auto;
     padding-inline: var(--gutter);
@@ -247,7 +333,7 @@ const groups: { id: Group; label: string }[] = [
     justify-content: center;
     min-height: 50px;
     padding: 0 30px;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 400;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -257,16 +343,6 @@ const groups: { id: Group; label: string }[] = [
       background 0.35s ease,
       color 0.35s ease,
       border-color 0.35s ease;
-  }
-
-  .c-btn-light {
-    color: #fff;
-    border-color: rgba(255, 255, 255, 0.8);
-  }
-
-  .c-btn-light:hover {
-    background: #fff;
-    color: var(--indigo);
   }
 
   .c-btn-dark {
@@ -291,7 +367,7 @@ const groups: { id: Group; label: string }[] = [
 
   .c-link {
     display: inline-block;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     text-decoration: none;
@@ -305,27 +381,51 @@ const groups: { id: Group; label: string }[] = [
     border-color: var(--ink);
   }
 
-  /* Signet als Trenner: feine Linie · Signet · feine Linie */
-  .c-divider {
-    display: flex;
-    align-items: center;
-    gap: 22px;
-    max-width: 520px;
-    margin: clamp(72px, 9vw, 128px) auto 0;
-    padding-inline: var(--gutter);
-    color: var(--salvia-deep);
+  .c-stars {
+    letter-spacing: 3px;
+    color: var(--salvia-ink);
   }
 
-  .c-divider span {
-    flex: 1;
-    height: 1px;
-    background: var(--line);
+  /* Frosted Glass */
+  .c-glass {
+    background: rgba(251, 250, 246, 0.58);
+    -webkit-backdrop-filter: blur(22px) saturate(1.25);
+    backdrop-filter: blur(22px) saturate(1.25);
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    box-shadow: 0 30px 60px -40px rgba(27, 30, 42, 0.35);
   }
 
-  .c-divider :global(.c-signet) {
-    width: 64px;
-    height: auto;
-    flex: none;
+  /* Bilder mit Parallaxe: etwas höher als ihr Rahmen */
+  figure :global(img[data-parallax]),
+  .c-texture :global(img),
+  .c-voices-bg :global(img),
+  .c-hero-panel video {
+    position: absolute;
+    left: 0;
+    top: -6%;
+    width: 100%;
+    height: 112%;
+    object-fit: cover;
+  }
+
+  /* Signet-Linie: wiederholtes Signet, läuft über die Grenze zweier Sections */
+  .c-band {
+    position: relative;
+    z-index: 6;
+    height: 0;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .c-band-strip {
+    position: absolute;
+    left: -25%;
+    width: 150%;
+    top: -10px;
+    height: 20px;
+    background-image: var(--signet);
+    background-repeat: repeat-x;
+    background-size: auto 100%;
   }
 
   /* Texturen aus eigenen Detailfotos */
@@ -337,9 +437,6 @@ const groups: { id: Group; label: string }[] = [
   }
 
   .c-texture :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
     opacity: 0.22;
     filter: grayscale(1) contrast(0.9);
     mix-blend-mode: multiply;
@@ -349,67 +446,203 @@ const groups: { id: Group; label: string }[] = [
   .c-hero {
     position: relative;
     height: 100svh;
-    min-height: 600px;
-    display: grid;
-    place-items: center;
+    min-height: 680px;
     overflow: hidden;
-    color: #fff;
-    --head: currentColor;
+    background: var(--bg);
   }
 
-  .c-hero-video {
+  .c-hero-panel {
+    position: absolute;
+    left: 33%;
+    width: 34%;
+    top: 14%;
+    bottom: 8%;
+    overflow: hidden;
+    z-index: 2;
+    background: #e9e6de;
+  }
+
+  .c-hero-panel::after {
+    content: '';
     position: absolute;
     inset: 0;
+    z-index: 1;
+    background: rgba(17, 19, 28, 0.16);
+  }
+
+  /* Typo zweimal deckungsgleich: Indigo auf der Fläche, Weiss im Video-Fenster */
+  .c-hero-type {
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+    font-family: var(--sans);
+    font-weight: 200;
+    font-stretch: 100%;
+    text-transform: uppercase;
+    font-size: clamp(3rem, 10.6vw, 12.5rem);
+    line-height: 0.92;
+    letter-spacing: 0.02em;
+    color: var(--indigo);
+    pointer-events: none;
+  }
+
+  .c-hero-type-in {
+    left: -97.0588%;
+    width: 294.1176%;
+    top: 46.1538%;
+    z-index: 3;
+    color: #fff;
+  }
+
+  .c-hl {
+    display: block;
+    white-space: nowrap;
+  }
+
+  .c-hl > span {
+    display: block;
+  }
+
+  .c-hl1 {
+    padding-left: 5%;
+  }
+
+  .c-hl2 {
+    text-align: right;
+    padding-right: 5%;
+  }
+
+  .c-float {
+    position: absolute;
+    margin: 0;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  .c-float :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 
-  .c-hero-shade {
+  .c-float-l {
+    left: 8%;
+    top: 54%;
+    width: 10%;
+    aspect-ratio: 3 / 4;
+  }
+
+  .c-float-r {
+    right: 7%;
+    top: 22%;
+    width: 11%;
+    aspect-ratio: 1;
+  }
+
+  .c-hero-meta {
     position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(17, 19, 28, 0.36) 0%, rgba(17, 19, 28, 0.3) 45%, rgba(17, 19, 28, 0.46) 100%);
+    z-index: 4;
+    left: var(--gutter);
+    bottom: clamp(24px, 4vh, 44px);
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
   }
 
-  .c-hero-inner {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    padding: var(--header-h) var(--gutter) 0;
+  .c-hero-meta span:first-child {
+    color: var(--ink);
+    margin-bottom: 6px;
   }
 
-  .c-hero-title {
-    font-weight: 200;
-    font-size: clamp(2.3rem, 5.6vw, 5.4rem);
+  .c-hero-card {
+    position: absolute;
+    z-index: 4;
+    right: max(var(--gutter), 14%);
+    bottom: clamp(24px, 5vh, 52px);
+    width: min(360px, 30vw);
+    padding: 26px 28px 28px;
+  }
+
+  .c-hero-rating {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 12px;
+    font-size: 0.82rem;
     letter-spacing: 0.08em;
-    line-height: 1.05;
-    margin-bottom: 0.45em;
+    text-decoration: none;
+    color: var(--ink);
   }
 
-  .c-hero-text {
-    color: rgba(255, 255, 255, 0.88);
-    font-size: clamp(0.98rem, 1.2vw, 1.12rem);
-    letter-spacing: 0.04em;
-    margin: 0 0 36px;
+  .c-hero-rating b {
+    font-weight: 500;
+  }
+
+  .c-hero-card p {
+    font-size: 0.98rem;
+    line-height: 1.65;
+    margin: 14px 0 22px;
+  }
+
+  .c-hero-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px 22px;
   }
 
   /* ——— 2 · Haltung ——— */
   .c-intro {
-    padding-block: clamp(110px, 14vw, 200px) clamp(90px, 10vw, 140px);
+    position: relative;
+    padding-block: clamp(140px, 16vw, 230px) clamp(150px, 16vw, 230px);
   }
 
   .c-intro .c-ttl {
-    margin-bottom: 1em;
+    margin-bottom: 0.9em;
   }
 
   .c-intro p + p {
-    margin-top: 1.2em;
+    margin-top: 1.1em;
+  }
+
+  .c-intro-img {
+    position: absolute;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .c-intro-img :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .c-intro-img-l {
+    left: 5%;
+    top: 22%;
+    width: 15%;
+    aspect-ratio: 3 / 4;
+  }
+
+  .c-intro-img-r {
+    right: 6%;
+    top: 46%;
+    width: 13%;
+    aspect-ratio: 4 / 5;
   }
 
   /* ——— 3 · Grosses Wort ——— */
   .c-word {
     position: relative;
-    height: clamp(560px, 62vw, 860px);
+    height: clamp(600px, 64vw, 900px);
     overflow: hidden;
     background: #f3f1ea;
   }
@@ -426,13 +659,9 @@ const groups: { id: Group; label: string }[] = [
   }
 
   .c-word-img :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
     object-position: center 55%;
   }
 
-  /* Das Wort liegt zweimal deckungsgleich: in Indigo auf der Fläche, in Weiss im Bild */
   .c-word-text {
     position: absolute;
     left: 0;
@@ -452,6 +681,10 @@ const groups: { id: Group; label: string }[] = [
     pointer-events: none;
   }
 
+  .c-word-text > span {
+    display: block;
+  }
+
   .c-word-text-in {
     left: -75%;
     width: 250%;
@@ -461,20 +694,22 @@ const groups: { id: Group; label: string }[] = [
 
   .c-word-note {
     position: absolute;
-    z-index: 3;
-    right: var(--gutter);
-    bottom: clamp(24px, 4vw, 48px);
-    max-width: 260px;
+    z-index: 4;
+    right: calc(30% - 120px);
+    bottom: 5%;
+    width: 300px;
+    padding: 22px 26px;
+  }
+
+  .c-word-note p {
     margin: 0;
-    font-size: 0.95rem;
+    font-size: 0.96rem;
     line-height: 1.6;
-    text-align: right;
-    color: var(--ink-2);
   }
 
   /* ——— 4 · Ablauf ——— */
   .c-steps {
-    padding-block: clamp(110px, 13vw, 190px) clamp(90px, 10vw, 140px);
+    padding-block: clamp(110px, 13vw, 190px) clamp(110px, 12vw, 170px);
   }
 
   .c-steps-head {
@@ -516,36 +751,32 @@ const groups: { id: Group; label: string }[] = [
     overflow: hidden;
   }
 
-  .c-step-img :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 1.2s var(--ease);
-  }
-
-  .c-step:hover .c-step-img :global(img) {
-    transform: scale(1.035);
-  }
-
-  .c-step-img::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(17, 19, 28, 0) 50%, rgba(17, 19, 28, 0.38) 100%);
-  }
-
   .c-step-title {
     position: absolute;
     z-index: 2;
-    left: 0;
-    right: 0;
-    bottom: 22px;
-    text-align: center;
-    color: #fff;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    padding: 14px 18px;
+    background: rgba(251, 250, 246, 0.55);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    backdrop-filter: blur(16px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    color: var(--ink);
     font-weight: 300;
-    font-size: clamp(0.95rem, 1.3vw, 1.2rem);
-    letter-spacing: 0.22em;
+    font-size: clamp(0.78rem, 1vw, 0.95rem);
+    letter-spacing: 0.2em;
     text-transform: uppercase;
+  }
+
+  .c-step-title small {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-2);
   }
 
   .c-step p {
@@ -559,30 +790,53 @@ const groups: { id: Group; label: string }[] = [
 
   /* ——— 5 · Beliebte Zonen ——— */
   .c-prices {
-    padding-block: clamp(100px, 12vw, 170px);
+    padding-block: clamp(120px, 13vw, 190px);
     background: #f3f1ea;
   }
 
   .c-prices-grid {
     display: grid;
-    gap: 48px clamp(48px, 8vw, 140px);
+    gap: 64px clamp(48px, 8vw, 140px);
   }
 
-  .c-prices-intro p {
-    max-width: 26em;
+  .c-prices-media {
+    position: relative;
   }
+
+  .c-prices-img {
+    position: relative;
+    margin: 0;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+  }
+
+  .c-prices-note {
+    position: absolute;
+    z-index: 2;
+    left: -24px;
+    bottom: 40px;
+    max-width: 280px;
+    padding: 20px 24px;
+  }
+
+  .c-prices-note p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
 
   .c-tabs {
     display: flex;
     gap: 28px;
-    margin: 32px 0 40px;
+    margin: 8px 0 28px;
   }
 
   .c-tabs button {
     border: 0;
     background: none;
     padding: 0 0 6px;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--muted);
@@ -611,9 +865,14 @@ const groups: { id: Group; label: string }[] = [
     grid-template-columns: 1fr auto auto;
     align-items: baseline;
     gap: 8px 28px;
-    padding: 22px 0;
+    padding: 24px 0;
     text-decoration: none;
     color: var(--ink);
+    transition: padding 0.4s var(--ease);
+  }
+
+  .c-list a:hover {
+    padding-left: 10px;
   }
 
   .c-l-name {
@@ -639,7 +898,7 @@ const groups: { id: Group; label: string }[] = [
     display: none;
     align-items: center;
     gap: 8px;
-    font-size: 0.76rem;
+    font-size: 0.74rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--salvia-ink);
@@ -649,88 +908,136 @@ const groups: { id: Group; label: string }[] = [
     color: var(--salvia-ink);
   }
 
-  /* ——— 7 · Über Caro ——— */
-  .c-about {
-    padding-block: clamp(110px, 13vw, 190px);
+  .c-prices-all {
+    margin-top: 36px;
   }
 
-  .c-about-grid {
+  /* ——— 7 · Kundenstimmen ——— */
+  .c-voices {
+    position: relative;
+    min-height: clamp(620px, 72vw, 900px);
     display: grid;
-    gap: 56px;
+    place-items: center;
+    padding: 100px var(--gutter);
+    overflow: hidden;
+  }
+
+  .c-voices-bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .c-voices-card {
+    position: relative;
+    z-index: 2;
+    width: min(640px, 100%);
+    padding: clamp(36px, 5vw, 64px);
+    text-align: center;
+  }
+
+  .c-voices-score {
+    margin: 0;
+    font-weight: 200;
+    font-size: clamp(4rem, 8vw, 7rem);
+    line-height: 1;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+  }
+
+  .c-voices-meta {
+    margin: 12px 0 34px;
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  .c-voices-quotes {
+    min-height: 9em;
+    display: grid;
     align-items: center;
   }
 
-  .c-about-media {
-    position: relative;
-    padding-right: 18%;
-  }
-
-  .c-about-big {
+  .c-quote {
     margin: 0;
-    aspect-ratio: 4 / 5;
-    overflow: hidden;
   }
 
-  .c-about-big :global(img),
-  .c-about-small :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .c-about-small {
-    position: absolute;
-    right: 0;
-    bottom: -8%;
-    width: 38%;
-    aspect-ratio: 3 / 4;
-    margin: 0;
-    overflow: hidden;
-    outline: 10px solid var(--bg);
-  }
-
-  .c-about-text {
-    max-width: 520px;
-  }
-
-  .c-about-text p + p {
-    margin-top: 1.1em;
-  }
-
-  .c-facts {
-    list-style: none;
-    margin: 36px 0 40px;
-    padding: 0;
-    border-top: 1px solid var(--line-strong);
-  }
-
-  .c-facts li {
-    padding: 14px 0;
-    border-bottom: 1px solid var(--line);
-    font-size: 0.82rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
+  .c-quote blockquote {
+    margin: 0 0 18px;
+    font-weight: 300;
+    font-size: clamp(1.2rem, 1.8vw, 1.55rem);
+    line-height: 1.5;
     color: var(--ink);
+  }
+
+  .c-quote figcaption {
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  .c-voices-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    margin: 28px 0 30px;
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    color: var(--ink-2);
+  }
+
+  .c-voices-nav button {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition:
+      background 0.3s ease,
+      color 0.3s ease;
+  }
+
+  .c-voices-nav button:hover {
+    background: var(--indigo);
+    color: #fff;
+  }
+
+  .c-flip {
+    display: grid;
+    transform: scaleX(-1);
   }
 
   /* ——— 8 · Abschluss ——— */
   .c-end {
     position: relative;
-    padding-block: clamp(110px, 13vw, 180px);
+    padding-block: clamp(130px, 14vw, 200px);
     background: #f3f1ea;
     overflow: hidden;
   }
 
-  .c-end-inner {
-    position: relative;
-    z-index: 2;
+  .c-end-band {
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 20px;
+    transform: translateY(-50%);
+    background-image: var(--signet);
+    background-repeat: repeat-x;
+    background-size: auto 100%;
+    opacity: 0.45;
   }
 
-  .c-end :global(.c-signet-end) {
-    display: block;
-    width: 64px;
-    margin: 0 auto 36px;
-    color: var(--salvia-deep);
+  .c-end-inner {
+    padding: clamp(40px, 5vw, 64px) clamp(28px, 4vw, 56px);
+    background: rgba(243, 241, 234, 0.86);
   }
 
   .c-end-btns {
@@ -759,24 +1066,57 @@ const groups: { id: Group; label: string }[] = [
       grid-template-columns: repeat(4, 1fr);
     }
     .c-prices-grid {
-      grid-template-columns: 0.8fr 1.2fr;
-      align-items: start;
-    }
-    .c-about-grid {
-      grid-template-columns: 1fr 1fr;
-      gap: clamp(64px, 8vw, 140px);
-    }
-    /* Titel überlappt das Bild */
-    .c-about-title {
-      font-size: clamp(2.6rem, 4.6vw, 4.6rem);
-      margin-left: calc(-1 * clamp(90px, 11vw, 200px));
-      position: relative;
-      z-index: 2;
+      grid-template-columns: 0.9fr 1.1fr;
+      align-items: center;
     }
   }
 
   @media (max-width: 899px) {
-    /* gleiche Deckungs-Logik: Bild 14 % links, 72 % breit, oben 6 %, unten 18 % → Wortmitte bei 44 % */
+    /* Start: Fenster 8 % links, 84 % breit, oben 16 %, unten 30 % → Typo-Mitte bei 43 % */
+    .c-hero {
+      min-height: 640px;
+    }
+    .c-hero-panel {
+      left: 8%;
+      width: 84%;
+      top: 16%;
+      bottom: 30%;
+    }
+    .c-hero-type {
+      font-size: 15.5vw;
+      top: 43%;
+    }
+    .c-hero-type-in {
+      left: -9.5238%;
+      width: 119.0476%;
+      top: 50%;
+    }
+    .c-hl1 {
+      padding-left: 4%;
+    }
+    .c-hl2 {
+      padding-right: 4%;
+    }
+    .c-float,
+    .c-hero-meta,
+    .c-intro-img {
+      display: none;
+    }
+    .c-hero-card {
+      left: var(--gutter);
+      right: var(--gutter);
+      width: auto;
+      bottom: 5%;
+      padding: 20px 22px 22px;
+    }
+    .c-hero-card p {
+      display: none;
+    }
+    .c-hero-rating {
+      margin-bottom: 16px;
+    }
+
+    /* Grosses Wort: Bild 14 % links, 72 % breit, oben 6 %, unten 18 % → Wortmitte bei 44 % */
     .c-word {
       height: 150vw;
     }
@@ -791,19 +1131,21 @@ const groups: { id: Group; label: string }[] = [
       top: 44%;
     }
     .c-word-text-in {
-      left: calc(-1 * 14% / 0.72);
-      width: calc(100% / 0.72);
+      left: -19.4444%;
+      width: 138.8889%;
       top: 50%;
     }
     .c-word-note {
       left: var(--gutter);
       right: var(--gutter);
-      bottom: 5vw;
-      max-width: none;
-      text-align: center;
+      bottom: 4vw;
+      width: auto;
+      padding: 16px 18px;
     }
-    .c-about-media {
-      max-width: 520px;
+
+    .c-prices-note {
+      left: 12px;
+      bottom: 16px;
     }
   }
 </style>

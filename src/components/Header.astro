@@ -193,9 +193,9 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   /* ——— Startseite: ruhige, helle Leiste mit mittigem Logo ——— */
   .is-calm {
     position: fixed;
-    color: #fff;
+    color: var(--ink);
     --head: currentColor;
-    background: linear-gradient(180deg, rgba(17, 19, 28, 0.28), rgba(17, 19, 28, 0));
+    background: transparent;
   }
 
   .is-calm:global(.is-scrolled),
@@ -275,17 +275,9 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   }
 
   .calm-cta:hover {
-    background: currentColor;
-  }
-
-  .calm-cta:hover {
-    color: var(--indigo);
-    background: #fff;
-  }
-
-  .is-calm:global(.is-scrolled) .calm-cta:hover {
     color: #fff;
     background: var(--indigo);
+    border-color: var(--indigo);
   }
 
   .is-calm .mobile-nav {
