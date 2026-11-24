@@ -1,35 +1,57 @@
 ---
-// Startseite – reduziert, fast kahl.
-// Grossbuchstaben, keine Kursiven, Salvia Blue / Creme / Deep Indigo, grosse Signets.
-// Drei Elemente 1:1 aus den Vorlagen (Nerea):
-//   1. breites Startbild mit Schrift und Link unten links
-//   2. Kachelraster mit feinen Linien (eine Kachel als Bild)
-//   3. Text links, breites Bild rechts
+// Startseite – ruhig, grossformatig, klar.
+// Regeln: Überschriften immer in Grossbuchstaben, fein (Source Sans 3, Myriad-ähnlich), keine Kursiven,
+// keine Zahlen/Überüberschriften – pro Block genau eine Überschrift und ein Text.
+// Farben: Creme · Salvia Soft · Salvia Blue · Deep Indigo, Buttons in warmem Sand (CTA).
+// Farbfolge: Bild → Creme → Creme → Salvia Soft → Creme → Salvia → Bilder → Ruhepunkt → Creme → Salvia Soft → Salvia → Indigo
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import StudioCalm from '../components/StudioCalm.astro';
 import { services, chf, type Group } from '../data/services';
 import { googleRating, pickReview } from '../data/reviews';
-import { site } from '../data/site';
 
-import imgHero from '../assets/shoot/laser-achsel-quer.jpg';
-import imgTuecher from '../assets/shoot/detail-tuecher.jpg';
-import imgRaum from '../assets/shoot/raum-weit.jpg';
-import imgStep1 from '../assets/shoot/beratung-haende.jpg';
-import imgStep2 from '../assets/shoot/detail-pflanze.jpg';
-import imgStep3 from '../assets/shoot/kundin-brille.jpg';
-import imgStep4 from '../assets/shoot/caro-beratung-2.jpg';
+import imgHero from '../assets/shoot/relief-sessel.jpg';
 import imgLeaf from '../assets/shoot/detail-pflanze.jpg';
-import imgCaroSw from '../assets/shoot/caro-sw.jpg';
-import imgCaro from '../assets/shoot/caro-laechelt.jpg';
+import imgHands from '../assets/shoot/beratung-haende.jpg';
+import imgBehandlung from '../assets/shoot/laser-achsel.jpg';
+import imgBegleitung from '../assets/shoot/caro-beratung-2.jpg';
+import imgExhale from '../assets/shoot/tuer-exhale.jpg';
+import imgExhaleRoom from '../assets/shoot/raum-exhale-2.jpg';
 import imgLounge from '../assets/shoot/lounge.jpg';
 import imgLiege from '../assets/shoot/liege-fenster.jpg';
 import imgGeraet from '../assets/shoot/geraet.jpg';
 import imgObjekte from '../assets/shoot/detail-objekte.jpg';
+import imgCaroSw from '../assets/shoot/caro-sw.jpg';
+import imgCaro from '../assets/shoot/caro-laechelt.jpg';
 
 const rating = googleRating.rating.toFixed(1).replace('.', ',');
 
-// Variante B der vier Bildspalten: Studio-Eindrücke
+// Drei Bilder vor grosser Hintergrundschrift
+const explore = [
+  { img: imgHands, title: 'Beratung', alt: 'Hände mit Tablet beim Beratungsgespräch', pos: 'center 40%' },
+  { img: imgBehandlung, title: 'Behandlung', alt: 'Laserhaarentfernung an der Achsel', pos: 'center 35%' },
+  { img: imgBegleitung, title: 'Begleitung', alt: 'Caro im Gespräch mit einer Kundin', pos: 'center 30%' },
+];
+
+// Preise: drei Spalten nebeneinander, breit mit Linien
+const priceCols: Record<Group, { title: string; ids: string[] }[]> = {
+  frauen: [
+    { title: 'Gesicht & Oberkörper', ids: ['oberlippe', 'gesicht', 'achseln', 'bauch', 'arme-1'] },
+    { title: 'Intim & Beine', ids: ['bikinilinie', 'bikini-intim', 'unterschenkel', 'beine-komplett', 'fuesse-inkl-zehen'] },
+    { title: 'Kombis', ids: ['kombi-intim-achseln', 'ganzkoerper-halbes-bein', 'ganzkoerper'] },
+  ],
+  maenner: [
+    { title: 'Gesicht & Oberkörper', ids: ['konturen', 'hals', 'achseln-1', 'brust', 'ruecken-inkl-nacken'] },
+    { title: 'Arme & Beine', ids: ['oberarme', 'arme-komplett', 'beine', 'fuesse-inkl-zehen-1'] },
+    { title: 'Kombis', ids: ['brust-bauch', 'ganzkoerper-1'] },
+  ],
+};
+const svc = (id: string) => services.find((s) => s.id === id);
+const groups: { id: Group; label: string }[] = [
+  { id: 'frauen', label: 'Frauen' },
+  { id: 'maenner', label: 'Männer' },
+];
+
 const rooms = [
   { img: imgLounge, title: 'Lounge', alt: 'Lounge mit weissen Sesseln' },
   { img: imgLiege, title: 'Behandlungsraum', alt: 'Behandlungsliege am Fenster' },
@@ -37,42 +59,9 @@ const rooms = [
   { img: imgObjekte, title: 'Details', alt: 'Dekorative Objekte im Studio' },
 ];
 
-// Drei Spalten mit Button-Leiste (Rouge) – zwei Varianten
-const offersA = [
-  { title: 'Beratung', text: '25 Minuten, kostenlos. Alle Fragen klären, bevor es losgeht.', cta: 'Beratung buchen', href: '/termin?behandlung=beratungsgespraech' },
-  { title: 'Einzelne Zonen', text: 'Von der Oberlippe bis zu den Beinen. Ab CHF 29 pro Sitzung.', cta: 'Zone wählen', href: '/preise' },
-  { title: 'Kombis', text: 'Mehrere Zonen in einem Termin – zum Kombipreis.', cta: 'Kombi wählen', href: '/preise' },
-];
-const offersB = [
-  { title: 'Frauen', text: 'Gesicht, Achseln, Bikini, Beine – sanft und präzise.', cta: 'Termin buchen', href: '/termin?gruppe=frauen' },
-  { title: 'Männer', text: 'Rücken, Brust, Konturen, Beine – ohne Rasieren.', cta: 'Termin buchen', href: '/termin?gruppe=maenner' },
-  { title: 'Ganzkörper', text: 'Drei Zonen deiner Wahl in einem Termin. Ab CHF 169.', cta: 'Termin buchen', href: '/termin?behandlung=ganzkoerper' },
-];
-
-const steps = [
-  { img: imgStep1, title: 'Beratung', alt: 'Hände mit Tablet beim Beratungsgespräch', pos: 'center 40%' },
-  { img: imgStep2, title: 'Vorbereitung', alt: 'Grüne Pflanze im Studio', pos: 'center 50%' },
-  { img: imgStep3, title: 'Behandlung', alt: 'Kundin mit Schutzbrille bei der Behandlung', pos: 'center 30%' },
-  { img: imgStep4, title: 'Begleitung', alt: 'Caro im Gespräch mit einer Kundin', pos: 'center 30%' },
-];
-
-const pick: Record<Group, string[]> = {
-  frauen: ['achseln', 'bikini-intim', 'kombi-intim-achseln', 'unterschenkel', 'beine-komplett', 'ganzkoerper'],
-  maenner: ['achseln-1', 'brust-bauch', 'ruecken-inkl-nacken', 'beine', 'ganzkoerper-1', 'oberarme'],
-};
-const list = (g: Group) =>
-  pick[g]
-    .map((id) => services.find((s) => s.id === id))
-    .filter((s) => !!s)
-    .slice(0, 6);
-const groups: { id: Group; label: string }[] = [
-  { id: 'frauen', label: 'Frauen' },
-  { id: 'maenner', label: 'Männer' },
-];
-
 const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy H.'].map(pickReview).filter(Boolean);
 
-// Grosses Signet als eng gesetzte, sehr transparente Linie (Deep Indigo)
+// Grosses Signet als eng gesetzte, sehr transparente Linie / einzelnes grosses Signet
 const signetPaths = [
   'M165.63 2.986c10.504 0 25.65 8.292 25.871 35.711h9.398C200.899 6.634 178.787 0 165.519 0c-13.156 0-35.27 6.634-35.27 38.698h9.397c.222-27.42 15.37-35.712 25.984-35.712zM220.729 0h9.397v38.698h-9.397zM136.703 77.394c13.269 0 35.38-6.632 35.38-38.696h-9.397c-.221 27.419-15.367 35.712-25.872 35.712-10.613 0-25.762-8.293-25.982-35.712h-9.398c-.001 32.064 22.113 38.696 35.269 38.696z',
   'M224.118 77.394c22.887 0 26.093-23.771 26.203-36.816v-1.88h-2.984v1.88c-.221 27.308-12.716 33.833-23.219 33.833-10.505 0-22.998-6.524-23.219-33.833v-2.383l-9.398.503v1.991c0 31.841 19.459 36.705 32.617 36.705z',
@@ -92,15 +81,15 @@ const signetOne = signetSvg('100 0 151 78');
   theme="calm"
   announce={false}
 >
-  <!-- 1 · Startbild nach Whole Body Beauty: Vollbild, Text mittig, leiser Blauschleier -->
+  <!-- 1 · Startbild (Whole Body Beauty): Vollbild, Text mittig, Schleier -->
   <section class="c-hero">
     <div class="c-hero-img">
-      <Image src={imgHero} alt="Hals und Schulter einer Kundin bei der Laserhaarentfernung" widths={[1200, 1800, 2400]} sizes="100vw" loading="eager" />
+      <Image src={imgHero} alt="Helle Lounge mit Reliefwand und weissem Sessel" widths={[1200, 1800, 2400]} sizes="100vw" loading="eager" />
     </div>
     <div class="c-hero-text">
       <h1 class="c-ttl c-hero-title" data-anim="up">Laserhaarentfernung<br />in Amriswil</h1>
-      <p class="c-hero-sub" data-anim="up">Medizinischer Diodenlaser · Persönlich begleitet</p>
-      <a class="c-btn c-btn-ghost" href="/termin" data-anim="up">Termin buchen</a>
+      <p class="c-hero-sub" data-anim="up">Medizinischer Diodenlaser, persönlich begleitet.</p>
+      <a class="c-btn c-btn-cta" href="/termin" data-anim="up">Termin buchen</a>
     </div>
   </section>
 
@@ -112,114 +101,109 @@ const signetOne = signetSvg('100 0 151 78');
     </div>
   </section>
 
-  <!-- NEU · Text + dunkle Bildfläche (Salvia „True Wellness“) – Variante A -->
+  <!-- 3 · Text + Bildfläche (Salvia „True Wellness“) -->
   <section class="c-tw">
     <div class="c-tw-text">
-      <span class="c-tw-no">01</span>
-      <h2 class="c-ttl c-tw-title reveal">Erst reden.<br />Dann lasern.</h2>
+      <h2 class="c-ttl reveal">Erst reden.<br />Dann lasern.</h2>
+      <p class="reveal">Wir sagen dir ehrlich, was bei dir realistisch ist – und planen deine Behandlung danach.</p>
       <figure class="c-tw-small" data-slide="left">
-        <Image src={imgStep1} alt="Beratungsgespräch mit Tablet" widths={[300, 500]} sizes="14vw" />
+        <Image src={imgHands} alt="" widths={[300, 500]} sizes="14vw" />
       </figure>
     </div>
-    <div class="c-tw-panel">
-      <Image src={imgLeaf} alt="" widths={[800, 1200, 1600]} sizes="(min-width: 900px) 50vw, 100vw" />
-      <div class="c-tw-copy reveal">
-        <h3>Unsere Haltung</h3>
-        <p>Wir sagen dir ehrlich, was bei dir realistisch ist – und planen deine Behandlung danach.</p>
-        <a class="c-link c-link-light" href="/studio">Mehr erfahren</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- 3 · Kachelraster (Nerea) -->
-  <section class="c-grid-sec" id="zonen" data-c-prices>
-    <div class="c-tabs c-wrap reveal" role="tablist" aria-label="Zonen für">
-      {
-        groups.map((g, i) => (
-          <button type="button" role="tab" aria-selected={String(i === 0)} data-c-tab={g.id}>
-            {g.label}
-          </button>
-        ))
-      }
-    </div>
-    {
-      groups.map((g, gi) => (
-        <ul class="c-grid" data-c-list={g.id} hidden={gi !== 0}>
-          {list(g.id).map((s, i) => (
-            <>
-              {i === 2 && (
-                <li class="c-cell c-cell-img" aria-hidden="true">
-                  <Image src={imgTuecher} alt="" widths={[400, 700]} sizes="(min-width: 900px) 25vw, 50vw" />
-                </li>
-              )}
-              <li class="c-cell">
-                <a href={`/termin?behandlung=${s!.id}&gruppe=${g.id}`}>
-                  <span class="c-cell-name">{s!.name}</span>
-                  <span class="c-cell-price">{chf(s!.price)}</span>
-                </a>
-              </li>
-            </>
-          ))}
-          <li class="c-cell c-cell-all">
-            <a href="/preise">
-              <span class="c-cell-name">Alle Zonen</span>
-              <span class="c-cell-price">ab CHF 29</span>
-            </a>
-          </li>
-        </ul>
-      ))
-    }
-  </section>
-
-
-  <!-- NEU · Vier Bildspalten (Salvia) – Variante A: Ablauf -->
-  <section class="c-cols" aria-label="Ablauf">
-    {
-      steps.map((s, i) => (
-        <figure class="c-col" data-anim="soft">
-          <Image src={s.img} alt={s.alt} widths={[500, 800, 1100]} sizes="(min-width: 900px) 25vw, 50vw" style={`object-position:${s.pos}`} />
-          <figcaption>
-            <small>0{i + 1}</small>
-            {s.title}
-          </figcaption>
-        </figure>
-      ))
-    }
-  </section>
-
-  <!-- NEU · Drei Spalten mit Button-Leiste (Rouge) – Variante A -->
-  <section class="c-offers" aria-label="Angebote">
-    {
-      offersA.map((o) => (
-        <div class="c-offer reveal">
-          <div class="c-offer-body">
-            <h3>{o.title}</h3>
-            <p>{o.text}</p>
-          </div>
-          <a class="c-offer-bar" href={o.href}>{o.cta}</a>
-        </div>
-      ))
-    }
-  </section>
-
-  <!-- 4 · Text links, Bild rechts (Nerea) -->
-  <section class="c-split">
-    <div class="c-wrap c-split-grid">
-      <div class="c-split-text">
-        <h2 class="c-ttl reveal">Kein Klinikgefühl.<br />Nur Ruhe.</h2>
-        <a class="c-link reveal" href="/studio">Das Studio</a>
-      </div>
-      <figure class="c-split-img" data-slide="right">
-        <Image src={imgRaum} alt="Heller Behandlungsraum mit Liege und Laser" widths={[700, 1100, 1600]} sizes="(min-width: 900px) 50vw, 100vw" />
-      </figure>
-    </div>
+    <figure class="c-tw-img">
+      <Image src={imgLeaf} alt="Grünes Blatt im Studio" widths={[800, 1200, 1600]} sizes="(min-width: 900px) 50vw, 100vw" />
+    </figure>
   </section>
 
   <!-- Signet-Linie über die Section-Grenze -->
   <div class="c-band" aria-hidden="true" style={`--signet:${signetRow}`}><div class="c-band-strip"></div></div>
 
-  <!-- NEU · Vier Bildspalten (Salvia) – Variante B: Studio -->
-  <section class="c-cols c-cols-b" aria-label="Studio">
+  <!-- 4 · Drei Bilder vor grosser Hintergrundschrift -->
+  <section class="c-explore" aria-label="Ablauf">
+    <div class="c-explore-bg" aria-hidden="true">
+      <span>Glatte Haut Glatte Haut</span>
+      <span>Haut Glatte Haut Glatte</span>
+      <span>Glatte Haut Glatte Haut</span>
+    </div>
+    <div class="c-explore-row">
+      {
+        explore.map((e) => (
+          <figure class="c-explore-card" data-anim="soft">
+            <Image src={e.img} alt={e.alt} widths={[500, 800]} sizes="(min-width: 900px) 24vw, 80vw" style={`object-position:${e.pos}`} />
+            <figcaption>{e.title}</figcaption>
+          </figure>
+        ))
+      }
+    </div>
+    <div class="c-explore-cta reveal">
+      <a class="c-btn c-btn-cta" href="/laserhaarentfernung">So läuft es ab</a>
+    </div>
+  </section>
+
+  <!-- 5 · Preise: drei Spalten, breit mit Linien -->
+  <section class="c-prices" id="zonen" data-c-prices>
+    <div class="c-prices-head c-wrap">
+      <h2 class="c-ttl reveal">Preise</h2>
+      <div class="c-tabs reveal" role="tablist" aria-label="Preise für">
+        {
+          groups.map((g, i) => (
+            <button type="button" role="tab" aria-selected={String(i === 0)} data-c-tab={g.id}>
+              {g.label}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+    {
+      groups.map((g, gi) => (
+        <div class="c-pcols" data-c-list={g.id} hidden={gi !== 0}>
+          {priceCols[g.id].map((col) => (
+            <div class="c-pcol">
+              <h3>{col.title}</h3>
+              <ul>
+                {col.ids.map((id) => {
+                  const s = svc(id);
+                  return (
+                    s && (
+                      <li>
+                        <a href={`/termin?behandlung=${s.id}&gruppe=${g.id}`}>
+                          <span>{s.name}</span>
+                          <span>{chf(s.price)}</span>
+                        </a>
+                      </li>
+                    )
+                  );
+                })}
+              </ul>
+              <a class="c-pcol-bar" href={`/termin?gruppe=${g.id}`}>
+                Termin buchen
+              </a>
+            </div>
+          ))}
+        </div>
+      ))
+    }
+    <div class="c-prices-all c-wrap reveal">
+      <a class="c-link" href="/preise">Alle Zonen & Preise</a>
+    </div>
+  </section>
+
+  <!-- 6 · Grossformat: Exhale -->
+  <section class="c-big on-salvia">
+    <figure class="c-big-img" data-anim="soft">
+      <Image src={imgExhale} alt="Wand mit dem Schriftzug Exhale the Bullshit im Studio" widths={[800, 1200, 1800]} sizes="(min-width: 900px) 55vw, 100vw" />
+    </figure>
+    <div class="c-big-text">
+      <h2 class="c-ttl reveal">Einmal tief<br />durchatmen.</h2>
+      <p class="reveal">Nervös vor dem ersten Termin? Ganz normal. Wir nehmen uns Zeit, bis du dich wohlfühlst.</p>
+      <figure class="c-big-small" data-slide="right">
+        <Image src={imgExhaleRoom} alt="" widths={[400, 700]} sizes="18vw" />
+      </figure>
+    </div>
+  </section>
+
+  <!-- 7 · Vier Bildspalten: Studio -->
+  <section class="c-cols" aria-label="Studio">
     {
       rooms.map((r) => (
         <a class="c-col" href="/studio" data-anim="soft">
@@ -230,29 +214,24 @@ const signetOne = signetSvg('100 0 151 78');
     }
   </section>
 
-  <!-- 6 · Ruhepunkt -->
+  <!-- 8 · Ruhepunkt -->
   <StudioCalm />
 
-  <!-- NEU · Text + dunkle Bildfläche (Salvia „True Wellness“) – Variante B, gespiegelt -->
+  <!-- 9 · Caro: Bild + eine Überschrift, ein Text -->
   <section class="c-tw c-tw-rev">
-    <div class="c-tw-panel">
+    <figure class="c-tw-img">
       <Image src={imgCaroSw} alt="Caro, Gründerin von Eloure" widths={[800, 1200, 1600]} sizes="(min-width: 900px) 50vw, 100vw" />
-      <div class="c-tw-copy reveal">
-        <h3>Caro · Gründerin</h3>
-        <p>Deine Ansprechpartnerin – von der ersten Frage bis zum Ergebnis.</p>
-        <a class="c-link c-link-light" href="/studio">Das Team</a>
-      </div>
-    </div>
+    </figure>
     <div class="c-tw-text">
-      <span class="c-tw-no">02</span>
-      <h2 class="c-ttl c-tw-title reveal">Persönlich.<br />Ehrlich.<br />Mit Zeit für dich.</h2>
+      <h2 class="c-ttl reveal">Persönlich<br />begleitet.</h2>
+      <p class="reveal">Caro hat Eloure gegründet und ist deine Ansprechpartnerin – von der ersten Frage bis zum Ergebnis.</p>
       <figure class="c-tw-small" data-slide="right">
-        <Image src={imgCaro} alt="Caro lächelt" widths={[300, 500]} sizes="14vw" />
+        <Image src={imgCaro} alt="" widths={[300, 500]} sizes="14vw" />
       </figure>
     </div>
   </section>
 
-  <!-- 7 · Kundenstimmen -->
+  <!-- 10 · Kundenstimmen -->
   <section class="c-voices" data-c-voices aria-label="Kundenstimmen">
     <div class="c-voices-inner">
       <button type="button" class="c-arrow c-arrow-l" aria-label="Vorherige Stimme" data-c-prev><span></span></button>
@@ -273,28 +252,13 @@ const signetOne = signetSvg('100 0 151 78');
     </div>
   </section>
 
-  <!-- NEU · Drei Spalten mit Button-Leiste (Rouge) – Variante B auf Salvia -->
-  <section class="c-offers c-offers-b on-salvia" aria-label="Für wen">
-    {
-      offersB.map((o) => (
-        <div class="c-offer reveal">
-          <div class="c-offer-body">
-            <h3>{o.title}</h3>
-            <p>{o.text}</p>
-          </div>
-          <a class="c-offer-bar" href={o.href}>{o.cta}</a>
-        </div>
-      ))
-    }
-  </section>
-
-  <!-- 8 · Abschluss -->
+  <!-- 11 · Abschluss -->
   <section class="c-end on-salvia" style={`--signet:${signetOne}`}>
     <div class="c-end-signet" aria-hidden="true"></div>
     <div class="c-narrow c-end-inner">
       <h2 class="c-ttl reveal">Bereit für<br />glatte Haut?</h2>
       <div class="c-end-btns reveal">
-        <a class="c-btn c-btn-dark" href="/termin">Termin buchen</a>
+        <a class="c-btn c-btn-cta" href="/termin">Termin buchen</a>
       </div>
     </div>
   </section>
@@ -328,19 +292,26 @@ const signetOne = signetSvg('100 0 151 78');
 </script>
 
 <style>
-  /* ——— Grundlagen: immer Grossbuchstaben, fein, keine Kursiven ——— */
+  /* ——— Grundlagen ——— */
   .c-ttl {
     font-family: var(--sans);
-    font-weight: 300;
+    font-weight: 250;
     font-style: normal;
     font-stretch: 100%;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    line-height: 1.06;
-    font-size: clamp(2.5rem, 4.6vw, 4.6rem);
+    line-height: 1.04;
+    font-size: clamp(2.8rem, 5.8vw, 6.2rem);
     color: var(--head);
-    margin: 0 0 0.55em;
+    margin: 0 0 0.5em;
     text-wrap: balance;
+    hyphens: manual;
+    overflow-wrap: normal;
+  }
+
+  .c-big-text .c-ttl,
+  .c-tw-text .c-ttl {
+    font-size: clamp(2.4rem, 4.4vw, 4.8rem);
   }
 
   p {
@@ -360,7 +331,7 @@ const signetOne = signetSvg('100 0 151 78');
   .c-narrow {
     position: relative;
     z-index: 2;
-    max-width: 760px;
+    max-width: 860px;
     margin-inline: auto;
     padding-inline: var(--gutter);
     text-align: center;
@@ -375,14 +346,15 @@ const signetOne = signetSvg('100 0 151 78');
     --line-strong: rgba(43, 47, 64, 0.45);
   }
 
+  /* Buttons: warmer Sand als Call-to-Action-Farbe */
   .c-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 56px;
-    padding: 0 36px;
+    min-height: 58px;
+    padding: 0 40px;
     font-size: 0.88rem;
-    font-weight: 400;
+    font-weight: 450;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     text-decoration: none;
@@ -393,15 +365,15 @@ const signetOne = signetSvg('100 0 151 78');
       border-color 0.4s ease;
   }
 
-  .c-btn-dark {
-    background: var(--indigo);
-    border-color: var(--indigo);
-    color: #fff;
+  .c-btn-cta {
+    background: var(--cta);
+    border-color: var(--cta);
+    color: var(--indigo);
   }
 
-  .c-btn-dark:hover {
-    background: var(--indigo-soft);
-    border-color: var(--indigo-soft);
+  .c-btn-cta:hover {
+    background: var(--cta-hover);
+    border-color: var(--cta-hover);
   }
 
   .c-link {
@@ -420,20 +392,14 @@ const signetOne = signetSvg('100 0 151 78');
     border-color: currentColor;
   }
 
-  .c-link-light {
-    color: #fff;
-    border-color: rgba(255, 255, 255, 0.6);
-  }
-
-  /* ——— 1 · Breites Startbild (Nerea) ——— */
+  /* ——— 1 · Startbild ——— */
   .c-hero {
     position: relative;
-    overflow-x: clip;
     height: 100svh;
     min-height: 680px;
     max-height: 1100px;
     overflow: hidden;
-    background: #d9d2c6;
+    background: #6f7484;
   }
 
   .c-hero-img {
@@ -445,12 +411,8 @@ const signetOne = signetSvg('100 0 151 78');
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 82% 72%;
-  }
-
-  /* Kontrast leicht zurück, minimaler Blauschleier, Dunkel-Verlauf für die Lesbarkeit */
-  .c-hero-img :global(img) {
-    filter: contrast(0.86) saturate(0.8) brightness(1.04);
+    object-position: center 78%;
+    filter: contrast(0.86) saturate(0.8);
   }
 
   .c-hero-img::after {
@@ -458,8 +420,8 @@ const signetOne = signetSvg('100 0 151 78');
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(180deg, rgba(17, 19, 28, 0.28) 0%, rgba(17, 19, 28, 0.08) 30%, rgba(17, 19, 28, 0.08) 70%, rgba(17, 19, 28, 0.3) 100%),
-      rgba(155, 174, 201, 0.22);
+      linear-gradient(180deg, rgba(17, 19, 28, 0.35) 0%, rgba(17, 19, 28, 0.18) 35%, rgba(17, 19, 28, 0.18) 65%, rgba(17, 19, 28, 0.4) 100%),
+      rgba(70, 86, 116, 0.32);
   }
 
   .c-hero-text {
@@ -469,161 +431,83 @@ const signetOne = signetSvg('100 0 151 78');
     display: grid;
     place-content: center;
     justify-items: center;
-    padding: 104px var(--gutter) 0;
+    padding: 120px var(--gutter) 0;
     text-align: center;
     color: #fff;
     --head: #fff;
   }
 
   .c-hero-title {
-    font-weight: 300;
-    font-size: clamp(2.4rem, 5vw, 5.2rem);
+    font-size: clamp(2.6rem, 6vw, 6.4rem);
     letter-spacing: 0.06em;
-    margin-bottom: 0.4em;
+    margin-bottom: 0.35em;
   }
 
   .c-hero-sub {
-    margin: 0 0 40px;
+    margin: 0 0 44px;
     color: rgba(255, 255, 255, 0.92);
-    font-size: clamp(1rem, 1.2vw, 1.15rem);
-    letter-spacing: 0.06em;
-  }
-
-  .c-btn-ghost {
-    color: #fff;
-    border-color: rgba(255, 255, 255, 0.75);
-    background: transparent;
-  }
-
-  .c-btn-ghost:hover {
-    background: #fff;
-    color: var(--indigo);
+    font-size: clamp(1.05rem, 1.25vw, 1.2rem);
+    letter-spacing: 0.04em;
   }
 
   /* ——— 2 · Haltung ——— */
   .c-intro {
-    padding-block: clamp(140px, 15vw, 220px);
+    padding-block: clamp(150px, 16vw, 240px) clamp(110px, 11vw, 160px);
   }
 
   .c-intro p {
     margin: 0;
   }
 
-  /* ——— 3 · Kachelraster (Nerea) ——— */
-  .c-tabs {
-    display: flex;
-    justify-content: flex-end;
-    gap: 32px;
-    margin-bottom: 20px;
-  }
-
-  .c-tabs button {
-    border: 0;
-    background: none;
-    padding: 0 0 6px;
-    font-size: 0.86rem;
-    font-weight: 400;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--muted);
-    border-bottom: 1px solid transparent;
-    cursor: pointer;
-  }
-
-  .c-tabs button[aria-selected='true'] {
-    color: var(--ink);
-    border-color: var(--ink);
-  }
-
-  .c-grid {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  /* ——— 3 / 9 · Text + Bildfläche ——— */
+  .c-tw {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    border-top: 1px solid var(--line-strong);
-    border-bottom: 1px solid var(--line-strong);
+    min-height: clamp(600px, 62vw, 880px);
   }
 
-  .c-grid[hidden] {
-    display: none;
-  }
-
-  .c-cell {
+  .c-tw-text {
     position: relative;
-    aspect-ratio: 1 / 1;
-    border-right: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
+    display: grid;
+    align-content: center;
+    padding: clamp(90px, 9vw, 140px) clamp(28px, 7vw, 120px) clamp(200px, 17vw, 260px);
+  }
+
+  .c-tw-text p {
+    max-width: 26em;
+    margin: 0;
+  }
+
+  .c-tw-img {
+    position: relative;
+    margin: 0;
+    min-height: 540px;
     overflow: hidden;
   }
 
-  .c-cell a {
+  .c-tw-img :global(img) {
     position: absolute;
     inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 6px;
-    padding: clamp(20px, 2.4vw, 36px);
-    text-align: center;
-    text-decoration: none;
-    color: var(--ink);
-    transition: background 0.5s ease;
-  }
-
-  .c-cell a:hover {
-    background: var(--salvia-soft);
-  }
-
-  .c-cell-name {
-    font-weight: 400;
-    font-size: clamp(0.86rem, 1vw, 0.98rem);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-  }
-
-  .c-cell-price {
-    text-transform: uppercase;
-    font-size: 0.95rem;
-    letter-spacing: 0.1em;
-    color: var(--ink-2);
-  }
-
-  .c-cell-img :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 
-  .c-cell-all a {
-    background: var(--salvia);
-    --ink-2: var(--indigo);
-  }
-
-  .c-cell-all a:hover {
-    background: var(--salvia-deep);
-  }
-
-  /* ——— 4 · Text links, Bild rechts (Nerea) ——— */
-  .c-split {
-    padding-block: clamp(140px, 15vw, 220px) clamp(160px, 16vw, 240px);
-    overflow-x: clip;
-  }
-
-  .c-split-grid {
-    display: grid;
-    gap: 48px clamp(48px, 7vw, 120px);
-    align-items: center;
-  }
-
-  .c-split-img {
+  .c-tw-small {
+    position: absolute;
+    left: 0;
+    bottom: clamp(48px, 6vw, 90px);
+    width: clamp(130px, 15vw, 230px);
+    aspect-ratio: 4 / 3;
     margin: 0;
-    aspect-ratio: 3 / 2;
     overflow: hidden;
   }
 
-  .c-split-img :global(img) {
+  .c-tw-rev .c-tw-small {
+    left: auto;
+    right: 0;
+  }
+
+  .c-tw-small :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -650,52 +534,310 @@ const signetOne = signetSvg('100 0 151 78');
     opacity: 0.07;
   }
 
-  /* ——— 5 · Ablauf ——— */
-  .c-steps {
-    padding-block: clamp(140px, 14vw, 200px);
+  /* ——— 4 · Drei Bilder vor grosser Schrift ——— */
+  .c-explore {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(130px, 13vw, 190px) clamp(110px, 11vw, 160px);
+    background: var(--salvia-soft);
   }
 
-  .c-steps-row {
-    list-style: none;
-    margin: 0 auto;
-    padding: 0 var(--gutter);
-    max-width: 1520px;
+  .c-explore-bg {
+    position: absolute;
+    inset: 0;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: clamp(14px, 1.6vw, 24px);
+    align-content: center;
+    gap: 0.02em;
+    font-weight: 500;
+    font-size: clamp(4rem, 11vw, 12rem);
+    line-height: 0.95;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: rgba(155, 174, 201, 0.55);
+    pointer-events: none;
+    user-select: none;
   }
 
-  .c-step-img {
+  .c-explore-bg span:nth-child(2) {
+    margin-left: -0.6em;
+  }
+
+  .c-explore-row {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: clamp(16px, 2vw, 32px);
+    max-width: 1180px;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .c-explore-card {
+    position: relative;
     margin: 0;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 4 / 5;
     overflow: hidden;
   }
 
-  .c-step-img :global(img) {
+  .c-explore-card :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 
-  .c-step-title {
-    margin: 22px 0 0;
-    font-family: var(--sans);
+  .c-explore-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(27, 30, 42, 0.18);
+  }
+
+  .c-explore-card figcaption {
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: #fff;
     font-weight: 400;
-    font-size: clamp(0.92rem, 1.1vw, 1.05rem);
+    font-size: clamp(0.9rem, 1.1vw, 1.05rem);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+  }
+
+  .c-explore-cta {
+    position: relative;
+    z-index: 1;
+    margin-top: clamp(44px, 5vw, 64px);
+    text-align: center;
+  }
+
+  /* ——— 5 · Preise ——— */
+  .c-prices {
+    padding-block: clamp(130px, 13vw, 190px) clamp(110px, 11vw, 160px);
+  }
+
+  .c-prices-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px 40px;
+    margin-bottom: clamp(40px, 5vw, 70px);
+  }
+
+  .c-prices-head .c-ttl {
+    margin: 0;
+  }
+
+  .c-tabs {
+    display: flex;
+    gap: 32px;
+  }
+
+  .c-tabs button {
+    border: 0;
+    background: none;
+    padding: 0 0 6px;
+    font-size: 0.86rem;
+    font-weight: 400;
     letter-spacing: 0.22em;
     text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid transparent;
+    cursor: pointer;
+  }
+
+  .c-tabs button[aria-selected='true'] {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .c-pcols {
+    display: grid;
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .c-pcols[hidden] {
+    display: none;
+  }
+
+  .c-pcol {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .c-pcol h3 {
+    margin: 0;
+    padding: clamp(36px, 4vw, 56px) clamp(24px, 3vw, 48px) clamp(24px, 3vw, 36px);
+    font-family: var(--sans);
+    font-weight: 300;
+    font-size: clamp(1.4rem, 1.9vw, 1.9rem);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
     color: var(--ink);
   }
 
-  .c-step-title small {
-    font-size: 0.85em;
-    margin-right: 8px;
+  .c-pcol ul {
+    flex: 1;
+    list-style: none;
+    margin: 0;
+    padding: 0 clamp(24px, 3vw, 48px) clamp(32px, 3vw, 48px);
+  }
+
+  .c-pcol li + li {
+    border-top: 1px solid var(--line);
+  }
+
+  .c-pcol li a {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 0;
+    text-decoration: none;
+    color: var(--ink);
+    font-weight: 350;
+    font-size: clamp(1.02rem, 1.15vw, 1.15rem);
+    transition: color 0.3s ease;
+  }
+
+  .c-pcol li a span:last-child {
+    white-space: nowrap;
     color: var(--ink-2);
   }
 
-  /* ——— 7 · Kundenstimmen ——— */
+  .c-pcol li a:hover {
+    color: var(--salvia-ink);
+  }
+
+  .c-pcol-bar {
+    display: grid;
+    place-items: center;
+    min-height: 72px;
+    background: var(--cta);
+    color: var(--indigo);
+    font-size: 0.86rem;
+    font-weight: 450;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.4s ease;
+  }
+
+  .c-pcol-bar:hover {
+    background: var(--cta-hover);
+  }
+
+  .c-prices-all {
+    margin-top: 40px;
+    text-align: center;
+  }
+
+  /* ——— 6 · Grossformat ——— */
+  .c-big {
+    display: grid;
+    min-height: clamp(640px, 70vw, 980px);
+  }
+
+  .c-big-img {
+    position: relative;
+    margin: 0;
+    min-height: 620px;
+    overflow: hidden;
+  }
+
+  .c-big-img :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 60% center;
+  }
+
+  .c-big-text {
+    position: relative;
+    display: grid;
+    align-content: center;
+    padding: clamp(90px, 9vw, 140px) clamp(28px, 6vw, 110px) clamp(220px, 20vw, 300px);
+  }
+
+  .c-big-text p {
+    max-width: 24em;
+    margin: 0;
+  }
+
+  .c-big-small {
+    position: absolute;
+    right: clamp(28px, 6vw, 110px);
+    bottom: clamp(48px, 6vw, 90px);
+    width: clamp(150px, 18vw, 280px);
+    aspect-ratio: 4 / 3;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .c-big-small :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ——— 7 · Bildspalten ——— */
+  .c-cols {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .c-col {
+    position: relative;
+    display: block;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .c-col :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: contrast(0.9) saturate(0.85);
+    transition: transform 1.4s var(--ease);
+  }
+
+  .c-col::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(27, 30, 42, 0.26);
+  }
+
+  .c-col:hover :global(img) {
+    transform: scale(1.03);
+  }
+
+  .c-col-cap {
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    font-weight: 400;
+    font-size: clamp(0.86rem, 1.05vw, 1rem);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+  }
+
+  /* ——— 10 · Kundenstimmen ——— */
   .c-voices {
     padding-block: clamp(140px, 14vw, 210px);
+    background: var(--salvia-soft);
   }
 
   .c-voices-inner {
@@ -709,7 +851,7 @@ const signetOne = signetSvg('100 0 151 78');
   }
 
   .c-voices-body {
-    max-width: 820px;
+    max-width: 860px;
     margin-inline: auto;
     text-align: center;
   }
@@ -733,10 +875,10 @@ const signetOne = signetSvg('100 0 151 78');
 
   .c-quote blockquote {
     margin: 0 0 26px;
-    font-weight: 350;
+    font-weight: 300;
     font-style: normal;
-    font-size: clamp(1.4rem, 2.2vw, 2rem);
-    line-height: 1.45;
+    font-size: clamp(1.5rem, 2.4vw, 2.2rem);
+    line-height: 1.42;
     color: var(--ink);
     text-wrap: balance;
   }
@@ -803,7 +945,7 @@ const signetOne = signetSvg('100 0 151 78');
     transform: translateX(4px);
   }
 
-  /* ——— 8 · Abschluss ——— */
+  /* ——— 11 · Abschluss ——— */
   .c-end {
     position: relative;
     padding-block: clamp(150px, 15vw, 220px);
@@ -829,230 +971,31 @@ const signetOne = signetSvg('100 0 151 78');
     margin-top: 44px;
   }
 
-  /* ——— NEU · Text + dunkle Bildfläche (True Wellness) ——— */
-  .c-tw {
-    display: grid;
-    min-height: clamp(560px, 60vw, 820px);
-  }
-
-  .c-tw-text {
-    position: relative;
-    padding: clamp(80px, 9vw, 130px) var(--gutter) clamp(180px, 16vw, 240px) clamp(48px, 7vw, 110px);
-  }
-
-  .c-tw-no {
-    position: absolute;
-    left: var(--gutter);
-    top: clamp(88px, 9.6vw, 140px);
-    font-size: 0.8rem;
-    letter-spacing: 0.2em;
-    color: var(--ink-2);
-  }
-
-  .c-tw-title {
-    font-size: clamp(2.2rem, 4vw, 4rem);
-    max-width: 11em;
-  }
-
-  .c-tw-small {
-    position: absolute;
-    left: 0;
-    bottom: clamp(48px, 6vw, 90px);
-    width: clamp(120px, 14vw, 210px);
-    aspect-ratio: 4 / 3;
-    margin: 0;
-    overflow: hidden;
-  }
-
-  .c-tw-rev .c-tw-small {
-    left: auto;
-    right: 0;
-  }
-
-  .c-tw-small :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .c-tw-panel {
-    position: relative;
-    min-height: 520px;
-    overflow: hidden;
-    background: var(--indigo);
-  }
-
-  .c-tw-panel > :global(img) {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: brightness(0.5) contrast(0.9) saturate(0.6);
-  }
-
-  .c-tw-panel::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(43, 47, 64, 0.35);
-  }
-
-  .c-tw-copy {
-    position: absolute;
-    z-index: 2;
-    left: clamp(28px, 6vw, 90px);
-    right: clamp(28px, 6vw, 90px);
-    top: 50%;
-    transform: translateY(-50%);
-    max-width: 360px;
-    color: #fff;
-    --head: #fff;
-  }
-
-  .c-tw-copy h3 {
-    margin: 0 0 16px;
-    font-family: var(--sans);
-    font-weight: 400;
-    font-size: 0.86rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-  }
-
-  .c-tw-copy p {
-    margin: 0 0 28px;
-    font-size: clamp(1rem, 1.1vw, 1.1rem);
-    color: rgba(255, 255, 255, 0.88);
-  }
-
-  /* ——— NEU · Vier Bildspalten (Salvia) ——— */
-  .c-cols {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .c-col {
-    position: relative;
-    display: block;
-    margin: 0;
-    aspect-ratio: 3 / 4;
-    overflow: hidden;
-    color: #fff;
-    text-decoration: none;
-  }
-
-  .c-col :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: contrast(0.9) saturate(0.85);
-    transition: transform 1.4s var(--ease);
-  }
-
-  .c-col::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(27, 30, 42, 0.26);
-    transition: background 0.6s ease;
-  }
-
-  .c-col:hover :global(img) {
-    transform: scale(1.03);
-  }
-
-  .c-col figcaption,
-  .c-col-cap {
-    position: absolute;
-    z-index: 2;
-    inset: 0;
-    display: grid;
-    place-content: center;
-    justify-items: center;
-    gap: 8px;
-    text-align: center;
-    font-weight: 400;
-    font-size: clamp(0.86rem, 1.05vw, 1rem);
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-  }
-
-  .c-col figcaption small {
-    font-size: 0.8em;
-    opacity: 0.85;
-  }
-
-  /* ——— NEU · Drei Spalten mit Button-Leiste (Rouge) ——— */
-  .c-offers {
-    display: grid;
-    border-top: 1px solid var(--line-strong);
-  }
-
-  .c-offer {
-    display: flex;
-    flex-direction: column;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .c-offer-body {
-    flex: 1;
-    display: grid;
-    align-content: start;
-    justify-items: center;
-    gap: 28px;
-    padding: clamp(64px, 7vw, 110px) clamp(24px, 3vw, 48px);
-    text-align: center;
-  }
-
-  .c-offer h3 {
-    margin: 0;
-    font-family: var(--sans);
-    font-weight: 300;
-    font-size: clamp(1.8rem, 2.6vw, 2.6rem);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--ink);
-  }
-
-  .c-offer p {
-    margin: 0;
-    max-width: 18em;
-    font-size: clamp(1.02rem, 1.15vw, 1.15rem);
-  }
-
-  .c-offer-bar {
-    display: grid;
-    place-items: center;
-    min-height: 76px;
-    background: var(--indigo);
-    color: #fff;
-    font-size: 0.86rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: background 0.4s ease;
-  }
-
-  .c-offer-bar:hover {
-    background: var(--indigo-soft);
-  }
-
-  .c-offers-b .c-offer-bar {
-    background: var(--cream);
-    color: var(--indigo);
-  }
-
-  .c-offers-b .c-offer-bar:hover {
-    background: #fff;
-  }
-
-  .c-offers-b .c-offer {
-    border-bottom-color: rgba(43, 47, 64, 0.22);
-  }
-
+  /* ——— Breakpoints ——— */
   @media (min-width: 900px) {
     .c-tw {
       grid-template-columns: 1fr 1fr;
+    }
+    .c-explore-row {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .c-pcols {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .c-pcol {
+      border-bottom: 0;
+    }
+    .c-pcol + .c-pcol {
+      border-left: 1px solid var(--line-strong);
+    }
+    .c-pcol-bar {
+      border-top: 0;
+    }
+    .c-pcol + .c-pcol .c-pcol-bar {
+      box-shadow: inset 1px 0 0 rgba(43, 47, 64, 0.18);
+    }
+    .c-big {
+      grid-template-columns: 1.15fr 0.85fr;
     }
     .c-cols {
       grid-template-columns: repeat(4, 1fr);
@@ -1061,57 +1004,25 @@ const signetOne = signetSvg('100 0 151 78');
       aspect-ratio: auto;
       height: min(76vh, 760px);
     }
-    .c-offers {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    .c-offer {
-      border-bottom: 0;
-    }
-    .c-offer + .c-offer {
-      border-left: 1px solid var(--line-strong);
-    }
-    .c-offers-b .c-offer + .c-offer {
-      border-left-color: rgba(43, 47, 64, 0.3);
-    }
-    .c-offer-bar + .c-offer-bar {
-      border-left: 1px solid rgba(255, 255, 255, 0.2);
-    }
   }
 
   @media (max-width: 899px) {
     .c-tw-rev .c-tw-text {
       order: -1;
     }
-    .c-tw-small {
+    .c-tw-small,
+    .c-big-small {
       display: none;
     }
-    .c-tw-text {
+    .c-tw-text,
+    .c-big-text {
       padding-bottom: clamp(80px, 9vw, 130px);
     }
-  }
-
-  /* ——— Breakpoints ——— */
-  @media (min-width: 900px) {
-    .c-grid {
-      grid-template-columns: repeat(4, 1fr);
+    .c-explore-row {
+      max-width: 420px;
     }
-    .c-cell:nth-child(4n) {
-      border-right: 0;
-    }
-    .c-split-grid {
-      grid-template-columns: 0.8fr 1.2fr;
-    }
-    .c-steps-row {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-
-  @media (max-width: 899px) {
-    .c-cell:nth-child(2n) {
-      border-right: 0;
-    }
-    .c-hero-img :global(img) {
-      object-position: 70% 40%;
+    .c-explore-bg {
+      font-size: 22vw;
     }
     .c-band-strip {
       height: 70px;

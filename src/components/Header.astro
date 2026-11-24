@@ -216,7 +216,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   }
 
   .calm-bar {
-    height: 104px;
+    height: 116px;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
@@ -261,7 +261,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   }
 
   .calm-logo :global(svg) {
-    height: 46px;
+    height: 62px;
   }
 
   .calm-r {
@@ -274,18 +274,20 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   .calm-cta {
     display: inline-flex;
     align-items: center;
-    min-height: 46px;
-    padding: 0 26px;
-    border: 1px solid currentColor;
+    min-height: 48px;
+    padding: 0 28px;
+    border: 1px solid var(--cta, currentColor);
+    background: var(--cta, transparent);
+    color: var(--indigo);
+    font-weight: 450;
     transition:
       background 0.3s ease,
       color 0.3s ease;
   }
 
   .calm-cta:hover {
-    color: var(--indigo);
-    background: #fff;
-    border-color: #fff;
+    background: var(--cta-hover, #fff);
+    border-color: var(--cta-hover, #fff);
   }
 
   .is-calm .mobile-nav {
@@ -325,7 +327,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 
   @media (max-width: 640px) {
     .calm-logo :global(svg) {
-      height: 32px;
+      height: 40px;
     }
   }
 

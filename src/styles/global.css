@@ -271,6 +271,9 @@ b {
 body.theme-calm {
   --bg: #f8f5ee;
   --paper: #f8f5ee;
+  /* Call-to-Action: warmer Sand – dezent, aber auffällig */
+  --cta: #d9c2a0;
+  --cta-hover: #ccb38c;
   background: var(--bg);
 }
 
