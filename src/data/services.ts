@@ -36,7 +36,7 @@ export const firstVisit: Service[] = [
     group: 'frauen',
     region: 'Erster Besuch',
     minutes: 30,
-    price: 24.5, // 50 % Neukunden-Rabatt auf CHF 49
+    price: 24, // Neukunden-Preis (regulär CHF 49)
     was: 49,
     note: 'Für Neukundinnen 50 % günstiger – kann nur einzeln gebucht werden.',
     single: true,
