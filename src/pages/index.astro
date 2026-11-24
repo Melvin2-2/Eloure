@@ -15,8 +15,8 @@ import imgLeaf from '../assets/shoot/detail-pflanze.jpg';
 import imgHands from '../assets/shoot/beratung-haende.jpg';
 import imgBehandlung from '../assets/shoot/laser-achsel.jpg';
 import imgBegleitung from '../assets/shoot/caro-beratung-2.jpg';
-import imgExhale from '../assets/shoot/tuer-exhale.jpg';
-import imgExhaleRoom from '../assets/shoot/raum-exhale-2.jpg';
+import imgExhale from '../assets/shoot/raum-exhale.jpg';
+import imgExhaleRoom from '../assets/shoot/sessel.jpg';
 import imgLounge from '../assets/shoot/lounge.jpg';
 import imgLiege from '../assets/shoot/liege-fenster.jpg';
 import imgGeraet from '../assets/shoot/geraet.jpg';
@@ -36,13 +36,13 @@ const explore = [
 // Preise: drei Spalten nebeneinander, breit mit Linien
 const priceCols: Record<Group, { title: string; ids: string[] }[]> = {
   frauen: [
-    { title: 'Gesicht & Oberkörper', ids: ['oberlippe', 'gesicht', 'achseln', 'bauch', 'arme-1'] },
-    { title: 'Intim & Beine', ids: ['bikinilinie', 'bikini-intim', 'unterschenkel', 'beine-komplett', 'fuesse-inkl-zehen'] },
-    { title: 'Kombis', ids: ['kombi-intim-achseln', 'ganzkoerper-halbes-bein', 'ganzkoerper'] },
+    { title: 'Oberkörper', ids: ['oberlippe', 'achseln', 'arme-1'] },
+    { title: 'Intim & Beine', ids: ['bikini-intim', 'unterschenkel', 'beine-komplett'] },
+    { title: 'Kombis', ids: ['kombi-intim-achseln', 'ganzkoerper'] },
   ],
   maenner: [
-    { title: 'Gesicht & Oberkörper', ids: ['konturen', 'hals', 'achseln-1', 'brust', 'ruecken-inkl-nacken'] },
-    { title: 'Arme & Beine', ids: ['oberarme', 'arme-komplett', 'beine', 'fuesse-inkl-zehen-1'] },
+    { title: 'Oberkörper', ids: ['achseln-1', 'brust', 'ruecken-inkl-nacken'] },
+    { title: 'Arme & Beine', ids: ['arme-komplett', 'beine'] },
     { title: 'Kombis', ids: ['brust-bauch', 'ganzkoerper-1'] },
   ],
 };
@@ -102,7 +102,7 @@ const signetOne = signetSvg('100 0 151 78');
   </section>
 
   <!-- 3 · Text + Bildfläche (Salvia „True Wellness“) -->
-  <section class="c-tw">
+  <section class="c-tw on-veil">
     <div class="c-tw-text">
       <h2 class="c-ttl reveal">Erst reden.<br />Dann lasern.</h2>
       <p class="reveal">Wir sagen dir ehrlich, was bei dir realistisch ist – und planen deine Behandlung danach.</p>
@@ -119,12 +119,7 @@ const signetOne = signetSvg('100 0 151 78');
   <div class="c-band" aria-hidden="true" style={`--signet:${signetRow}`}><div class="c-band-strip"></div></div>
 
   <!-- 4 · Drei Bilder vor grosser Hintergrundschrift -->
-  <section class="c-explore" aria-label="Ablauf">
-    <div class="c-explore-bg" aria-hidden="true">
-      <span>Glatte Haut Glatte Haut</span>
-      <span>Haut Glatte Haut Glatte</span>
-      <span>Glatte Haut Glatte Haut</span>
-    </div>
+  <section class="c-explore on-frost" aria-label="Ablauf">
     <div class="c-explore-row">
       {
         explore.map((e) => (
@@ -175,23 +170,21 @@ const signetOne = signetSvg('100 0 151 78');
                   );
                 })}
               </ul>
-              <a class="c-pcol-bar" href={`/termin?gruppe=${g.id}`}>
-                Termin buchen
-              </a>
             </div>
           ))}
         </div>
       ))
     }
     <div class="c-prices-all c-wrap reveal">
-      <a class="c-link" href="/preise">Alle Zonen & Preise</a>
+      <a class="c-btn c-btn-cta" href="/termin">Termin buchen</a>
+      <a class="c-link" href="/preise">Alle Preise</a>
     </div>
   </section>
 
   <!-- 6 · Grossformat: Exhale -->
-  <section class="c-big on-salvia">
+  <section class="c-big on-veil">
     <figure class="c-big-img" data-anim="soft">
-      <Image src={imgExhale} alt="Wand mit dem Schriftzug Exhale the Bullshit im Studio" widths={[800, 1200, 1800]} sizes="(min-width: 900px) 55vw, 100vw" />
+      <Image src={imgExhale} alt="Heller Raum mit weissem Sessel und Kunstwerk an der Wand" widths={[800, 1200, 1800]} sizes="(min-width: 900px) 55vw, 100vw" />
     </figure>
     <div class="c-big-text">
       <h2 class="c-ttl reveal">Einmal tief<br />durchatmen.</h2>
@@ -253,7 +246,7 @@ const signetOne = signetSvg('100 0 151 78');
   </section>
 
   <!-- 11 · Abschluss -->
-  <section class="c-end on-salvia" style={`--signet:${signetOne}`}>
+  <section class="c-end on-frost" style={`--signet:${signetOne}`}>
     <div class="c-end-signet" aria-hidden="true"></div>
     <div class="c-narrow c-end-inner">
       <h2 class="c-ttl reveal">Bereit für<br />glatte Haut?</h2>
@@ -295,13 +288,13 @@ const signetOne = signetSvg('100 0 151 78');
   /* ——— Grundlagen ——— */
   .c-ttl {
     font-family: var(--sans);
-    font-weight: 250;
+    font-weight: 200;
     font-style: normal;
     font-stretch: 100%;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    line-height: 1.04;
-    font-size: clamp(2.8rem, 5.8vw, 6.2rem);
+    letter-spacing: 0.005em;
+    line-height: 1;
+    font-size: clamp(3rem, 6.8vw, 7.4rem);
     color: var(--head);
     margin: 0 0 0.5em;
     text-wrap: balance;
@@ -311,7 +304,7 @@ const signetOne = signetSvg('100 0 151 78');
 
   .c-big-text .c-ttl,
   .c-tw-text .c-ttl {
-    font-size: clamp(2.4rem, 4.4vw, 4.8rem);
+    font-size: clamp(2.8rem, 5.2vw, 6rem);
   }
 
   p {
@@ -337,13 +330,18 @@ const signetOne = signetSvg('100 0 151 78');
     text-align: center;
   }
 
-  .on-salvia {
-    background: var(--salvia);
-    --ink-body: var(--indigo);
-    --ink-2: var(--indigo-soft);
-    --muted: var(--indigo-soft);
-    --line: rgba(43, 47, 64, 0.22);
-    --line-strong: rgba(43, 47, 64, 0.45);
+  .on-frost {
+    background: var(--frost);
+    --ink: #33363a;
+    --ink-body: #3a3d41;
+    --ink-2: #44474b;
+    --muted: #44474b;
+    --line: rgba(51, 54, 58, 0.22);
+    --line-strong: rgba(51, 54, 58, 0.42);
+  }
+
+  .on-veil {
+    background: var(--veil);
   }
 
   /* Buttons: warmer Sand als Call-to-Action-Farbe */
@@ -368,7 +366,7 @@ const signetOne = signetSvg('100 0 151 78');
   .c-btn-cta {
     background: var(--cta);
     border-color: var(--cta);
-    color: var(--indigo);
+    color: #fff;
   }
 
   .c-btn-cta:hover {
@@ -421,7 +419,7 @@ const signetOne = signetSvg('100 0 151 78');
     inset: 0;
     background:
       linear-gradient(180deg, rgba(17, 19, 28, 0.35) 0%, rgba(17, 19, 28, 0.18) 35%, rgba(17, 19, 28, 0.18) 65%, rgba(17, 19, 28, 0.4) 100%),
-      rgba(70, 86, 116, 0.32);
+      rgba(78, 92, 102, 0.34);
   }
 
   .c-hero-text {
@@ -438,8 +436,8 @@ const signetOne = signetSvg('100 0 151 78');
   }
 
   .c-hero-title {
-    font-size: clamp(2.6rem, 6vw, 6.4rem);
-    letter-spacing: 0.06em;
+    font-size: clamp(2.8rem, 6.6vw, 7.2rem);
+    letter-spacing: 0.01em;
     margin-bottom: 0.35em;
   }
 
@@ -539,28 +537,6 @@ const signetOne = signetSvg('100 0 151 78');
     position: relative;
     overflow: hidden;
     padding-block: clamp(130px, 13vw, 190px) clamp(110px, 11vw, 160px);
-    background: var(--salvia-soft);
-  }
-
-  .c-explore-bg {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    align-content: center;
-    gap: 0.02em;
-    font-weight: 500;
-    font-size: clamp(4rem, 11vw, 12rem);
-    line-height: 0.95;
-    letter-spacing: 0.01em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    color: rgba(155, 174, 201, 0.55);
-    pointer-events: none;
-    user-select: none;
-  }
-
-  .c-explore-bg span:nth-child(2) {
-    margin-left: -0.6em;
   }
 
   .c-explore-row {
@@ -686,7 +662,7 @@ const signetOne = signetSvg('100 0 151 78');
     flex: 1;
     list-style: none;
     margin: 0;
-    padding: 0 clamp(24px, 3vw, 48px) clamp(32px, 3vw, 48px);
+    padding: 0 clamp(28px, 4vw, 64px) clamp(40px, 4vw, 64px);
   }
 
   .c-pcol li + li {
@@ -697,7 +673,7 @@ const signetOne = signetSvg('100 0 151 78');
     display: flex;
     justify-content: space-between;
     gap: 16px;
-    padding: 18px 0;
+    padding: 20px 0;
     text-decoration: none;
     color: var(--ink);
     font-weight: 350;
@@ -711,7 +687,7 @@ const signetOne = signetSvg('100 0 151 78');
   }
 
   .c-pcol li a:hover {
-    color: var(--salvia-ink);
+    color: var(--cta);
   }
 
   .c-pcol-bar {
@@ -733,8 +709,12 @@ const signetOne = signetSvg('100 0 151 78');
   }
 
   .c-prices-all {
-    margin-top: 40px;
-    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 20px 36px;
+    margin-top: clamp(48px, 5vw, 72px);
   }
 
   /* ——— 6 · Grossformat ——— */
@@ -756,7 +736,7 @@ const signetOne = signetSvg('100 0 151 78');
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 60% center;
+    object-position: 45% center;
   }
 
   .c-big-text {
@@ -837,7 +817,7 @@ const signetOne = signetSvg('100 0 151 78');
   /* ——— 10 · Kundenstimmen ——— */
   .c-voices {
     padding-block: clamp(140px, 14vw, 210px);
-    background: var(--salvia-soft);
+    background: var(--veil);
   }
 
   .c-voices-inner {
@@ -860,7 +840,7 @@ const signetOne = signetSvg('100 0 151 78');
     margin: 0 0 34px;
     font-size: clamp(1.3rem, 1.8vw, 1.7rem);
     letter-spacing: 0.4em;
-    color: var(--salvia-ink);
+    color: var(--cta);
   }
 
   .c-voices-quotes {
@@ -1024,9 +1004,6 @@ const signetOne = signetSvg('100 0 151 78');
     }
     .c-explore-row {
       max-width: 420px;
-    }
-    .c-explore-bg {
-      font-size: 22vw;
     }
     .c-band-strip {
       height: 70px;

@@ -269,11 +269,22 @@ b {
 
 /* Ruhige Gestaltung (Startseite): warmes Off-White */
 body.theme-calm {
-  --bg: #f8f5ee;
-  --paper: #f8f5ee;
-  /* Call-to-Action: warmer Sand – dezent, aber auffällig */
-  --cta: #d9c2a0;
-  --cta-hover: #ccb38c;
+  /* Farbwelt nach Palette „Frost · Veil · Shade“ */
+  --bg: #ecebe6;
+  --paper: #ecebe6;
+  --frost: #a4b3ba;
+  --veil: #dfe2e1;
+  --shade: #505050;
+  --ink: #45474b;
+  --ink-body: #505050;
+  --ink-2: #66696d;
+  --muted: #74777b;
+  --head: var(--ink);
+  --line: rgba(69, 71, 75, 0.16);
+  --line-strong: rgba(69, 71, 75, 0.32);
+  /* Call-to-Action: kräftiges Blau */
+  --cta: #3e5c7c;
+  --cta-hover: #314b67;
   background: var(--bg);
 }
 
