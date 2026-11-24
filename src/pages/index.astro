@@ -322,6 +322,7 @@ const signetOne = signetSvg('100 0 151 78');
   /* ——— 1 · Breites Startbild (Nerea) ——— */
   .c-hero {
     position: relative;
+    overflow-x: clip;
     height: 100svh;
     min-height: 680px;
     max-height: 1100px;
@@ -462,6 +463,7 @@ const signetOne = signetSvg('100 0 151 78');
 
   .c-cell-all a {
     background: var(--salvia);
+    --ink-2: var(--indigo);
   }
 
   .c-cell-all a:hover {
@@ -471,6 +473,7 @@ const signetOne = signetSvg('100 0 151 78');
   /* ——— 4 · Text links, Bild rechts (Nerea) ——— */
   .c-split {
     padding-block: clamp(140px, 15vw, 220px) clamp(160px, 16vw, 240px);
+    overflow-x: clip;
   }
 
   .c-split-grid {
