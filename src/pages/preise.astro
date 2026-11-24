@@ -9,7 +9,9 @@ import CtaFinal from '../components/CtaFinal.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
 import imgHero from '../assets/shoot/laser-achsel-quer.jpg';
-import imgCost from '../assets/shoot/caro-telefon.jpg';
+import imgMarkiert from '../assets/shoot/cd-markiert.jpg';
+import imgBein from '../assets/shoot/cd-bein-2.jpg';
+import LoopVideo from '../components/LoopVideo.astro';
 ---
 
 <Base
@@ -48,14 +50,14 @@ import imgCost from '../assets/shoot/caro-telefon.jpg';
     </div>
   </section>
 
-  <UspLines />
+  <UspLines imgA={imgMarkiert} imgB={imgBein} />
 
   <section class="cost bg-paper">
     <div class="cost-img" data-anim="img">
-      <Image src={imgCost} alt="Caro am Telefon in der Studio-Lounge" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 50vw, 100vw" />
+      <LoopVideo name="laser-knoechel" label="Laserbehandlung am Unterschenkel" pos="center 55%" />
     </div>
     <div class="cost-content">
-      <Lines lines={['Und was kostet', 'es insgesamt?']} class="ol cost-title" />
+      <Lines lines={['Und was kostet', 'es insgesamt?']} class="cost-title" />
       <p class="reveal">
         Damit möglichst alle Haarwurzeln in ihrer Wachstumsphase erwischt werden, braucht es mehrere Sitzungen. Wie viele, ist <strong>sehr individuell</strong> – Zone, Haardichte, Hauttyp und Hormone spielen mit. Am Anfang liegen meist 4 bis 8
         Wochen dazwischen, später werden die Abstände grösser.
@@ -138,7 +140,8 @@ import imgCost from '../assets/shoot/caro-telefon.jpg';
     }
   }
 
-  .cost-img :global(img) {
+  .cost-img :global(img),
+  .cost-img :global(video) {
     position: absolute;
     inset: 0;
     width: 100%;

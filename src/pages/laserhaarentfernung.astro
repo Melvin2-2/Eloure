@@ -3,9 +3,9 @@ import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import StoryPath from '../components/StoryPath.astro';
 import { Image } from 'astro:assets';
+import LoopVideo from '../components/LoopVideo.astro';
 import Lines from '../components/Lines.astro';
 import imgHero from '../assets/shoot/geraet.jpg';
-import imgWirk from '../assets/shoot/gel-achsel.jpg';
 import CtaFinal from '../components/CtaFinal.astro';
 import Icon from '../components/Icon.astro';
 ---
@@ -43,7 +43,7 @@ import Icon from '../components/Icon.astro';
       <p class="muted small reveal">Fachbegriff: selektive Photothermolyse.</p>
     </div>
     <div class="w-img" data-anim="img">
-      <Image src={imgWirk} alt="Kühlgel wird vor der Laserbehandlung aufgetragen" widths={[700, 1100, 1600]} sizes="(min-width: 1000px) 50vw, 100vw" />
+      <LoopVideo name="laser-knie" label="Laser-Handstück mit Licht auf der Haut am Knie" pos="center 60%" />
     </div>
   </section>
 
@@ -239,7 +239,8 @@ import Icon from '../components/Icon.astro';
     }
   }
 
-  .w-img :global(img) {
+  .w-img :global(img),
+  .w-img :global(video) {
     position: absolute;
     inset: 0;
     width: 100%;

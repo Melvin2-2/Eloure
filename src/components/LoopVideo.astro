@@ -1,0 +1,55 @@
+---
+// Kurzer, stummer Video-Loop (Close-up). Spielt nur, solange er sichtbar ist;
+// bei „Bewegung reduzieren“ bleibt das Standbild stehen.
+interface Props {
+  name: string; // Datei in /public/video ohne Endung (mp4 + jpg)
+  label?: string;
+  pos?: string;
+  class?: string;
+}
+const { name, label, pos = 'center', class: cls } = Astro.props;
+---
+
+<video
+  class:list={['loop-video', cls]}
+  muted
+  loop
+  playsinline
+  preload="none"
+  poster={`/video/${name}.jpg`}
+  data-loop
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  style={`object-position:${pos}`}
+>
+  <source src={`/video/${name}.mp4`} type="video/mp4" />
+</video>
+
+<style>
+  .loop-video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>
+
+<script>
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const vids = [...document.querySelectorAll<HTMLVideoElement>('video[data-loop]')];
+  if (!still && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          const v = e.target as HTMLVideoElement;
+          if (e.isIntersecting) {
+            if (v.preload === 'none') v.preload = 'auto';
+            v.play().catch(() => {});
+          } else v.pause();
+        }
+      },
+      { rootMargin: '200px 0px' },
+    );
+    vids.forEach((v) => io.observe(v));
+  }
+</script>
