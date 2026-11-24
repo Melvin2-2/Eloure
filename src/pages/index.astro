@@ -1,9 +1,9 @@
 ---
-// Startseite – ruhig, klar, hochwertig.
-// Aufbau nach Moodboard (evnia, Speechless, Whole Body Beauty, Nerea, Salvia):
-// Salvia-Blue-Streifen mit hohem Raumfoto, feine Grossbuchstaben (Source Sans 3), warmes Creme,
-// Deep Indigo für Schrift, rechteckige Buttons, eng gesetzte transparente Signets
-// und nur sanfte Einblendungen (Fade + leichtes Einschieben).
+// Startseite – kantig, ruhig, hochwertig.
+// Aufbau nach Moodboard (Nerea, Blue Mind, evnia, Speechless, Salvia):
+// breites Startbild mit Glas-Karte, Signet-Musterband, Raster mit feinen Linien (Kacheln),
+// feine Typografie mit kursiven Akzenten, Salvia Blue / Creme / Deep Indigo,
+// rechteckige Buttons, Frosted-Glass-Elemente auf Bildern, sanfte Einblendungen.
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
@@ -12,30 +12,33 @@ import { services, chf, duration, type Group } from '../data/services';
 import { googleRating, pickReview } from '../data/reviews';
 import { site } from '../data/site';
 
-import imgHero from '../assets/shoot/sessel.jpg';
-import imgWord from '../assets/shoot/relief-sessel.jpg';
-import imgPflanze from '../assets/shoot/detail-pflanze.jpg';
-import imgObjekte from '../assets/shoot/detail-objekte.jpg';
-import imgLiege from '../assets/shoot/liege-fenster.jpg';
+import imgHero from '../assets/shoot/laser-achsel-quer.jpg';
+import imgTuecher from '../assets/shoot/detail-tuecher.jpg';
+import imgRaum from '../assets/shoot/raum-weit.jpg';
+import imgAdieu from '../assets/shoot/relief-sessel.jpg';
 import imgStep1 from '../assets/shoot/beratung-haende.jpg';
-import imgStep2 from '../assets/shoot/detail-tuecher.jpg';
-import imgStep3 from '../assets/shoot/laser-achsel.jpg';
+import imgStep2 from '../assets/shoot/gel-achsel.jpg';
+import imgStep3 from '../assets/shoot/kundin-brille.jpg';
 import imgStep4 from '../assets/shoot/caro-beratung-2.jpg';
 
 const rating = googleRating.rating.toFixed(1).replace('.', ',');
 
-const steps = [
-  { img: imgStep1, title: 'Beratung', alt: 'Hände mit Tablet beim Beratungsgespräch', pos: 'center 40%', text: 'Ehrlich und ohne Zeitdruck.' },
-  { img: imgStep2, title: 'Vorbereitung', alt: 'Frische, gefaltete Handtücher im Studio', pos: 'center 60%', text: 'Saubere Liege, kühlendes Gel.' },
-  { img: imgStep3, title: 'Behandlung', alt: 'Laserhaarentfernung an der Achsel mit Schutzbrille', pos: 'center 30%', text: 'Medizinischer Diodenlaser, sanft gekühlt.' },
-  { img: imgStep4, title: 'Begleitung', alt: 'Caro im Gespräch mit einer Kundin', pos: 'center 30%', text: 'Folgetermine passend zum Haarzyklus.' },
+const chapters = [
+  { img: imgStep1, title: 'Reden', alt: 'Hände mit Tablet beim Beratungsgespräch', pos: 'center 40%', text: 'Erst Fragen, dann Laser. Ehrlich und ohne Zeitdruck.' },
+  { img: imgStep2, title: 'Vorbereiten', alt: 'Kühlendes Gel wird auf die Achsel aufgetragen', pos: 'center 50%', text: 'Frische Tücher, kühles Gel, jeder Schritt erklärt.' },
+  { img: imgStep3, title: 'Lasern', alt: 'Kundin mit Schutzbrille bei der Behandlung', pos: 'center 30%', text: 'Medizinischer Diodenlaser. Kurz, sanft gekühlt.' },
+  { img: imgStep4, title: 'Dranbleiben', alt: 'Caro im Gespräch mit einer Kundin', pos: 'center 30%', text: 'Folgetermine im Takt deines Haarzyklus.' },
 ];
 
 const pick: Record<Group, string[]> = {
   frauen: ['achseln', 'bikini-intim', 'kombi-intim-achseln', 'unterschenkel', 'beine-komplett', 'ganzkoerper'],
-  maenner: ['achseln-1', 'brust-bauch', 'ruecken-inkl-nacken', 'beine', 'ganzkoerper-1'],
+  maenner: ['achseln-1', 'brust-bauch', 'ruecken-inkl-nacken', 'beine', 'ganzkoerper-1', 'oberarme'],
 };
-const list = (g: Group) => pick[g].map((id) => services.find((s) => s.id === id)).filter((s) => !!s);
+const list = (g: Group) =>
+  pick[g]
+    .map((id) => services.find((s) => s.id === id))
+    .filter((s) => !!s)
+    .slice(0, 6);
 const groups: { id: Group; label: string }[] = [
   { id: 'frauen', label: 'Frauen' },
   { id: 'maenner', label: 'Männer' },
@@ -43,17 +46,18 @@ const groups: { id: Group; label: string }[] = [
 
 const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy H.'].map(pickReview).filter(Boolean);
 
-// Signet als eng gesetztes, sehr transparentes Muster (Deep Indigo, Deckkraft über CSS)
+// Signet als Muster (Salvia Blue)
 const signetPaths = [
   'M165.63 2.986c10.504 0 25.65 8.292 25.871 35.711h9.398C200.899 6.634 178.787 0 165.519 0c-13.156 0-35.27 6.634-35.27 38.698h9.397c.222-27.42 15.37-35.712 25.984-35.712zM220.729 0h9.397v38.698h-9.397zM136.703 77.394c13.269 0 35.38-6.632 35.38-38.696h-9.397c-.221 27.419-15.367 35.712-25.872 35.712-10.613 0-25.762-8.293-25.982-35.712h-9.398c-.001 32.064 22.113 38.696 35.269 38.696z',
   'M224.118 77.394c22.887 0 26.093-23.771 26.203-36.816v-1.88h-2.984v1.88c-.221 27.308-12.716 33.833-23.219 33.833-10.505 0-22.998-6.524-23.219-33.833v-2.383l-9.398.503v1.991c0 31.841 19.459 36.705 32.617 36.705z',
 ];
-const signetSvg = (vb: string) =>
+const signetSvg = (vb: string, fill: string) =>
   `url("data:image/svg+xml,${encodeURIComponent(
-    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='${vb}'><g fill='#2b2f40'>${signetPaths.map((d) => `<path d='${d}'/>`).join('')}</g></svg>`,
+    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='${vb}'><g fill='${fill}'>${signetPaths.map((d) => `<path d='${d}'/>`).join('')}</g></svg>`,
   )}")`;
-const signetRow = signetSvg('96 -2 160 82');
-const signetOne = signetSvg('100 0 151 78');
+const signetPattern = signetSvg('92 -8 168 94', '#9baec9');
+const signetBig = signetSvg('96 -2 160 82', '#2b2f40');
+const signetOne = signetSvg('100 0 151 78', '#2b2f40');
 ---
 
 <Base
@@ -63,120 +67,139 @@ const signetOne = signetSvg('100 0 151 78');
   theme="calm"
   announce={false}
 >
-  <!-- 1 · Start: Salvia-Streifen, hohes Raumfoto, feine Typo überlappt -->
+  <!-- 1 · Start: breites Bild, Glas-Karte unten links -->
   <section class="c-hero">
-    <div class="c-hero-band" aria-hidden="true"></div>
-    <figure class="c-hero-img" data-anim="soft">
-      <Image src={imgHero} alt="Heller Behandlungsraum mit weissem Sessel am Fenster" widths={[600, 900, 1300]} sizes="(min-width: 900px) 30vw, 80vw" loading="eager" />
-    </figure>
-    <div class="c-hero-text">
-      <h1 class="c-hero-title" data-slide="left">
-        <span>Laserhaar-</span><span>entfernung</span>
-        <small>in Amriswil</small>
-      </h1>
+    <div class="c-hero-img" data-anim="soft">
+      <Image src={imgHero} alt="Laserhaarentfernung an der Achsel – Kundin mit Schutzbrille" widths={[1200, 1800, 2400]} sizes="100vw" loading="eager" />
     </div>
-    <a class="c-btn c-btn-dark c-hero-cta" href="/termin" data-anim="up">Termin buchen</a>
+    <div class="c-glass c-hero-card" data-slide="left">
+      <h1 class="c-kicker">Laserhaarentfernung · Amriswil</h1>
+      <p class="c-hero-claim">Glatt.<br /><em>Ganz ohne Rasierer.</em></p>
+      <a class="c-link c-link-light" href="/termin">Ersten Termin buchen</a>
+    </div>
   </section>
+
+  <!-- Signet-Musterband (wie bei Nerea) -->
+  <div class="c-pattern" aria-hidden="true" style={`--signet:${signetPattern}`}></div>
 
   <!-- 2 · Haltung -->
   <section class="c-intro">
-    <figure class="c-intro-img c-intro-img-l" data-slide="left">
-      <Image src={imgPflanze} alt="" widths={[300, 500]} sizes="16vw" />
-    </figure>
-    <figure class="c-intro-img c-intro-img-r" data-slide="right">
-      <Image src={imgObjekte} alt="" widths={[300, 500]} sizes="14vw" />
-    </figure>
     <div class="c-narrow">
-      <h2 class="c-ttl reveal">Ein Studio.<br />Eine Sache.</h2>
+      <h2 class="c-display reveal">Weniger Haare.<br /><em>Mehr du.</em></h2>
       <p class="reveal">
-        Eloure ist auf Laserhaarentfernung spezialisiert – und auf nichts anderes. Jede Behandlung beginnt mit einem ehrlichen
-        Gespräch und einem Plan, der zu deiner Haut passt.
+        Kein Beauty-Allerlei. Eloure macht genau eine Sache: Laserhaarentfernung – mit medizinischem Diodenlaser, ehrlicher
+        Beratung und viel Ruhe.
       </p>
     </div>
   </section>
 
-  <!-- Signet-Linie über beide Sections -->
-  <div class="c-band" aria-hidden="true" style={`--signet:${signetRow}`}><div class="c-band-strip"></div></div>
-
-  <!-- 3 · Grosses Wort über hellem Raumfoto -->
-  <section class="c-word on-salvia" aria-label="Glatte Haut">
-    <figure class="c-word-img" data-anim="soft">
-      <Image src={imgWord} alt="Helle Lounge mit weissem Sessel und Reliefwand" widths={[700, 1100, 1500]} sizes="(min-width: 900px) 40vw, 80vw" style="object-position:center 30%" />
-    </figure>
-    <p class="c-word-text" aria-hidden="true" data-anim="up">Glatte Haut</p>
+  <!-- 3 · Beliebte Zonen als Kachelraster -->
+  <section class="c-grid-sec" id="zonen" data-c-prices>
+    <div class="c-grid-head c-wrap">
+      <h2 class="c-display c-display-s reveal">Beliebte <em>Zonen</em></h2>
+      <div class="c-tabs reveal" role="tablist" aria-label="Zonen für">
+        {
+          groups.map((g, i) => (
+            <button type="button" role="tab" aria-selected={String(i === 0)} data-c-tab={g.id}>
+              {g.label}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+    {
+      groups.map((g, gi) => (
+        <ul class="c-grid" data-c-list={g.id} hidden={gi !== 0}>
+          {list(g.id).map((s, i) => (
+            <>
+              {i === 2 && (
+                <li class="c-cell c-cell-img" aria-hidden="true">
+                  <Image src={imgTuecher} alt="" widths={[400, 700]} sizes="(min-width: 900px) 25vw, 50vw" />
+                </li>
+              )}
+              <li class="c-cell">
+                <a href={`/termin?behandlung=${s!.id}&gruppe=${g.id}`}>
+                  <span class="c-cell-name">{s!.name}</span>
+                  <span class="c-cell-meta">
+                    <span>{chf(s!.price)}</span>
+                    <span>{duration(s!.minutes)}</span>
+                  </span>
+                  <span class="c-cell-go">
+                    Buchen <Icon name="arrow" size={14} />
+                  </span>
+                </a>
+              </li>
+            </>
+          ))}
+          <li class="c-cell c-cell-all">
+            <a href="/preise">
+              <span class="c-cell-name">Über 30 Zonen</span>
+              <span class="c-cell-meta">
+                <span>ab CHF 29</span>
+              </span>
+              <span class="c-cell-go">
+                Alle Preise <Icon name="arrow" size={14} />
+              </span>
+            </a>
+          </li>
+        </ul>
+      ))
+    }
   </section>
 
-  <!-- 4 · Ablauf in vier Bildern -->
-  <section class="c-steps">
-    <div class="c-wrap">
-      <h2 class="c-ttl reveal">In vier ruhigen<br />Schritten</h2>
+  <!-- 4 · Split: Text links, Bild rechts mit Glas-Hinweis -->
+  <section class="c-split">
+    <div class="c-wrap c-split-grid">
+      <div class="c-split-text">
+        <h2 class="c-display c-display-m reveal">
+          Ein Raum, der sich nicht nach <em>Klinik</em> anfühlt – aber genauso <em>sauber</em> ist.
+        </h2>
+        <a class="c-link reveal" href="/studio">Das Studio ansehen</a>
+      </div>
+      <figure class="c-split-img" data-slide="right">
+        <Image src={imgRaum} alt="Heller Behandlungsraum mit Liege und Laser" widths={[700, 1100, 1600]} sizes="(min-width: 900px) 46vw, 100vw" />
+        <figcaption class="c-glass c-tag">Geprüfte Sachkunde nach V-NISSG</figcaption>
+      </figure>
     </div>
-    <ol class="c-steps-row">
+  </section>
+
+  <!-- Signet-Linie über die Section-Grenze -->
+  <div class="c-band" aria-hidden="true" style={`--signet:${signetBig}`}><div class="c-band-strip"></div></div>
+
+  <!-- 5 · Adieu, Rasierer -->
+  <section class="c-word on-salvia" aria-label="Adieu, Rasierer">
+    <figure class="c-word-img" data-anim="soft">
+      <Image src={imgAdieu} alt="Helle Lounge mit weissem Sessel und Reliefwand" widths={[700, 1100, 1500]} sizes="(min-width: 900px) 38vw, 80vw" style="object-position:center 30%" />
+      <figcaption class="c-glass c-word-card">Für Frauen und Männer.<br />Einzeln oder als Kombi.</figcaption>
+    </figure>
+    <p class="c-word-text" aria-hidden="true" data-anim="up"><span>Adieu,</span><em>Rasierer.</em></p>
+  </section>
+
+  <!-- 6 · Vier Kapitel -->
+  <section class="c-chapters">
+    <div class="c-wrap c-chapters-head">
+      <h2 class="c-display c-display-s reveal">Vier Kapitel <em>bis glatt.</em></h2>
+    </div>
+    <ol class="c-chapter-row">
       {
-        steps.map((s, i) => (
-          <li class="c-step" data-anim="soft" style={`--d:${i * 0.12}`}>
-            <figure class="c-step-img">
-              <Image src={s.img} alt={s.alt} widths={[500, 800, 1100]} sizes="(min-width: 900px) 25vw, 50vw" style={`object-position:${s.pos}`} />
+        chapters.map((c, i) => (
+          <li class="c-chapter" data-anim="soft">
+            <span class="c-chip">Kapitel 0{i + 1}</span>
+            <figure>
+              <Image src={c.img} alt={c.alt} widths={[500, 800, 1100]} sizes="(min-width: 900px) 25vw, 50vw" style={`object-position:${c.pos}`} />
             </figure>
-            <h3 class="c-step-title">
-              <small>0{i + 1}</small> {s.title}
-            </h3>
-            <p>{s.text}</p>
+            <h3>{c.title}</h3>
+            <p>{c.text}</p>
           </li>
         ))
       }
     </ol>
   </section>
 
-  <div class="c-band" aria-hidden="true" style={`--signet:${signetRow}`}><div class="c-band-strip c-band-strip-2"></div></div>
-
-  <!-- 5 · Beliebte Zonen auf Salvia Blue -->
-  <section class="c-prices on-salvia" id="zonen" data-c-prices>
-    <div class="c-wrap c-prices-grid">
-      <figure class="c-prices-img" data-slide="left">
-        <Image src={imgLiege} alt="Behandlungsliege am Fenster im hellen Behandlungsraum" widths={[600, 900, 1300]} sizes="(min-width: 900px) 34vw, 90vw" />
-      </figure>
-      <div class="c-prices-list">
-        <h2 class="c-ttl reveal">Beliebte Zonen</h2>
-        <div class="c-tabs reveal" role="tablist" aria-label="Zonen für">
-          {
-            groups.map((g, i) => (
-              <button type="button" role="tab" aria-selected={String(i === 0)} data-c-tab={g.id}>
-                {g.label}
-              </button>
-            ))
-          }
-        </div>
-        {
-          groups.map((g, i) => (
-            <ul class="c-list reveal" data-c-list={g.id} hidden={i !== 0}>
-              {list(g.id).map((s) => (
-                <li>
-                  <a href={`/termin?behandlung=${s!.id}&gruppe=${g.id}`}>
-                    <span class="c-l-name">{s!.name}</span>
-                    <span class="c-l-dur">{duration(s!.minutes)}</span>
-                    <span class="c-l-price">{chf(s!.price)}</span>
-                    <span class="c-l-go" aria-hidden="true">
-                      <Icon name="arrow" size={16} />
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          ))
-        }
-        <div class="c-prices-foot reveal">
-          <a class="c-btn c-btn-dark" href="/preise">Alle Zonen & Preise</a>
-          <span>Bezahlt wird erst vor Ort.</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 6 · Ruhepunkt -->
+  <!-- 7 · Ruhepunkt -->
   <StudioCalm />
 
-  <!-- 7 · Kundenstimmen -->
+  <!-- 8 · Kundenstimmen -->
   <section class="c-voices" data-c-voices aria-label="Kundenstimmen">
     <div class="c-voices-inner">
       <button type="button" class="c-arrow c-arrow-l" aria-label="Vorherige Stimme" data-c-prev><span></span></button>
@@ -198,11 +221,11 @@ const signetOne = signetSvg('100 0 151 78');
     </div>
   </section>
 
-  <!-- 8 · Abschluss auf Salvia Blue -->
+  <!-- 9 · Abschluss -->
   <section class="c-end on-salvia" style={`--signet:${signetOne}`}>
     <div class="c-end-signet" aria-hidden="true"></div>
     <div class="c-narrow c-end-inner">
-      <h2 class="c-ttl reveal">Bereit für<br />glatte Haut?</h2>
+      <h2 class="c-display reveal">Bereit, den Rasierer<br /><em>abzugeben?</em></h2>
       <div class="c-end-btns reveal">
         <a class="c-btn c-btn-dark" href="/termin">Termin buchen</a>
         <a class="c-btn c-btn-line" href="/termin?behandlung=beratungsgespraech">Kostenlos beraten lassen</a>
@@ -217,11 +240,7 @@ const signetOne = signetSvg('100 0 151 78');
   prices?.querySelectorAll<HTMLButtonElement>('[data-c-tab]').forEach((btn) => {
     btn.addEventListener('click', () => {
       prices.querySelectorAll<HTMLButtonElement>('[data-c-tab]').forEach((b) => b.setAttribute('aria-selected', String(b === btn)));
-      prices.querySelectorAll<HTMLElement>('[data-c-list]').forEach((l) => {
-        l.hidden = l.dataset.cList !== btn.dataset.cTab;
-        l.style.opacity = '1';
-        l.style.transform = 'none';
-      });
+      prices.querySelectorAll<HTMLElement>('[data-c-list]').forEach((l) => (l.hidden = l.dataset.cList !== btn.dataset.cTab));
     });
   });
 
@@ -243,30 +262,56 @@ const signetOne = signetSvg('100 0 151 78');
 </script>
 
 <style>
-  /* ——— Grundlagen dieser Seite ——— */
-  .c-ttl {
+  /* ——— Typografie: fein, gemischt mit kursiven Akzenten ——— */
+  .c-display {
     font-family: var(--sans);
-    font-weight: 350;
+    font-weight: 250;
     font-stretch: 100%;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    line-height: 1.06;
-    font-size: clamp(2.5rem, 4.6vw, 4.6rem);
+    text-transform: none;
+    letter-spacing: -0.01em;
+    line-height: 1.08;
+    font-size: clamp(2.6rem, 5vw, 5rem);
     color: var(--head);
-    margin: 0 0 0.55em;
+    margin: 0 0 0.6em;
     text-wrap: balance;
+  }
+
+  .c-display em,
+  .c-hero-claim em,
+  .c-word-text em {
+    font-style: italic;
+    font-weight: 250;
+  }
+
+  .c-display-s {
+    font-size: clamp(2.2rem, 3.6vw, 3.6rem);
+  }
+
+  .c-display-m {
+    font-size: clamp(2rem, 3.2vw, 3.2rem);
+    line-height: 1.18;
+  }
+
+  .c-kicker {
+    margin: 0 0 18px;
+    hyphens: none;
+    font-family: var(--sans);
+    font-weight: 400;
+    font-size: 0.82rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
   }
 
   p {
     font-weight: 350;
-    font-size: clamp(1.15rem, 1.35vw, 1.35rem);
+    font-size: clamp(1.12rem, 1.3vw, 1.3rem);
     line-height: 1.7;
     color: var(--ink-body);
   }
 
   .c-wrap {
     width: 100%;
-    max-width: 1360px;
+    max-width: 1440px;
     margin-inline: auto;
     padding-inline: var(--gutter);
   }
@@ -274,20 +319,19 @@ const signetOne = signetSvg('100 0 151 78');
   .c-narrow {
     position: relative;
     z-index: 2;
-    max-width: 760px;
+    max-width: 780px;
     margin-inline: auto;
     padding-inline: var(--gutter);
     text-align: center;
   }
 
-  /* Flächen in Salvia Blue: alle Schriftstufen in Indigo */
   .on-salvia {
     background: var(--salvia);
     --ink-body: var(--indigo);
     --ink-2: var(--indigo-soft);
     --muted: var(--indigo-soft);
-    --line: rgba(43, 47, 64, 0.2);
-    --line-strong: rgba(43, 47, 64, 0.42);
+    --line: rgba(43, 47, 64, 0.22);
+    --line-strong: rgba(43, 47, 64, 0.45);
   }
 
   /* Rechteckige Buttons */
@@ -297,8 +341,8 @@ const signetOne = signetSvg('100 0 151 78');
     justify-content: center;
     min-height: 56px;
     padding: 0 36px;
-    font-size: 0.9rem;
-    font-weight: 450;
+    font-size: 0.88rem;
+    font-weight: 400;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     text-decoration: none;
@@ -333,8 +377,8 @@ const signetOne = signetSvg('100 0 151 78');
 
   .c-link {
     display: inline-block;
-    font-size: 0.9rem;
-    letter-spacing: 0.2em;
+    font-size: 0.86rem;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     text-decoration: none;
     color: var(--ink);
@@ -344,15 +388,281 @@ const signetOne = signetSvg('100 0 151 78');
   }
 
   .c-link:hover {
+    border-color: currentColor;
+  }
+
+  .c-link-light {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.55);
+  }
+
+  /* Frosted Glass wie im Ruhepunkt – leicht getönt, feine weisse Kante */
+  .c-glass {
+    background: rgba(28, 30, 42, 0.16);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    backdrop-filter: blur(14px) saturate(1.1);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #fff;
+    --head: #fff;
+  }
+
+  /* ——— 1 · Start ——— */
+  .c-hero {
+    position: relative;
+    height: 100svh;
+    min-height: 680px;
+    max-height: 1100px;
+    overflow: hidden;
+    background: #d9d2c6;
+  }
+
+  .c-hero-img {
+    position: absolute;
+    inset: 0;
+  }
+
+  .c-hero-img :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 60% 40%;
+  }
+
+  .c-hero-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(17, 19, 28, 0.32) 0%, rgba(17, 19, 28, 0) 22%),
+      linear-gradient(20deg, rgba(17, 19, 28, 0.35) 0%, rgba(17, 19, 28, 0) 50%);
+  }
+
+  .c-hero-card {
+    position: absolute;
+    z-index: 2;
+    left: var(--gutter);
+    bottom: var(--gutter);
+    width: min(520px, calc(100% - 2 * var(--gutter)));
+    padding: clamp(28px, 3vw, 44px);
+  }
+
+  .c-hero-claim {
+    margin: 0 0 28px;
+    font-weight: 250;
+    font-size: clamp(2.6rem, 4.6vw, 4.6rem);
+    line-height: 1.04;
+    letter-spacing: -0.01em;
+    color: #fff;
+  }
+
+  /* ——— Signet-Musterband ——— */
+  .c-pattern {
+    height: clamp(44px, 4.4vw, 64px);
+    border-block: 1px solid var(--line);
+    background-image: var(--signet);
+    background-repeat: repeat-x;
+    background-size: auto 62%;
+    background-position: center;
+    opacity: 0.9;
+  }
+
+  /* ——— 2 · Haltung ——— */
+  .c-intro {
+    padding-block: clamp(130px, 14vw, 210px);
+  }
+
+  .c-intro p {
+    max-width: 34em;
+    margin-inline: auto;
+  }
+
+  /* ——— 3 · Kachelraster ——— */
+  .c-grid-sec {
+    padding-top: clamp(40px, 5vw, 80px);
+    border-top: 1px solid var(--line);
+  }
+
+  .c-grid-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px 40px;
+    margin-bottom: clamp(32px, 4vw, 56px);
+  }
+
+  .c-grid-head .c-display {
+    margin: 0;
+  }
+
+  .c-tabs {
+    display: flex;
+    gap: 32px;
+  }
+
+  .c-tabs button {
+    border: 0;
+    background: none;
+    padding: 0 0 6px;
+    font-size: 0.86rem;
+    font-weight: 400;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid transparent;
+    cursor: pointer;
+  }
+
+  .c-tabs button[aria-selected='true'] {
+    color: var(--ink);
     border-color: var(--ink);
   }
 
-  /* Signet-Linie: gross, eng gesetzt, sehr transparent, über der Section-Grenze */
+  .c-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .c-grid[hidden] {
+    display: none;
+  }
+
+  .c-cell {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+  }
+
+  .c-cell a {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(20px, 2.2vw, 34px);
+    text-decoration: none;
+    color: var(--ink);
+    transition: background 0.5s ease;
+  }
+
+  .c-cell a:hover {
+    background: var(--salvia-soft);
+  }
+
+  .c-cell-name {
+    font-weight: 250;
+    font-size: clamp(1.4rem, 2.2vw, 2.2rem);
+    line-height: 1.12;
+  }
+
+  .c-cell-meta {
+    display: grid;
+    gap: 4px;
+    font-size: 0.86rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  .c-cell-meta span:first-child {
+    font-size: 1.05rem;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+  }
+
+  .c-cell-go {
+    position: absolute;
+    right: clamp(20px, 2.2vw, 34px);
+    bottom: clamp(20px, 2.2vw, 34px);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--indigo);
+    opacity: 0;
+    transform: translateX(-6px);
+    transition:
+      opacity 0.4s ease,
+      transform 0.4s var(--ease);
+  }
+
+  .c-cell a:hover .c-cell-go,
+  .c-cell a:focus-visible .c-cell-go {
+    opacity: 1;
+    transform: none;
+  }
+
+  .c-cell-img :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .c-cell-all a {
+    background: var(--salvia);
+  }
+
+  .c-cell-all a:hover {
+    background: var(--salvia-deep);
+  }
+
+  .c-cell-all .c-cell-go {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ——— 4 · Split ——— */
+  .c-split {
+    padding-block: clamp(130px, 14vw, 210px);
+  }
+
+  .c-split-grid {
+    display: grid;
+    gap: 48px clamp(48px, 7vw, 120px);
+    align-items: center;
+  }
+
+  .c-split-text .c-display {
+    margin-bottom: 1em;
+  }
+
+  .c-split-img {
+    position: relative;
+    margin: 0;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+  }
+
+  .c-split-img :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .c-tag {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    padding: 12px 18px;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  /* Signet-Linie über die Grenze */
   .c-band {
     position: relative;
     z-index: 6;
     height: 0;
-    overflow: visible;
     pointer-events: none;
   }
 
@@ -369,135 +679,17 @@ const signetOne = signetSvg('100 0 151 78');
     opacity: 0.07;
   }
 
-  .c-band-strip-2 {
-    background-position: 70% 0;
-  }
-
-  /* ——— 1 · Start ——— */
-  .c-hero {
-    position: relative;
-    height: 100svh;
-    min-height: 720px;
-    max-height: 1080px;
-    overflow: hidden;
-    background: var(--bg);
-  }
-
-  .c-hero-band {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 72%;
-    background: var(--salvia);
-  }
-
-  .c-hero-img {
-    position: absolute;
-    left: 38%;
-    width: 30%;
-    top: 13%;
-    bottom: 7%;
-    margin: 0;
-    overflow: hidden;
-    z-index: 1;
-  }
-
-  .c-hero-img :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: 40% center;
-  }
-
-  .c-hero-text {
-    position: absolute;
-    z-index: 2;
-    left: 7%;
-    top: 26%;
-    pointer-events: none;
-  }
-
-  .c-hero-title {
-    margin: 0;
-    font-family: var(--sans);
-    font-weight: 300;
-    font-stretch: 100%;
-    text-transform: uppercase;
-    font-size: clamp(3rem, 6.6vw, 7.8rem);
-    line-height: 0.98;
-    letter-spacing: 0.03em;
-    color: var(--indigo);
-  }
-
-  .c-hero-title span {
-    display: block;
-    white-space: nowrap;
-  }
-
-  .c-hero-title small {
-    display: block;
-    margin-top: 0.9em;
-    font-size: 0.17em;
-    font-weight: 400;
-    letter-spacing: 0.36em;
-  }
-
-  .c-hero-cta {
-    position: absolute;
-    z-index: 3;
-    left: calc(68% - 96px);
-    top: 62%;
-  }
-
-  /* ——— 2 · Haltung ——— */
-  .c-intro {
-    position: relative;
-    padding-block: clamp(150px, 16vw, 240px) clamp(170px, 18vw, 260px);
-  }
-
-  .c-intro .c-ttl {
-    margin-bottom: 0.8em;
-  }
-
-  .c-intro-img {
-    position: absolute;
-    margin: 0;
-    overflow: hidden;
-  }
-
-  .c-intro-img :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .c-intro-img-l {
-    left: 5%;
-    top: 20%;
-    width: 15%;
-    aspect-ratio: 3 / 4;
-  }
-
-  .c-intro-img-r {
-    right: 6%;
-    top: 44%;
-    width: 13%;
-    aspect-ratio: 4 / 5;
-  }
-
-  /* ——— 3 · Grosses Wort ——— */
+  /* ——— 5 · Adieu, Rasierer ——— */
   .c-word {
     position: relative;
-    height: clamp(620px, 64vw, 920px);
+    height: clamp(640px, 64vw, 940px);
     overflow: hidden;
-    background: var(--salvia-soft);
   }
 
   .c-word-img {
     position: absolute;
-    left: 31%;
-    width: 38%;
+    left: 50%;
+    width: 36%;
     top: 10%;
     bottom: 10%;
     margin: 0;
@@ -511,197 +703,109 @@ const signetOne = signetSvg('100 0 151 78');
     object-fit: cover;
   }
 
+  .c-word-card {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    z-index: 2;
+    padding: 18px 22px;
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
   .c-word-text {
     position: absolute;
-    left: 0;
-    width: 100%;
+    left: var(--gutter);
     top: 50%;
-    margin: -0.5em 0 0;
+    margin: -0.94em 0 0;
     z-index: 2;
-    text-align: center;
-    white-space: nowrap;
-    font-weight: 300;
-    font-size: clamp(3.4rem, 12.4vw, 14rem);
-    line-height: 1;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    font-weight: 250;
+    font-size: clamp(3.6rem, 10.4vw, 11.5rem);
+    line-height: 0.94;
+    letter-spacing: -0.02em;
     color: var(--indigo);
     pointer-events: none;
   }
 
-  /* ——— 4 · Ablauf ——— */
-  .c-steps {
-    padding-block: clamp(140px, 14vw, 210px) clamp(140px, 14vw, 200px);
+  .c-word-text span,
+  .c-word-text em {
+    display: block;
   }
 
-  .c-steps .c-ttl {
-    margin-bottom: clamp(52px, 6vw, 88px);
+  .c-word-text em {
+    padding-left: 1.1em;
   }
 
-  .c-steps-row {
+  /* ——— 6 · Kapitel ——— */
+  .c-chapters {
+    padding-block: clamp(130px, 14vw, 210px) 0;
+  }
+
+  .c-chapters-head {
+    margin-bottom: clamp(44px, 5vw, 72px);
+  }
+
+  .c-chapter-row {
     list-style: none;
     margin: 0;
-    padding: 0 var(--gutter);
+    padding: 0;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: clamp(14px, 1.6vw, 24px);
-    max-width: 1520px;
-    margin-inline: auto;
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
   }
 
-  .c-step-img {
-    margin: 0;
-    aspect-ratio: 3 / 4;
-    overflow: hidden;
+  .c-chapter {
+    padding: clamp(20px, 2.2vw, 32px);
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
   }
 
-  .c-step-img :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .c-step-title {
-    margin: 22px 0 6px;
-    font-family: var(--sans);
-    font-weight: 400;
-    font-size: clamp(1rem, 1.2vw, 1.15rem);
-    letter-spacing: 0.22em;
+  .c-chip {
+    display: inline-block;
+    margin-bottom: 18px;
+    padding: 6px 12px;
+    border: 1px solid var(--line-strong);
+    font-size: 0.74rem;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--ink);
-  }
-
-  .c-step-title small {
-    font-size: 0.8em;
-    color: var(--salvia-ink);
-    margin-right: 6px;
-  }
-
-  .c-step p {
-    margin: 0;
-    font-size: clamp(1.02rem, 1.1vw, 1.1rem);
-    line-height: 1.6;
     color: var(--ink-2);
   }
 
-  /* ——— 5 · Beliebte Zonen ——— */
-  .c-prices {
-    padding-block: clamp(150px, 15vw, 220px) clamp(130px, 13vw, 190px);
-    overflow-x: clip;
-  }
-
-  .c-prices-grid {
-    display: grid;
-    gap: 64px clamp(56px, 8vw, 150px);
-  }
-
-  .c-prices-img {
+  .c-chapter figure {
     margin: 0;
     aspect-ratio: 4 / 5;
     overflow: hidden;
   }
 
-  .c-prices-img :global(img) {
+  .c-chapter :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 
-  .c-tabs {
-    display: flex;
-    gap: 32px;
-    margin: 4px 0 30px;
-  }
-
-  .c-tabs button {
-    border: 0;
-    background: none;
-    padding: 0 0 6px;
-    font-size: 0.9rem;
-    font-weight: 400;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    border-bottom: 1px solid transparent;
-    cursor: pointer;
-    opacity: 0.75;
-  }
-
-  .c-tabs button[aria-selected='true'] {
+  .c-chapter h3 {
+    margin: 22px 0 6px;
+    font-family: var(--sans);
+    font-weight: 250;
+    font-size: clamp(1.6rem, 2.2vw, 2.1rem);
+    letter-spacing: -0.005em;
     color: var(--ink);
-    border-color: var(--ink);
-    opacity: 1;
   }
 
-  .c-list {
-    list-style: none;
+  .c-chapter p {
     margin: 0;
-    padding: 0;
-    border-top: 1px solid var(--line-strong);
-  }
-
-  .c-list li {
-    border-bottom: 1px solid var(--line);
-  }
-
-  .c-list a {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    align-items: baseline;
-    gap: 8px 32px;
-    padding: 26px 0;
-    text-decoration: none;
-    color: var(--ink);
-  }
-
-  .c-l-name {
-    font-weight: 350;
-    font-size: clamp(1.25rem, 1.8vw, 1.65rem);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-
-  .c-l-dur {
-    white-space: nowrap;
-    font-size: 1rem;
-    color: var(--muted);
-  }
-
-  .c-l-price {
-    white-space: nowrap;
-    font-weight: 450;
-    font-size: clamp(1.1rem, 1.3vw, 1.25rem);
-    min-width: 5.5em;
-    text-align: right;
-  }
-
-  .c-l-go {
-    display: none;
-    transition: transform 0.4s var(--ease);
-  }
-
-  .c-list a:hover .c-l-go {
-    transform: translateX(4px);
-  }
-
-  .c-prices-foot {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 16px 28px;
-    margin-top: 44px;
-    font-size: 1rem;
+    font-size: clamp(1rem, 1.1vw, 1.1rem);
+    line-height: 1.6;
     color: var(--ink-2);
   }
 
-  /* ——— 7 · Kundenstimmen ——— */
+  /* ——— 8 · Kundenstimmen ——— */
   .c-voices {
-    position: relative;
     padding-block: clamp(140px, 14vw, 210px);
   }
 
   .c-voices-inner {
-    position: relative;
     max-width: 1360px;
     margin-inline: auto;
     padding-inline: var(--gutter);
@@ -712,7 +816,7 @@ const signetOne = signetSvg('100 0 151 78');
   }
 
   .c-voices-body {
-    max-width: 820px;
+    max-width: 840px;
     margin-inline: auto;
     text-align: center;
   }
@@ -736,15 +840,16 @@ const signetOne = signetSvg('100 0 151 78');
 
   .c-quote blockquote {
     margin: 0 0 26px;
-    font-weight: 350;
-    font-size: clamp(1.45rem, 2.3vw, 2.1rem);
-    line-height: 1.45;
+    font-weight: 250;
+    font-style: italic;
+    font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+    line-height: 1.38;
     color: var(--ink);
     text-wrap: balance;
   }
 
   .c-quote figcaption {
-    font-size: 0.9rem;
+    font-size: 0.86rem;
     letter-spacing: 0.24em;
     text-transform: uppercase;
     color: var(--ink-2);
@@ -755,7 +860,6 @@ const signetOne = signetSvg('100 0 151 78');
     color: var(--ink-2);
   }
 
-  /* Feine Linien-Pfeile */
   .c-arrow {
     position: relative;
     width: clamp(44px, 5vw, 72px);
@@ -811,7 +915,7 @@ const signetOne = signetSvg('100 0 151 78');
     transform: translateX(4px);
   }
 
-  /* ——— 8 · Abschluss ——— */
+  /* ——— 9 · Abschluss ——— */
   .c-end {
     position: relative;
     padding-block: clamp(150px, 15vw, 220px);
@@ -842,67 +946,81 @@ const signetOne = signetSvg('100 0 151 78');
   }
 
   /* ——— Breakpoints ——— */
-  @media (min-width: 640px) {
-    .c-l-go {
-      display: inline-flex;
-    }
-    .c-list a {
-      grid-template-columns: 1fr auto auto auto;
-    }
-  }
-
   @media (min-width: 900px) {
-    .c-steps-row {
+    .c-grid {
       grid-template-columns: repeat(4, 1fr);
     }
-    .c-prices-grid {
-      grid-template-columns: 0.85fr 1.15fr;
-      align-items: center;
+    .c-cell:nth-child(4n) {
+      border-right: 0;
+    }
+    .c-chapter-row {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .c-chapter:nth-child(4n) {
+      border-right: 0;
+    }
+    .c-chapter {
+      border-bottom: 0;
+    }
+    .c-split-grid {
+      grid-template-columns: 0.9fr 1.1fr;
     }
   }
 
   @media (max-width: 899px) {
-    .c-hero {
-      min-height: 640px;
+    .c-cell:nth-child(2n) {
+      border-right: 0;
     }
-    .c-hero-band {
-      height: 60%;
+    .c-cell-go {
+      position: static;
+      margin-top: 10px;
+      opacity: 1;
+      transform: none;
+      font-size: 0.72rem;
     }
-    .c-hero-img {
-      left: 14%;
-      width: 72%;
-      top: 15%;
-      bottom: 15%;
+    .c-cell a {
+      justify-content: flex-start;
     }
-    .c-hero-text {
-      left: 6%;
-      top: 30%;
+    .c-cell-name {
+      flex: 1;
     }
-    .c-hero-title {
-      font-size: 12.2vw;
+    .c-kicker {
+      letter-spacing: 0.18em;
     }
-    .c-hero-cta {
-      left: 0;
-      right: 0;
-      width: max-content;
-      margin-inline: auto;
-      top: auto;
-      bottom: calc(15% - 28px);
+    .c-chapter:nth-child(2n) {
+      border-right: 0;
     }
-    .c-intro-img {
-      display: none;
+    .c-hero-img :global(img) {
+      object-position: 70% 40%;
     }
     .c-word {
-      height: 140vw;
+      height: auto;
+      padding-block: 80px;
+      display: grid;
+      gap: 32px;
     }
     .c-word-img {
-      left: 12%;
-      width: 76%;
-      top: 8%;
-      bottom: 8%;
+      position: relative;
+      left: auto;
+      top: auto;
+      bottom: auto;
+      width: auto;
+      margin-inline: var(--gutter);
+      aspect-ratio: 4 / 5;
+      order: 2;
     }
     .c-word-text {
-      font-size: 13.5vw;
+      position: relative;
+      left: auto;
+      top: auto;
+      margin: 0;
+      padding-inline: var(--gutter);
+      font-size: 17vw;
+      order: 1;
+    }
+    .c-band-strip {
+      height: 70px;
+      top: -35px;
     }
     .c-voices-inner {
       grid-template-columns: 1fr 1fr;
