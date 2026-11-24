@@ -52,7 +52,6 @@ const faqs = [
   ctaHref={`/termin?${q}`}
   ctaLabel={`${pct} sichern`}
   mobileNote={`Code ${promo.code}`}
-  announce={{ text: `Neukundenangebot: ${pct} auf deine erste Behandlung · Code ${promo.code}`, href: `/termin?${q}`, cta: 'Jetzt einlösen' }}
 >
   <!-- HERO -->
   <section class="hero bg-dark">
@@ -65,7 +64,6 @@ const faqs = [
 
     <div class="hero-content">
       <Lines as="h1" class="display hero-title" lines={[`${pct} auf deine`, 'erste Behandlung.']}>
-        <span class="hero-sub" data-anim="up">Laserhaarentfernung in Amriswil</span>
       </Lines>
       <p class="lead" data-anim="up">
         Dauerhaft glatte Haut mit medizinischem Diodenlaser. Ohne Rasieren, ohne Pickel, ohne Stress – und ohne Vorauszahlung.
@@ -86,7 +84,6 @@ const faqs = [
     </div>
 
     <div class="hero-card glass" data-anim="up">
-      <span class="label">So einfach geht’s</span>
       <ol>
         <li><b>1</b> Zone & Termin wählen</li>
         <li><b>2</b> Code {promo.code} eingeben</li>

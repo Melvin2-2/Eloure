@@ -1,508 +1,118 @@
 ---
-// Unterseiten-Hero. Varianten:
-//  frame – Vollbild im Passepartout (dunkel oder hell): oben und links bündig,
-//          rechts und unten mit Rand; der Rand verschwindet beim Scrollen.
-//  shape – Bild randlos. Darauf ein feiner Neon-Rahmen, der sich zeichnet und beim
-//          Scrollen verformt, und eine kantige dunkelbraune Fläche mit Text,
-//          deren schräge Kante sich beim Scrollen aufrichtet.
-// Aufbau Text: grosse Headline links; rechts ein Textblock mit eigener Überschrift
-// (Neon), kurzem Text und Buttons.
+// Unterseiten-Startbild im ruhigen Stil der Startseite (nach Whole Body Beauty):
+// Vollbild mit gedämpftem Kontrast und leisem Grau-Blau-Schleier, Überschrift mittig in
+// Grossbuchstaben, darunter ein Text und ein Button. Eine Überschrift, ein Text – keine Unterzeilen.
+// (Alte Props wie variant/sub/lines/glass bleiben erlaubt, werden aber nicht mehr verwendet.)
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-import Lines from './Lines.astro';
 
 interface Props {
   title: string[];
-  /** Überschrift des Textblocks */
   sub?: string;
   lead?: string;
   image: ImageMetadata;
   alt?: string;
   position?: string;
-  variant?: 'frame' | 'shape' | 'signet';
-  frame?: 'dark' | 'light';
-  /** shape: feiner Neon-Rahmen ('frame', zeichnet sich beim Laden), Neon-Ecken ('corners') oder keiner */
-  lines?: 'frame' | 'corners' | 'none';
-  /** shape: Form leicht transparent (Glas) */
+  variant?: string;
+  frame?: string;
+  lines?: string;
   glass?: boolean;
-  /** grössere Headline */
   xl?: boolean;
-  /** Hero bleibt stehen, der Inhalt darunter schiebt sich darüber, das Bild tritt zurück */
   curtain?: boolean;
 }
-const {
-  title,
-  sub,
-  lead,
-  image,
-  alt = '',
-  position = 'center',
-  variant = 'frame',
-  frame = 'dark',
-  lines = 'frame',
-  glass = false,
-  xl = false,
-  curtain = false,
-} = Astro.props;
-// Vier Eckwinkel im 100×100-Raster (ix/iy = Abstand zum Rand)
-const corners = (ix: number, iy: number, lx = 7, ly = 11) =>
-  `M${ix},${iy + ly} V${iy} H${ix + lx} M${100 - ix - lx},${iy} H${100 - ix} V${iy + ly} M${100 - ix},${100 - iy - ly} V${100 - iy} H${100 - ix - lx} M${ix + lx},${100 - iy} H${ix} V${100 - iy - ly}`;
+const { title, lead, image, alt = '', position = 'center' } = Astro.props;
 const hasSlot = Astro.slots.has('default');
 ---
 
-{
-  variant === 'frame' && (
-    <section class:list={['ph ph-frame', frame === 'light' ? 'bg-paper' : 'bg-dark']} data-ph-frame>
-      <div class="fr-img" data-ph-frame-img>
-        <Image src={image} alt={alt} widths={[900, 1400, 2000, 2400]} sizes="100vw" loading="eager" fetchpriority="high" style={`object-position:${position}`} />
-        <div class="fr-shade" />
-      </div>
-      <div class="fr-content">
-        <Lines as="h1" class="ph-title" lines={title} />
-        <div class="ph-block" data-anim="up">
-          {sub && <h2 class="ph-head">{sub}</h2>}
-          {lead && <p class="ph-lead">{lead}</p>}
-          {hasSlot && <div class="ph-actions"><slot /></div>}
+<section class="ph">
+  <div class="ph-img">
+    <Image src={image} alt={alt} widths={[1200, 1800, 2400]} sizes="100vw" loading="eager" fetchpriority="high" style={`object-position:${position}`} />
+  </div>
+  <div class="ph-text">
+    <h1 data-anim="up">{title.map((t, i) => (i ? [<br />, t] : t))}</h1>
+    {lead && <p data-anim="up">{lead}</p>}
+    {
+      hasSlot && (
+        <div class="ph-actions" data-anim="up">
+          <slot />
         </div>
-      </div>
-    </section>
-  )
-}
-
-{
-  variant === 'shape' && (
-    <section class:list={['ph ph-shape bg-dark', { 'is-xl': xl, 'is-curtain': curtain }]} data-ph-shape data-curtain={curtain ? '' : undefined}>
-      <div class="sh-img">
-        <Image src={image} alt={alt} widths={[900, 1400, 2000, 2400]} sizes="100vw" loading="eager" fetchpriority="high" style={`object-position:${position}`} data-ph-shape-img />
-        <div class="sh-shade" />
-        {lines === 'none' ? null : lines === 'frame' ? (
-          <svg class="sh-lines is-draw" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-            <polygon data-ph-shape-line points="5,7 95,7 95,93 5,93" />
-          </svg>
-        ) : (
-          <svg class="sh-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-            <path data-ph-corners data-from={corners(0.8, 1.2, 4, 6)} d={corners(4.5, 6.5)} />
-          </svg>
-        )}
-      </div>
-      <div class="sh-title">
-        <Lines as="h1" class="ph-title" lines={title} />
-      </div>
-      <div class:list={['sh-form', { 'is-glass': glass }]} data-ph-shape-form>
-        <div class="ph-block" data-anim="up">
-          {sub && <h2 class="ph-head">{sub}</h2>}
-          {lead && <p class="ph-lead">{lead}</p>}
-          {hasSlot && <div class="ph-actions"><slot /></div>}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-{
-  variant === 'signet' && (
-    <section class="ph ph-signet bg-dark" data-ph-signet>
-      <div class="sg-img">
-        <Image src={image} alt={alt} widths={[900, 1400, 2000, 2400]} sizes="100vw" loading="eager" fetchpriority="high" style={`object-position:${position}`} data-ph-shape-img />
-        <div class="sh-shade" />
-      </div>
-      <div class="sh-title">
-        <Lines as="h1" class="ph-title" lines={title} />
-      </div>
-      <div class="sg-signet" aria-hidden="true">
-        <svg class="sg-u" viewBox="0 0 200 104" data-sg-u>
-          <path d="M2 2 C2 60 44 102 100 102 C156 102 198 60 198 2" pathLength="1" />
-        </svg>
-      </div>
-      <div class="sg-arch" data-sg-arch>
-        <div class="ph-block" data-anim="up">
-          {sub && <h2 class="ph-head">{sub}</h2>}
-          {lead && <p class="ph-lead">{lead}</p>}
-          {hasSlot && <div class="ph-actions"><slot /></div>}
-        </div>
-      </div>
-    </section>
-  )
-}
+      )
+    }
+  </div>
+</section>
 
 <style>
-  /* ——— gemeinsam ——— */
-  .ph :global(.ph-title) {
-    font-size: clamp(2.3rem, 5.4vw, 6.4rem);
-    line-height: 0.92;
-    margin: 0;
-    color: var(--cream);
-    --head: currentColor;
-  }
-
-  .ph-head {
-    margin: 0 0 12px;
-    font-size: clamp(1.25rem, 1.6vw, 1.6rem);
-    line-height: 1.1;
-    color: var(--lime);
-  }
-
-  .ph-lead {
-    margin: 0 0 24px;
-    max-width: 34em;
-    font-size: clamp(1.05rem, 1.2vw, 1.15rem);
-    line-height: 1.55;
-    color: rgba(244, 246, 247, 0.9);
-  }
-
-  .ph-actions :global(.btn-ghost) {
-    --btn-fg: var(--cream);
-    --btn-border: rgba(244, 246, 247, 0.6);
-  }
-
-  .ph-actions :global(.btn-ghost:hover) {
-    --btn-bg: var(--lime);
-    --btn-fg: var(--espresso);
-    --btn-border: var(--lime);
-  }
-
-  .ph-actions :global(.btn-primary) {
-    --btn-border: var(--lime);
-  }
-
-  /* ——— frame ——— */
-  .ph-frame {
-    --fr-side: clamp(28px, 6vw, 112px);
+  .ph {
     position: relative;
-    height: calc(100svh - var(--header-h));
+    height: 82svh;
     min-height: 600px;
-    max-height: 1000px;
+    max-height: 960px;
+    overflow: hidden;
+    background: #6f7378;
   }
 
-  .fr-img {
+  .ph-img {
     position: absolute;
     inset: 0;
-    overflow: hidden;
-    clip-path: inset(0px var(--fr-side) var(--fr-side) 0px);
   }
 
-  .fr-img :global(img) {
+  .ph-img :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    filter: contrast(0.86) saturate(0.8);
   }
 
-  .fr-shade {
+  .ph-img::after {
+    content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(0deg, rgba(27, 30, 42, 0.78) 0%, rgba(27, 30, 42, 0.3) 42%, rgba(27, 30, 42, 0) 70%);
-  }
-
-  .fr-content {
-    position: absolute;
-    z-index: 2;
-    left: calc(var(--gutter) * 1.5);
-    right: calc(var(--fr-side) + var(--gutter));
-    bottom: calc(var(--fr-side) + var(--gutter));
-    display: grid;
-    gap: 28px 56px;
-    align-items: end;
-  }
-
-  .fr-content :global(.ph-title) {
-    min-width: 0;
-  }
-
-  @media (min-width: 1000px) {
-    .fr-content {
-      grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
-    }
-  }
-
-  @media (max-width: 999px) {
-    .ph-frame {
-      --fr-side: 18px;
-    }
-    .fr-shade {
-      background: linear-gradient(0deg, rgba(27, 30, 42, 0.86) 0%, rgba(27, 30, 42, 0.5) 55%, rgba(27, 30, 42, 0.1) 85%);
-    }
-    .fr-content {
-      left: var(--gutter);
-    }
-  }
-
-  /* ——— shape ——— */
-  .ph-shape {
-    position: relative;
-    height: calc(100svh - var(--header-h));
-    min-height: 620px;
-    max-height: 1000px;
-    overflow: hidden;
-  }
-
-  .sh-img {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-  }
-
-  .sh-img :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .sh-shade {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, rgba(27, 30, 42, 0.6) 0%, rgba(27, 30, 42, 0.15) 45%, rgba(27, 30, 42, 0) 65%);
-  }
-
-  .sh-lines {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 2;
-  }
-
-  .sh-lines polygon,
-  .sh-lines path {
-    fill: none;
-    stroke: var(--lime);
-    stroke-width: 1.4;
-    vector-effect: non-scaling-stroke;
-  }
-
-  /* Rahmen zeichnet sich beim Laden von links nach rechts */
-  :global(.motion) .sh-lines.is-draw {
-    animation: draw 2.2s 0.3s cubic-bezier(0.65, 0, 0.35, 1) both;
-  }
-
-  @keyframes draw {
-    from {
-      clip-path: inset(0 100% 0 0);
-    }
-    to {
-      clip-path: inset(0 0 0 0);
-    }
-  }
-
-  .sh-title {
-    position: absolute;
-    z-index: 3;
-    left: calc(5% + var(--gutter));
-    bottom: calc(7% + clamp(28px, 4vw, 56px));
-    max-width: 52vw;
-  }
-
-  .sh-form {
-    position: absolute;
-    z-index: 4;
-    right: 5%;
-    bottom: 7%;
-    width: clamp(340px, 32vw, 480px);
-    padding: clamp(80px, 9vw, 130px) clamp(28px, 3vw, 44px) clamp(32px, 3.4vw, 48px) clamp(56px, 6vw, 92px);
-    background: var(--espresso);
-    clip-path: polygon(22% 0%, 100% 0%, 100% 100%, 0% 100%);
-    will-change: clip-path, transform;
-  }
-
-  .sh-form.is-glass {
-    background: rgba(27, 30, 42, 0.62);
-    -webkit-backdrop-filter: blur(14px) saturate(1.1);
-    backdrop-filter: blur(14px) saturate(1.1);
-  }
-
-  .is-xl :global(.ph-title) {
-    font-size: clamp(2.8rem, 6.4vw, 7.6rem);
-    line-height: 0.9;
-  }
-
-  @media (min-width: 1000px) {
-    .is-xl .sh-title {
-      max-width: 60vw;
-    }
-  }
-
-  .is-xl .sh-shade {
     background:
-      linear-gradient(90deg, rgba(27, 30, 42, 0.7) 0%, rgba(27, 30, 42, 0.25) 45%, rgba(27, 30, 42, 0) 65%),
-      linear-gradient(0deg, rgba(27, 30, 42, 0.45) 0%, rgba(27, 30, 42, 0) 45%);
+      linear-gradient(180deg, rgba(17, 19, 28, 0.35) 0%, rgba(17, 19, 28, 0.15) 35%, rgba(17, 19, 28, 0.15) 65%, rgba(17, 19, 28, 0.38) 100%),
+      rgba(78, 92, 102, 0.34);
   }
 
-  /* Vorhang: Hero bleibt stehen, der nächste Abschnitt schiebt sich darüber */
-  @media (min-width: 1000px) {
-    .ph-shape.is-curtain {
-      position: sticky;
-      top: 0;
-      z-index: 0;
-    }
-    .ph-shape.is-curtain + :global(*) {
-      position: relative;
-      z-index: 1;
-      box-shadow: 0 -30px 60px -20px rgba(17, 19, 28, 0.45);
-    }
-  }
-
-  .sh-form :global(.btn-row) {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  @media (max-width: 999px) {
-    .ph-shape {
-      height: auto;
-      min-height: 0;
-      max-height: none;
-      display: flex;
-      flex-direction: column;
-    }
-    .sh-img {
-      position: relative;
-      inset: auto;
-      height: 100vw;
-      max-height: 560px;
-    }
-    .sh-shade {
-      background: linear-gradient(0deg, rgba(27, 30, 42, 0.75) 0%, rgba(27, 30, 42, 0) 60%);
-    }
-    .sh-title {
-      position: relative;
-      left: auto;
-      bottom: auto;
-      max-width: none;
-      margin: -8.5rem var(--gutter) 0;
-    }
-    .sh-form {
-      position: relative;
-      right: auto;
-      bottom: auto;
-      width: auto;
-      margin: 28px 0 0;
-      padding: 72px var(--gutter) 48px;
-      clip-path: polygon(0% 12%, 100% 0%, 100% 100%, 0% 100%);
-      background: var(--mocha);
-    }
-  }
-
-  /* ——— signet (Studio) ———
-     Abgeleitet vom „O“ im Eloure-Logo: oben ein Bogen, unten ein versetzter Bogen.
-     Der obere Bogen trägt den Text (Glas), der untere ist eine feine Neon-Linie,
-     die sich zeichnet und beim Scrollen unter den oberen Bogen gleitet. */
-  .ph-signet {
-    --sg-w: clamp(340px, 30vw, 460px);
-    position: relative;
-    height: calc(100svh - var(--header-h));
-    min-height: 640px;
-    max-height: 1000px;
-    overflow: hidden;
-  }
-
-  .sg-img {
+  .ph-text {
     position: absolute;
+    z-index: 2;
     inset: 0;
-    overflow: hidden;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    padding: 120px var(--gutter) 40px;
+    text-align: center;
+    color: #fff;
+    --head: #fff;
   }
 
-  .sg-img :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  .ph-text h1 {
+    margin: 0 0 0.4em;
+    font-size: clamp(2.6rem, 6vw, 6.6rem);
   }
 
-  .sg-arch {
-    position: absolute;
-    z-index: 4;
-    right: 7%;
-    bottom: 26%;
-    width: var(--sg-w);
-    padding: calc(var(--sg-w) * 0.42) clamp(28px, 3vw, 44px) clamp(30px, 3vw, 42px);
-    background: rgba(27, 30, 42, 0.66);
-    -webkit-backdrop-filter: blur(14px) saturate(1.1);
-    backdrop-filter: blur(14px) saturate(1.1);
-    border-radius: 999px 999px 0 0;
+  .ph-text p {
+    max-width: 36em;
+    margin: 0 0 40px;
+    font-weight: 350;
+    font-size: clamp(1.05rem, 1.25vw, 1.2rem);
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.92);
   }
 
-  .sg-arch :global(.btn-row) {
-    flex-direction: column;
-    align-items: stretch;
+  .ph-actions :global(.btn-row) {
+    display: flex;
+    justify-content: center;
   }
 
-  .sg-signet {
-    position: absolute;
-    z-index: 3;
-    right: calc(7% + var(--sg-w) * 0.5);
-    bottom: calc(26% - var(--sg-w) * 0.52);
-    width: var(--sg-w);
-    pointer-events: none;
+  /* im Startbild nur ein Button */
+  .ph-actions :global(.btn-ghost),
+  .ph-actions :global(.btn ~ .btn) {
+    display: none;
   }
 
-  .sg-u {
-    display: block;
-    width: 100%;
-    height: auto;
-    overflow: visible;
-  }
-
-  .sg-u path {
-    fill: none;
-    stroke: var(--lime);
-    stroke-width: 1.6;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 0;
-  }
-
-  :global(.motion) .sg-u path {
-    animation: sg-draw 2s 0.4s cubic-bezier(0.65, 0, 0.35, 1) both;
-  }
-
-  @keyframes sg-draw {
-    from {
-      stroke-dashoffset: 1;
-    }
-    to {
-      stroke-dashoffset: 0;
-    }
-  }
-
-  .ph-signet .sh-title {
-    bottom: 26%;
-  }
-
-  @media (max-width: 999px) {
-    .ph-signet {
-      --sg-w: calc(100vw - 2 * var(--gutter));
-      height: auto;
-      min-height: 0;
-      max-height: none;
-      display: flex;
-      flex-direction: column;
-    }
-    .sg-img {
-      position: relative;
-      inset: auto;
-      height: 100vw;
-      max-height: 560px;
-    }
-    .ph-signet .sh-title {
-      position: relative;
-      left: auto;
-      bottom: auto;
-      max-width: none;
-      margin: -8.5rem var(--gutter) 0;
-    }
-    .sg-arch {
-      position: relative;
-      right: auto;
-      bottom: auto;
-      width: auto;
-      margin: 28px var(--gutter) 0;
-      padding: 38vw 24px 36px;
-      background: var(--mocha);
-    }
-    .sg-signet {
-      position: relative;
-      right: auto;
-      bottom: auto;
-      width: 70%;
-      margin: 0 auto 40px var(--gutter);
+  @media (max-width: 640px) {
+    .ph-text h1 {
+      font-size: 8.4vw;
     }
   }
 </style>

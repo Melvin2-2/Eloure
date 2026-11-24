@@ -9,7 +9,7 @@ interface Props {
   ctaLabel: string;
   /** dark: transparent über dunklem Hero (helle Schrift); paper: transparent über hellem Hero (dunkle Schrift); light: feste dunkle Leiste */
   /** calm: Startseite – transparent über dem Video, Logo mittig, beim Scrollen hell */
-  tone?: 'dark' | 'light' | 'paper' | 'calm';
+  tone?: 'dark' | 'light' | 'paper' | 'calm' | 'calm-ink';
 }
 const { variant, ctaHref, ctaLabel, tone = 'dark' } = Astro.props;
 
@@ -24,11 +24,11 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---
 
 <header
-  class:list={['site-header', tone === 'calm' ? 'is-calm' : tone === 'dark' ? 'is-over' : tone === 'paper' ? 'is-paper' : 'is-solid']}
+  class:list={['site-header', tone === 'calm' || tone === 'calm-ink' ? 'is-calm' : tone === 'dark' ? 'is-over' : tone === 'paper' ? 'is-paper' : 'is-solid', tone === 'calm-ink' && 'is-calm-ink']}
   data-header
 >
   {
-    tone === 'calm' && variant === 'full' && (
+    (tone === 'calm' || tone === 'calm-ink') && variant === 'full' && (
       <div class="calm-bar">
         <nav class="calm-nav calm-l" aria-label="Hauptnavigation">
           {nav.slice(0, 3).map((n) => (
@@ -53,7 +53,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       </div>
     )
   }
-  {!(tone === 'calm' && variant === 'full') && (
+  {!((tone === 'calm' || tone === 'calm-ink') && variant === 'full') && (
   <div class="bar">
     <a href="/" class="logo" aria-label={`${site.name} – Startseite`}>
       <Logo />
@@ -200,6 +200,12 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     background: transparent;
   }
 
+  /* Seiten ohne Startbild: dunkle Schrift, Leiste im Fluss */
+  .is-calm-ink {
+    position: relative;
+    color: var(--ink);
+  }
+
   .is-calm:global(.is-scrolled) {
     background: transparent;
     -webkit-backdrop-filter: none;
@@ -302,6 +308,10 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     letter-spacing: 0.06em;
     font-size: 1.9rem;
     border-bottom-color: var(--line);
+  }
+
+  .is-calm .menu-btn {
+    display: none;
   }
 
   @media (max-width: 1080px) {

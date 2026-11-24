@@ -5,8 +5,10 @@
 // Farben: Creme · Salvia Soft · Salvia Blue · Deep Indigo, Buttons in warmem Sand (CTA).
 // Farbfolge: Bild → Creme → Creme → Salvia Soft → Creme → Salvia → Bilder → Ruhepunkt → Creme → Salvia Soft → Salvia → Indigo
 import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import Base from '../layouts/Base.astro';
 import StudioCalm from '../components/StudioCalm.astro';
+import UspLines from '../components/UspLines.astro';
 import { services, chf, type Group } from '../data/services';
 import { googleRating, pickReview } from '../data/reviews';
 
@@ -23,6 +25,9 @@ import imgGeraet from '../assets/shoot/geraet.jpg';
 import imgObjekte from '../assets/shoot/detail-objekte.jpg';
 import imgCaroSw from '../assets/shoot/caro-sw.jpg';
 import imgCaro from '../assets/shoot/caro-laechelt.jpg';
+import imgTuecher from '../assets/shoot/detail-tuecher.jpg';
+import imgGel from '../assets/shoot/gel-achsel.jpg';
+import imgBrille from '../assets/shoot/kundin-brille.jpg';
 
 const rating = googleRating.rating.toFixed(1).replace('.', ',');
 
@@ -33,17 +38,17 @@ const explore = [
   { img: imgBegleitung, title: 'Begleitung', alt: 'Caro im Gespräch mit einer Kundin', pos: 'center 30%' },
 ];
 
-// Preise: drei Spalten nebeneinander, breit mit Linien
-const priceCols: Record<Group, { title: string; ids: string[] }[]> = {
+// Bestseller im Raster nach Nerea: drei Zonen + ein Stimmungsbild
+const best: Record<Group, { id: string; img: ImageMetadata; pos: string }[]> = {
   frauen: [
-    { title: 'Oberkörper', ids: ['oberlippe', 'achseln', 'arme-1'] },
-    { title: 'Intim & Beine', ids: ['bikini-intim', 'unterschenkel', 'beine-komplett'] },
-    { title: 'Kombis', ids: ['kombi-intim-achseln', 'ganzkoerper'] },
+    { id: 'achseln', img: imgBehandlung, pos: 'center 35%' },
+    { id: 'bikini-intim', img: imgTuecher, pos: 'center 55%' },
+    { id: 'kombi-intim-achseln', img: imgGel, pos: 'center 50%' },
   ],
   maenner: [
-    { title: 'Oberkörper', ids: ['achseln-1', 'brust', 'ruecken-inkl-nacken'] },
-    { title: 'Arme & Beine', ids: ['arme-komplett', 'beine'] },
-    { title: 'Kombis', ids: ['brust-bauch', 'ganzkoerper-1'] },
+    { id: 'achseln-1', img: imgBrille, pos: 'center 30%' },
+    { id: 'ruecken-inkl-nacken', img: imgTuecher, pos: 'center 55%' },
+    { id: 'brust-bauch', img: imgGel, pos: 'center 50%' },
   ],
 };
 const svc = (id: string) => services.find((s) => s.id === id);
@@ -135,11 +140,11 @@ const signetOne = signetSvg('100 0 151 78');
     </div>
   </section>
 
-  <!-- 5 · Preise: drei Spalten, breit mit Linien -->
+  <!-- 5 · Bestseller (Raster nach Nerea) -->
   <section class="c-prices" id="zonen" data-c-prices>
     <div class="c-prices-head c-wrap">
-      <h2 class="c-ttl reveal">Preise</h2>
-      <div class="c-tabs reveal" role="tablist" aria-label="Preise für">
+      <h2 class="c-ttl reveal">Bestseller</h2>
+      <div class="c-tabs reveal" role="tablist" aria-label="Bestseller für">
         {
           groups.map((g, i) => (
             <button type="button" role="tab" aria-selected={String(i === 0)} data-c-tab={g.id}>
@@ -151,28 +156,31 @@ const signetOne = signetSvg('100 0 151 78');
     </div>
     {
       groups.map((g, gi) => (
-        <div class="c-pcols" data-c-list={g.id} hidden={gi !== 0}>
-          {priceCols[g.id].map((col) => (
-            <div class="c-pcol">
-              <h3>{col.title}</h3>
-              <ul>
-                {col.ids.map((id) => {
-                  const s = svc(id);
-                  return (
-                    s && (
-                      <li>
-                        <a href={`/termin?behandlung=${s.id}&gruppe=${g.id}`}>
-                          <span>{s.name}</span>
-                          <span>{chf(s.price)}</span>
-                        </a>
-                      </li>
-                    )
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
-        </div>
+        <ul class="c-best" data-c-list={g.id} hidden={gi !== 0}>
+          {best[g.id].map((b, i) => {
+            const s = svc(b.id);
+            return (
+              <>
+                {i === 2 && (
+                  <li class="c-best-mood" aria-hidden="true">
+                    <Image src={imgGeraet} alt="" widths={[500, 800]} sizes="(min-width: 900px) 25vw, 50vw" />
+                  </li>
+                )}
+                {s && (
+                  <li class="c-best-item">
+                    <a href={`/termin?behandlung=${s.id}&gruppe=${g.id}`}>
+                      <span class="c-best-img">
+                        <Image src={b.img} alt="" widths={[400, 700]} sizes="(min-width: 900px) 18vw, 40vw" style={`object-position:${b.pos}`} />
+                      </span>
+                      <span class="c-best-name">{s.name}</span>
+                      <span class="c-best-price">{chf(s.price)}</span>
+                    </a>
+                  </li>
+                )}
+              </>
+            );
+          })}
+        </ul>
       ))
     }
     <div class="c-prices-all c-wrap reveal">
@@ -223,6 +231,9 @@ const signetOne = signetSvg('100 0 151 78');
       </figure>
     </div>
   </section>
+
+  <!-- USPs als Linienliste -->
+  <div class="c-usp-wrap"><UspLines /></div>
 
   <!-- 10 · Kundenstimmen -->
   <section class="c-voices" data-c-voices aria-label="Kundenstimmen">
@@ -630,82 +641,78 @@ const signetOne = signetSvg('100 0 151 78');
     border-color: var(--ink);
   }
 
-  .c-pcols {
+  .c-best {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: grid;
+    grid-template-columns: repeat(2, 1fr);
     border-top: 1px solid var(--line-strong);
     border-bottom: 1px solid var(--line-strong);
   }
 
-  .c-pcols[hidden] {
+  .c-best[hidden] {
     display: none;
   }
 
-  .c-pcol {
-    display: flex;
-    flex-direction: column;
-    border-bottom: 1px solid var(--line);
+  .c-best > li {
+    border-right: 1px solid var(--line-strong);
   }
 
-  .c-pcol h3 {
-    margin: 0;
-    padding: clamp(36px, 4vw, 56px) clamp(24px, 3vw, 48px) clamp(24px, 3vw, 36px);
-    font-family: var(--sans);
-    font-weight: 300;
-    font-size: clamp(1.4rem, 1.9vw, 1.9rem);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    text-align: center;
-    color: var(--ink);
-  }
-
-  .c-pcol ul {
-    flex: 1;
-    list-style: none;
-    margin: 0;
-    padding: 0 clamp(28px, 4vw, 64px) clamp(40px, 4vw, 64px);
-  }
-
-  .c-pcol li + li {
-    border-top: 1px solid var(--line);
-  }
-
-  .c-pcol li a {
-    display: flex;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 20px 0;
+  .c-best-item a {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    height: 100%;
+    padding: clamp(28px, 4vw, 64px) clamp(20px, 3vw, 48px) clamp(28px, 3vw, 44px);
     text-decoration: none;
     color: var(--ink);
-    font-weight: 350;
-    font-size: clamp(1.02rem, 1.15vw, 1.15rem);
-    transition: color 0.3s ease;
+    text-align: center;
   }
 
-  .c-pcol li a span:last-child {
-    white-space: nowrap;
+  .c-best-img {
+    display: block;
+    width: 72%;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    margin-bottom: clamp(20px, 2.4vw, 32px);
+  }
+
+  .c-best-img :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s var(--ease);
+  }
+
+  .c-best-item a:hover :global(img) {
+    transform: scale(1.04);
+  }
+
+  .c-best-name {
+    font-size: 0.86rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .c-best-price {
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
     color: var(--ink-2);
   }
 
-  .c-pcol li a:hover {
-    color: var(--cta);
+  .c-best-mood {
+    position: relative;
+    overflow: hidden;
+    min-height: 320px;
   }
 
-  .c-pcol-bar {
-    display: grid;
-    place-items: center;
-    min-height: 72px;
-    background: var(--cta);
-    color: var(--indigo);
-    font-size: 0.86rem;
-    font-weight: 450;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: background 0.4s ease;
-  }
-
-  .c-pcol-bar:hover {
-    background: var(--cta-hover);
+  .c-best-mood :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .c-prices-all {
@@ -817,6 +824,9 @@ const signetOne = signetSvg('100 0 151 78');
   /* ——— 10 · Kundenstimmen ——— */
   .c-voices {
     padding-block: clamp(140px, 14vw, 210px);
+  }
+
+  .c-usp-wrap {
     background: var(--veil);
   }
 
@@ -959,20 +969,11 @@ const signetOne = signetSvg('100 0 151 78');
     .c-explore-row {
       grid-template-columns: repeat(3, 1fr);
     }
-    .c-pcols {
-      grid-template-columns: repeat(3, 1fr);
+    .c-best {
+      grid-template-columns: repeat(4, 1fr);
     }
-    .c-pcol {
-      border-bottom: 0;
-    }
-    .c-pcol + .c-pcol {
-      border-left: 1px solid var(--line-strong);
-    }
-    .c-pcol-bar {
-      border-top: 0;
-    }
-    .c-pcol + .c-pcol .c-pcol-bar {
-      box-shadow: inset 1px 0 0 rgba(43, 47, 64, 0.18);
+    .c-best > li:nth-child(4n) {
+      border-right: 0;
     }
     .c-big {
       grid-template-columns: 1.15fr 0.85fr;
@@ -987,6 +988,12 @@ const signetOne = signetSvg('100 0 151 78');
   }
 
   @media (max-width: 899px) {
+    .c-best > li:nth-child(2n) {
+      border-right: 0;
+    }
+    .c-best > li:nth-child(-n + 2) {
+      border-bottom: 1px solid var(--line-strong);
+    }
     .c-hero-title {
       font-size: 8vw;
       letter-spacing: 0.03em;

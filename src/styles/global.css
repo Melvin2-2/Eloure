@@ -269,7 +269,7 @@ b {
 
 /* Ruhige Gestaltung (Startseite): warmes Off-White */
 body.theme-calm {
-  /* Farbwelt nach Palette „Frost · Veil · Shade“ */
+  /* Farbwelt nach Palette „Frost · Veil · Shade“ – gilt für alle Seiten */
   --bg: #ecebe6;
   --paper: #ecebe6;
   --frost: #a4b3ba;
@@ -282,10 +282,84 @@ body.theme-calm {
   --head: var(--ink);
   --line: rgba(69, 71, 75, 0.16);
   --line-strong: rgba(69, 71, 75, 0.32);
+  --line-light: rgba(242, 241, 237, 0.22);
   /* Call-to-Action: kräftiges Blau */
   --cta: #3e5c7c;
   --cta-hover: #314b67;
+
+  /* bestehende Namen auf die neue Palette legen */
+  --indigo: #45474b;
+  --indigo-deep: #3a3c40;
+  --indigo-soft: #5c5f63;
+  --espresso: #505050;
+  --cocoa: #5c5f63;
+  --mocha: #5c5f63;
+  --deep: #505050;
+  --accent: var(--cta);
+  --accent-hover: var(--cta-hover);
+  --salvia: var(--frost);
+  --salvia-soft: var(--veil);
+  --salvia-deep: #8d9ea6;
+  --salvia-ink: var(--cta);
+  --lime: var(--frost);
+  --lime-deep: #8d9ea6;
+  --sand: var(--veil);
+  --linen: var(--veil);
+  --mist: var(--veil);
+  --gray: var(--frost);
+  --gray-soft: var(--veil);
+  --stone: var(--frost);
+  --cream: #f2f1ed;
+  --taupe: #8a8d90;
+
+  /* Typografie: fein, Grossbuchstaben, keine Display-Schrift */
+  --serif: var(--sans);
+  --display-weight: 250;
+  --display-stretch: 100%;
+  --display-ls: 0.01em;
   background: var(--bg);
+}
+
+/* Buttons: kräftiges Blau, weisse Schrift, eckig */
+body.theme-calm .btn {
+  --btn-bg: var(--cta);
+  --btn-fg: #fff;
+  --btn-border: var(--cta);
+  font-weight: 450;
+  letter-spacing: 0.2em;
+}
+
+body.theme-calm .btn-primary:hover,
+body.theme-calm .btn-lime:hover {
+  --btn-bg: var(--cta-hover);
+  --btn-border: var(--cta-hover);
+}
+
+body.theme-calm .btn-ghost {
+  --btn-bg: transparent;
+  --btn-fg: currentColor;
+  --btn-border: currentColor;
+}
+
+body.theme-calm .btn .arrow {
+  display: none;
+}
+
+/* Flächen */
+body.theme-calm .bg-lime,
+body.theme-calm .bg-salvia {
+  background: var(--frost);
+  color: #33363a;
+  --ink: #33363a;
+  --ink-body: #3a3d41;
+  --ink-2: #44474b;
+  --muted: #44474b;
+  --head: #33363a;
+}
+
+body.theme-calm h3 {
+  font-weight: 400;
+  letter-spacing: 0.04em;
 }
 
 .bg-mist {

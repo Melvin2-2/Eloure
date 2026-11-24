@@ -379,6 +379,27 @@ const zoneCount = (g: Group) => byRegion(g).reduce((n, [, list]) => n + list.len
     color: var(--lime);
     border-color: var(--espresso);
   }
+
+  /* ruhiger Stil: Linien statt Karten, keine Badges */
+  .region,
+  .first {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    border-top: 1px solid var(--line-strong) !important;
+    color: var(--ink) !important;
+    --head: var(--ink);
+  }
+  .tag {
+    display: none !important;
+  }
+  .first,
+  .first :global(*) {
+    color: var(--ink) !important;
+  }
+  .first .muted {
+    color: var(--ink-2) !important;
+  }
 </style>
 
 <script>

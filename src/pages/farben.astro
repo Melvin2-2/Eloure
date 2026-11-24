@@ -1,0 +1,364 @@
+---
+// Farbregler: Farbtöne der Website live anpassen (nur zum Ausprobieren, nicht verlinkt).
+// Modus „Farbreihe“: Regler bleiben nah an der jeweiligen Palettenfarbe.
+// Modus „Alle Farben“: Farbton, Sättigung und Helligkeit frei.
+const tokens = [
+  { id: 'bg', label: 'Hintergrund', hex: '#ecebe6' },
+  { id: 'veil', label: 'Veil', hex: '#dfe2e1' },
+  { id: 'frost', label: 'Frost', hex: '#a4b3ba' },
+  { id: 'shade', label: 'Shade · Schrift', hex: '#505050' },
+  { id: 'cta', label: 'Buttons', hex: '#3e5c7c' },
+];
+const pages = [
+  { href: '', label: 'Startseite' },
+  { href: 'preise/', label: 'Preise' },
+  { href: 'laserhaarentfernung/', label: 'Behandlung' },
+  { href: 'studio/', label: 'Studio & Team' },
+  { href: 'faq/', label: 'FAQ' },
+  { href: 'kontakt/', label: 'Kontakt' },
+];
+---
+
+<!doctype html>
+<html lang="de-CH">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Farbregler | Eloure</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <aside class="panel">
+      <h1>Farben</h1>
+
+      <div class="mode" role="radiogroup" aria-label="Spielraum">
+        <label><input type="radio" name="mode" value="row" checked /> Farbreihe</label>
+        <label><input type="radio" name="mode" value="all" /> Alle Farben</label>
+      </div>
+
+      <label class="page-pick">
+        Seite
+        <select data-page>
+          {pages.map((p) => <option value={p.href}>{p.label}</option>)}
+        </select>
+      </label>
+
+      {
+        tokens.map((t) => (
+          <fieldset class="tok" data-token={t.id} data-base={t.hex}>
+            <legend>
+              <span class="sw" data-sw />
+              {t.label}
+              <code data-hex>{t.hex}</code>
+            </legend>
+            <label>
+              Farbton <input type="range" data-ch="h" />
+            </label>
+            <label>
+              Sättigung <input type="range" data-ch="s" />
+            </label>
+            <label>
+              Helligkeit <input type="range" data-ch="l" />
+            </label>
+            <input class="picker" type="color" value={t.hex} data-picker aria-label={`${t.label} frei wählen`} />
+          </fieldset>
+        ))
+      }
+
+      <div class="actions">
+        <button type="button" data-copy>Werte kopieren</button>
+        <button type="button" data-reset>Zurücksetzen</button>
+      </div>
+      <textarea readonly data-out rows="7" aria-label="Aktuelle Farbwerte"></textarea>
+    </aside>
+
+    <main class="preview">
+      <iframe data-frame title="Vorschau"></iframe>
+    </main>
+
+    <style is:global>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        height: 100vh;
+        font: 14px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif;
+        color: #333;
+        background: #f4f4f2;
+      }
+      .panel {
+        overflow-y: auto;
+        padding: 24px 22px 32px;
+        border-right: 1px solid #ddd;
+        background: #fff;
+      }
+      h1 {
+        margin: 0 0 18px;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+      .mode {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 14px;
+      }
+      .page-pick {
+        display: grid;
+        gap: 4px;
+        margin-bottom: 18px;
+      }
+      select,
+      button,
+      textarea {
+        font: inherit;
+      }
+      select {
+        padding: 6px 8px;
+      }
+      .tok {
+        margin: 0 0 14px;
+        padding: 12px 12px 10px;
+        border: 1px solid #e3e3e3;
+      }
+      legend {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 4px;
+        font-weight: 600;
+      }
+      legend code {
+        margin-left: auto;
+        font-weight: 400;
+        color: #777;
+      }
+      .sw {
+        width: 16px;
+        height: 16px;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+      }
+      .tok label {
+        display: grid;
+        grid-template-columns: 82px 1fr;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: #666;
+      }
+      input[type='range'] {
+        width: 100%;
+      }
+      .picker {
+        display: none;
+        width: 100%;
+        height: 30px;
+        margin-top: 6px;
+        border: 0;
+        padding: 0;
+      }
+      body.mode-all .picker {
+        display: block;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        margin: 6px 0 10px;
+      }
+      button {
+        padding: 8px 12px;
+        border: 1px solid #3e5c7c;
+        background: #3e5c7c;
+        color: #fff;
+        cursor: pointer;
+      }
+      button[data-reset] {
+        background: #fff;
+        color: #3e5c7c;
+      }
+      textarea {
+        width: 100%;
+        font-family: ui-monospace, monospace;
+        font-size: 12px;
+      }
+      .preview iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        display: block;
+      }
+      @media (max-width: 800px) {
+        body {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto 70vh;
+          height: auto;
+        }
+      }
+    </style>
+
+    <script>
+      type HSL = { h: number; s: number; l: number };
+      const hexToHsl = (hex: string): HSL => {
+        const r = parseInt(hex.slice(1, 3), 16) / 255;
+        const g = parseInt(hex.slice(3, 5), 16) / 255;
+        const b = parseInt(hex.slice(5, 7), 16) / 255;
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        const l = (max + min) / 2;
+        let h = 0;
+        let s = 0;
+        if (max !== min) {
+          const d = max - min;
+          s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+          h = max === r ? (g - b) / d + (g < b ? 6 : 0) : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+          h *= 60;
+        }
+        return { h: Math.round(h), s: Math.round(s * 100), l: Math.round(l * 100) };
+      };
+      const hslToHex = ({ h, s, l }: HSL) => {
+        s /= 100;
+        l /= 100;
+        const k = (n: number) => (n + h / 30) % 12;
+        const a = s * Math.min(l, 1 - l);
+        const f = (n: number) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+        return '#' + [f(0), f(8), f(4)].map((x) => Math.round(x * 255).toString(16).padStart(2, '0')).join('');
+      };
+      const shift = (hex: string, dl: number) => {
+        const c = hexToHsl(hex);
+        return hslToHex({ ...c, l: Math.max(0, Math.min(100, c.l + dl)) });
+      };
+
+      const frame = document.querySelector<HTMLIFrameElement>('[data-frame]')!;
+      const out = document.querySelector<HTMLTextAreaElement>('[data-out]')!;
+      const sets = [...document.querySelectorAll<HTMLFieldSetElement>('[data-token]')];
+      const base = location.pathname.replace(/farben\/?(index\.html)?$/, '');
+      const KEY = 'eloure-farben';
+      let saved: Record<string, string> = {};
+      try {
+        saved = JSON.parse(localStorage.getItem(KEY) || '{}');
+      } catch {}
+
+      const current = () => Object.fromEntries(sets.map((f) => [f.dataset.token!, f.dataset.value || f.dataset.base!]));
+
+      // Werte → CSS-Variablen der Website (inkl. abgeleiteter Töne)
+      const vars = (c: Record<string, string>) => ({
+        '--bg': c.bg,
+        '--paper': c.bg,
+        '--veil': c.veil,
+        '--sand': c.veil,
+        '--mist': c.veil,
+        '--salvia-soft': c.veil,
+        '--frost': c.frost,
+        '--salvia': c.frost,
+        '--lime': c.frost,
+        '--salvia-deep': shift(c.frost, -8),
+        '--shade': c.shade,
+        '--ink': shift(c.shade, -4),
+        '--ink-body': c.shade,
+        '--ink-2': shift(c.shade, 8),
+        '--muted': shift(c.shade, 14),
+        '--indigo': shift(c.shade, -4),
+        '--espresso': c.shade,
+        '--deep': c.shade,
+        '--cta': c.cta,
+        '--cta-hover': shift(c.cta, -7),
+        '--salvia-ink': c.cta,
+      });
+
+      const apply = () => {
+        const c = current();
+        const doc = frame.contentDocument;
+        if (doc?.body) for (const [k, v] of Object.entries(vars(c))) doc.body.style.setProperty(k, v);
+        out.value = Object.entries(c)
+          .map(([k, v]) => `--${k}: ${v};`)
+          .join('\n');
+        try {
+          localStorage.setItem(KEY, JSON.stringify(c));
+        } catch {}
+      };
+
+      const mode = () => (document.querySelector<HTMLInputElement>('input[name=mode]:checked')!.value as 'row' | 'all');
+
+      const setup = (f: HTMLFieldSetElement, keepValue = true) => {
+        const b = hexToHsl(f.dataset.base!);
+        const v = hexToHsl(keepValue && f.dataset.value ? f.dataset.value : f.dataset.base!);
+        const row = mode() === 'row';
+        const range: Record<'h' | 's' | 'l', [number, number]> = row
+          ? { h: [b.h - 18, b.h + 18], s: [Math.max(0, b.s - 18), Math.min(100, b.s + 18)], l: [Math.max(0, b.l - 16), Math.min(100, b.l + 16)] }
+          : { h: [0, 360], s: [0, 100], l: [0, 100] };
+        f.querySelectorAll<HTMLInputElement>('input[type=range]').forEach((r) => {
+          const ch = r.dataset.ch as 'h' | 's' | 'l';
+          r.min = String(range[ch][0]);
+          r.max = String(range[ch][1]);
+          r.value = String(Math.min(range[ch][1], Math.max(range[ch][0], v[ch])));
+        });
+        // exakten Wert übernehmen (keine Rundungsabweichung beim Laden)
+        update(f, keepValue && f.dataset.value ? f.dataset.value : f.dataset.base!);
+      };
+
+      const update = (f: HTMLFieldSetElement, hex?: string) => {
+        const get = (ch: string) => Number(f.querySelector<HTMLInputElement>(`[data-ch=${ch}]`)!.value);
+        const h = ((get('h') % 360) + 360) % 360;
+        const value = hex ?? hslToHex({ h, s: get('s'), l: get('l') });
+        f.dataset.value = value;
+        f.querySelector<HTMLElement>('[data-sw]')!.style.background = value;
+        f.querySelector<HTMLElement>('[data-hex]')!.textContent = value;
+        f.querySelector<HTMLInputElement>('[data-picker]')!.value = value;
+      };
+
+      sets.forEach((f) => {
+        if (saved[f.dataset.token!]) f.dataset.value = saved[f.dataset.token!];
+        f.querySelectorAll<HTMLInputElement>('input[type=range]').forEach((r) =>
+          r.addEventListener('input', () => {
+            update(f);
+            apply();
+          }),
+        );
+        f.querySelector<HTMLInputElement>('[data-picker]')!.addEventListener('input', (e) => {
+          const hex = (e.target as HTMLInputElement).value;
+          f.dataset.value = hex;
+          setup(f);
+          update(f, hex);
+          apply();
+        });
+        setup(f);
+      });
+
+      document.querySelectorAll<HTMLInputElement>('input[name=mode]').forEach((r) =>
+        r.addEventListener('change', () => {
+          document.body.classList.toggle('mode-all', mode() === 'all');
+          sets.forEach((f) => setup(f));
+          apply();
+        }),
+      );
+
+      document.querySelector('[data-reset]')!.addEventListener('click', () => {
+        sets.forEach((f) => {
+          delete f.dataset.value;
+          setup(f, false);
+        });
+        apply();
+      });
+
+      document.querySelector('[data-copy]')!.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(out.value);
+        } catch {
+          out.select();
+          document.execCommand('copy');
+        }
+      });
+
+      const pick = document.querySelector<HTMLSelectElement>('[data-page]')!;
+      const load = () => (frame.src = base + pick.value);
+      frame.addEventListener('load', apply);
+      pick.addEventListener('change', load);
+      load();
+    </script>
+  </body>
+</html>

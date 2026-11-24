@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 // Seiten, die nicht in die Sitemap gehören (Paid-Ads-Landingpage, Buchungsstrecke).
-const HIDDEN = ['/neukundenangebot', '/termin'];
+const HIDDEN = ['/farben', '/neukundenangebot', '/termin'];
 
 // RELATIVE=1 erzeugt eine Version mit relativen Pfaden, die unter jedem Unterpfad läuft
 // (z. B. GitHub Pages: https://melvin2-2.github.io/Eloure/).

@@ -35,9 +35,9 @@ const {
   ctaHref = '/termin',
   ctaLabel = 'Termin buchen',
   mobileNote,
-  headerTone = 'light',
-  theme,
-  announce = { text: 'Laserhaarentfernung in Amriswil · Bezahlt wird erst vor Ort', href: '/termin', cta: 'Termin buchen' },
+  headerTone = 'calm',
+  theme = 'calm',
+  announce = false,
   schema = [],
   ogImage = '/og-image.jpg',
 } = Astro.props;
@@ -106,7 +106,7 @@ const localBusiness = {
   <body data-variant={variant} class:list={[theme && `theme-${theme}`]}>
     <a class="skip-link" href="#main">Zum Inhalt springen</a>
     {announce && <AnnounceBar {...announce} />}
-    <Header variant={variant} ctaHref={ctaHref} ctaLabel={ctaLabel} tone={headerTone} />
+    <Header variant={variant} ctaHref={ctaHref} ctaLabel={ctaLabel} tone={headerTone === 'calm' || headerTone === 'dark' ? 'calm' : 'calm-ink'} />
     <main id="main">
       <slot />
     </main>

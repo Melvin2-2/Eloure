@@ -1,0 +1,15 @@
+// Eloure-Signet (die Bögen „OU“ aus der Wortmarke) als CSS-Hintergrund.
+const paths = [
+  'M165.63 2.986c10.504 0 25.65 8.292 25.871 35.711h9.398C200.899 6.634 178.787 0 165.519 0c-13.156 0-35.27 6.634-35.27 38.698h9.397c.222-27.42 15.37-35.712 25.984-35.712zM220.729 0h9.397v38.698h-9.397zM136.703 77.394c13.269 0 35.38-6.632 35.38-38.696h-9.397c-.221 27.419-15.367 35.712-25.872 35.712-10.613 0-25.762-8.293-25.982-35.712h-9.398c-.001 32.064 22.113 38.696 35.269 38.696z',
+  'M224.118 77.394c22.887 0 26.093-23.771 26.203-36.816v-1.88h-2.984v1.88c-.221 27.308-12.716 33.833-23.219 33.833-10.505 0-22.998-6.524-23.219-33.833v-2.383l-9.398.503v1.991c0 31.841 19.459 36.705 32.617 36.705z',
+];
+
+const svg = (viewBox: string, fill = '#45474b') =>
+  `url("data:image/svg+xml,${encodeURIComponent(
+    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='${viewBox}'><g fill='${fill}'>${paths.map((d) => `<path d='${d}'/>`).join('')}</g></svg>`,
+  )}")`;
+
+/** eng gesetzte Reihe (für die Signet-Linie) */
+export const signetRow = svg('96 -2 160 82');
+/** einzelnes Signet */
+export const signetOne = svg('100 0 151 78');

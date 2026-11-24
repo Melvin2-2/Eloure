@@ -1,186 +1,57 @@
 ---
-import { Image } from 'astro:assets';
-import Icon from './Icon.astro';
-import { site } from '../data/site';
-import img from '../assets/shoot/liege-licht.jpg';
+// Abschluss im ruhigen Stil: Frost-Fläche, grosses transparentes Signet, eine Überschrift, ein Button.
+import { signetOne } from '../lib/signet';
 
 interface Props {
   title?: string;
   code?: string;
 }
-const { title = 'Bereit für dein erstes Mal ohne Rasierer?', code } = Astro.props;
-
+const { title = 'Bereit für glatte Haut?', code } = Astro.props;
 const q = code ? `?code=${code}` : '';
 ---
 
-<section class="cta-final bg-ink">
-  <div class="bg">
-    <Image src={img} alt="" widths={[900, 1400, 2000, 2400]} sizes="100vw" data-parallax="14" />
-  </div>
-  <div class="wrap inner on-dark">
+<section class="cta-end" style={`--signet:${signetOne}`}>
+  <div class="cta-signet" aria-hidden="true"></div>
+  <div class="cta-inner">
     <h2 class="reveal" set:html={title} />
-    <p class="lead reveal">Such dir aus, was sich für dich gerade richtig anfühlt. Beides ist bei uns willkommen.</p>
-
-    <div class="paths">
-      <a class="path main reveal" href={`/termin${q}`}>
-        <span class="label">Ich weiss, was ich möchte</span>
-        <span class="title">Behandlung buchen</span>
-        <span class="sub">Inklusive persönlicher Beratung vor der ersten Session.</span>
-        <span class="go"><Icon name="arrow" size={20} /></span>
-      </a>
-      <a class="path reveal" style="--d:90ms" href={`/termin?behandlung=beratungsgespraech${code ? `&code=${code}` : ''}`}>
-        <span class="label">Ich bin noch unsicher</span>
-        <span class="title">Kostenlos beraten lassen</span>
-        <span class="sub">25 Minuten, unverbindlich, alle Fragen erlaubt.</span>
-        <span class="go"><Icon name="arrow" size={20} /></span>
-      </a>
-    </div>
-
-    <div class="contact reveal">
-      <a href={site.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" size={18} /> WhatsApp</a>
-      <a href={site.phoneHref}><Icon name="phone" size={18} /> {site.phone}</a>
-      <span><Icon name="clock" size={18} /> Mo–Fr 10–20 Uhr · Sa 10–16 Uhr</span>
-    </div>
+    <a class="btn btn-primary reveal" href={`/termin${q}`}>Termin buchen</a>
   </div>
 </section>
 
 <style>
-  .cta-final {
+  .cta-end {
     position: relative;
     overflow: hidden;
-    padding-block: clamp(96px, 13vw, 180px);
+    padding-block: clamp(150px, 15vw, 220px);
+    background: var(--frost, var(--salvia));
+    --ink: #33363a;
+    --head: #33363a;
   }
 
-  .bg {
+  .cta-signet {
     position: absolute;
-    inset: -8% 0;
-    opacity: 0.55;
-  }
-
-  .bg :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 40%;
-  }
-
-  .bg::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.1), color-mix(in srgb, var(--deep) 85%, transparent));
-  }
-
-  .inner {
-    position: relative;
-  }
-
-  h2 {
-    font-size: clamp(1.95rem, 5.6vw, 5.4rem);
-    max-width: 11em;
-  }
-
-  .paths {
-    display: grid;
-    gap: 14px;
-    margin: 44px 0 36px;
-    max-width: 980px;
-  }
-
-  @media (min-width: 720px) {
-    .paths {
-      grid-template-columns: 1.1fr 0.9fr;
-    }
-  }
-
-  .path {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 28px 84px 28px 28px;
-    background: rgba(250, 251, 252, 0.08);
-    border: 1px solid rgba(250, 251, 252, 0.22);
-    backdrop-filter: blur(8px);
-    text-decoration: none;
-    transition:
-      transform 0.3s var(--ease),
-      background 0.3s;
-  }
-
-  .path:hover {
-    transform: translateY(-3px);
-    background: rgba(250, 251, 252, 0.14);
-  }
-
-  .path.main {
-    background: var(--lime);
-    color: var(--espresso);
-    border-color: var(--lime);
-  }
-
-  .label {
-    font-size: 0.9rem;
-    opacity: 0.7;
-  }
-
-  .title {
-    font-family: var(--serif);
-    font-weight: var(--display-weight);
-    font-stretch: var(--display-stretch);
-    text-transform: uppercase;
-    font-size: clamp(1.9rem, 2.8vw, 2.5rem);
-    letter-spacing: var(--display-ls);
-    line-height: 1.05;
-  }
-
-  .sub {
-    font-size: 0.95rem;
-    opacity: 0.8;
-  }
-
-  .go {
-    position: absolute;
-    right: 24px;
+    left: 50%;
     top: 50%;
-    transform: translateY(-50%);
-    display: grid;
-    place-items: center;
-    width: 48px;
-    height: 48px;
-    background: var(--espresso);
-    color: var(--lime);
-    transition: transform 0.3s var(--ease);
+    width: min(64vw, 820px);
+    aspect-ratio: 151 / 78;
+    transform: translate(-50%, -50%);
+    background-image: var(--signet);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    opacity: 0.08;
   }
 
-  .path:hover .go {
-    transform: translateY(-50%) translateX(4px);
+  .cta-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+    text-align: center;
   }
 
-  .path:not(.main) .go {
-    background: rgba(250, 251, 252, 0.16);
-    color: var(--paper);
-    --head: currentColor;
-  }
-
-  .contact {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px 28px;
-    color: rgba(250, 251, 252, 0.8);
-  }
-
-  .contact a,
-  .contact span {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-  }
-
-  .contact a:hover {
-    color: var(--paper);
-    --head: currentColor;
-    text-decoration: underline;
+  .cta-inner h2 {
+    margin: 0 0 44px;
   }
 </style>

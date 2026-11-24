@@ -1,0 +1,176 @@
+---
+// USPs als Linienliste (nach Vorlage „Fun Facts“): links Überschrift, Mitte zwei versetzte
+// Bilder, rechts feine Linien mit „+“ zum Aufklappen.
+import { Image } from 'astro:assets';
+import { googleRating } from '../data/reviews';
+import imgA from '../assets/shoot/caro-sw.jpg';
+import imgB from '../assets/shoot/detail-relief.jpg';
+
+interface Props {
+  title?: string;
+}
+const { title = 'Darauf kannst du dich verlassen.' } = Astro.props;
+const rating = googleRating.rating.toFixed(1).replace('.', ',');
+
+const items = [
+  { title: `${rating} Sterne auf Google`, text: `Aus ${googleRating.count} Bewertungen.` },
+  { title: 'Medizinischer Diodenlaser', text: 'Präzise und schonend.' },
+  { title: 'Geprüfte Sachkunde', text: 'Nach Schweizer Verordnung V-NISSG.' },
+  { title: 'Bezahlt wird vor Ort', text: 'Keine Vorauszahlung.' },
+  { title: 'Kostenlos absagen', text: 'Bis 24 Stunden vorher.' },
+];
+---
+
+<section class="usp">
+  <div class="usp-grid">
+    <h2 class="usp-title reveal">{title}</h2>
+    <div class="usp-media" aria-hidden="true">
+      <figure class="usp-a" data-anim="soft">
+        <Image src={imgA} alt="" widths={[300, 500]} sizes="12vw" />
+      </figure>
+      <figure class="usp-b" data-anim="soft">
+        <Image src={imgB} alt="" widths={[500, 800]} sizes="22vw" />
+      </figure>
+    </div>
+    <ul class="usp-list reveal">
+      {
+        items.map((it) => (
+          <li>
+            <details>
+              <summary>
+                {it.title}
+                <span class="plus" aria-hidden="true" />
+              </summary>
+              <p>{it.text}</p>
+            </details>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .usp {
+    padding-block: clamp(140px, 14vw, 210px);
+  }
+
+  .usp-grid {
+    display: grid;
+    gap: 56px;
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .usp-title {
+    margin: 0;
+    font-size: clamp(2.6rem, 4.6vw, 5rem);
+  }
+
+  .usp-media {
+    position: relative;
+    min-height: 340px;
+  }
+
+  .usp-media figure {
+    position: absolute;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .usp-media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .usp-a {
+    left: 0;
+    top: 0;
+    width: 36%;
+    aspect-ratio: 4 / 5;
+  }
+
+  .usp-b {
+    left: 40%;
+    top: 0;
+    width: 58%;
+    aspect-ratio: 3 / 4;
+  }
+
+  .usp-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line-strong);
+    align-self: end;
+  }
+
+  .usp-list li {
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  summary {
+    position: relative;
+    display: block;
+    padding: 18px 36px 18px 0;
+    cursor: pointer;
+    list-style: none;
+    font-size: 0.86rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .plus,
+  .plus::after {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    width: 12px;
+    height: 1px;
+    background: currentColor;
+  }
+
+  .plus::after {
+    content: '';
+    right: 0;
+    top: 0;
+    transform: rotate(90deg);
+    transition: transform 0.3s ease;
+  }
+
+  details[open] .plus::after {
+    transform: rotate(0deg);
+  }
+
+  details p {
+    margin: 0;
+    padding: 0 36px 20px 0;
+    font-size: 1.05rem;
+    color: var(--ink-2);
+  }
+
+  @media (min-width: 900px) {
+    .usp-grid {
+      grid-template-columns: 1fr 1.1fr 0.9fr;
+      gap: clamp(40px, 5vw, 80px);
+      align-items: end;
+    }
+    .usp-title {
+      align-self: start;
+    }
+    .usp-media {
+      min-height: clamp(360px, 32vw, 480px);
+    }
+    .usp-b {
+      top: 14%;
+    }
+  }
+</style>
