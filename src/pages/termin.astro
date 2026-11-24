@@ -186,8 +186,8 @@ const data = {
                     })}
                   </div>
 
-                  <!-- Ganzkörper: Zonen direkt hier wählen -->
-                  <div class="pick" data-pkg-pick hidden></div>
+                  <!-- Ganzkörper: Zonen im Overlay-Fenster wählen -->
+                  <dialog class="pick" data-pkg-pick aria-label="Ganzkörper: Zonen wählen"></dialog>
 
                   <!-- Erstbesuch: Glas-Karte über Foto -->
                   <div class="first-visit" id={`erstbesuch-${g.id}`} data-first-visit>
@@ -671,16 +671,112 @@ const data = {
     border-bottom: 1px solid currentColor;
   }
 
-  /* Ganzkörper: Zonenwahl */
+  /* Ganzkörper: Zonenwahl als Overlay-Fenster */
   .pick {
-    margin: 4px 0 0;
-    padding: clamp(20px, 2.6vw, 32px);
-    border: 1px solid var(--cta);
-    background: rgba(255, 255, 255, 0.45);
+    width: min(880px, calc(100vw - 32px));
+    max-height: calc(100dvh - 48px);
+    margin: auto;
+    padding: clamp(24px, 3.4vw, 48px);
+    border: 0;
+    background: var(--bg);
+    color: var(--ink);
+    overflow: auto;
+    box-shadow: 0 40px 80px -40px rgba(20, 28, 38, 0.6);
   }
 
-  .pick[hidden] {
-    display: none;
+  .pick::backdrop {
+    background: rgba(48, 56, 64, 0.78);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+
+  .pick[open] {
+    animation: pick-in 0.35s var(--ease);
+  }
+
+  @keyframes pick-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+
+  .pick :global(.pick-x) {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+
+  .pick :global(.pick-x span),
+  .pick :global(.pick-x span::after) {
+    position: absolute;
+    left: 12px;
+    top: 21px;
+    width: 20px;
+    height: 1px;
+    background: var(--ink);
+    transform: rotate(45deg);
+  }
+
+  .pick :global(.pick-x span::after) {
+    content: '';
+    left: 0;
+    top: 0;
+    transform: rotate(90deg);
+  }
+
+  .pick :global(.pick-foot) {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .pick :global(.pick-actions) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 14px 24px;
+    margin-top: 16px;
+  }
+
+  .pick :global(.pick-remove) {
+    padding: 0 0 4px;
+    border: 0;
+    border-bottom: 1px solid var(--line-strong);
+    background: none;
+    font: inherit;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    cursor: pointer;
+  }
+
+  @media (max-width: 640px) {
+    .pick {
+      width: 100vw;
+      max-width: 100vw;
+      height: 100dvh;
+      max-height: 100dvh;
+      padding: 56px 18px 0;
+    }
+    .pick :global(.pick-foot) {
+      position: sticky;
+      bottom: 0;
+      margin-inline: -18px;
+      padding: 14px 18px calc(14px + env(safe-area-inset-bottom));
+      background: var(--bg);
+    }
+    .pick :global(.pick-actions) {
+      margin-top: 10px;
+      justify-content: space-between;
+    }
   }
 
   .pick :global(.pick-head) {
@@ -763,9 +859,7 @@ const data = {
   }
 
   .pick :global(.pick-status) {
-    margin: 22px 0 0;
-    padding-top: 16px;
-    border-top: 1px solid var(--line-strong);
+    margin: 0;
     font-size: 1rem;
     color: var(--ink);
   }
@@ -2262,6 +2356,25 @@ const data = {
     return { lines, sum: lines.reduce((a, l) => a + (l.price ?? 0), 0) };
   }
   const pkgsFor = () => data.packages.filter((x) => x.group === state.group);
+
+  // Leistungen, die sich ausschliessen (eine enthält die andere): beim Anhaken wird die andere abgewählt
+  const CONFLICTS: string[][] = [
+    ['oberlippe', 'oberlippe-kinn', 'gesicht'],
+    ['beine-komplett', 'unterschenkel'],
+    ['beine-komplett', 'oberschenkel'],
+    ['bikinilinie', 'bikini-intim'],
+    ['kombi-intim-achseln', 'bikini-intim'],
+    ['kombi-intim-achseln', 'bikinilinie'],
+    ['kombi-intim-achseln', 'achseln'],
+    ['brust-bauch', 'brust'],
+    ['brust-bauch', 'bauch-1'],
+    ['ruecken-inkl-nacken', 'nacken'],
+    ['arme-komplett', 'oberarme'],
+  ];
+  function addSvc(id: string) {
+    for (const g of CONFLICTS) if (g.includes(id)) g.forEach((x) => x !== id && state.selected.delete(x));
+    state.selected.add(id);
+  }
   function pricing() {
     const sel = [...state.selected].map((id) => byId.get(id)!).filter(Boolean);
     const zones = sel.filter(eligible);
@@ -2335,25 +2448,38 @@ const data = {
   $$<HTMLButtonElement>('[data-who-pick]').forEach((b) => b.addEventListener('click', () => setGroup(b.dataset.whoPick as 'frauen' | 'maenner')));
 
   // Ganzkörper wählen: klassische Zonen voreinstellen, danach frei anpassen
+  const pickDialog = () => root.querySelector<HTMLDialogElement>(`[data-group-panel="${state.group}"] [data-pkg-pick]`);
+  let pickFocus = '';
+  function openPick() {
+    const d = pickDialog();
+    renderPicker();
+    if (d && !d.open) d.showModal();
+  }
+  function removePkg() {
+    state.pkgOn = false;
+    [...state.selected].forEach((x) => eligible(byId.get(x)!) && state.selected.delete(x));
+    state.time = null;
+    state.slot = null;
+    pickDialog()?.close();
+    syncChecks();
+  }
   function applyPkg(id: string) {
     const pk = data.packages.find((x) => x.id === id);
     if (!pk) return;
     const current = state.pkgOn ? pricing().pk?.id ?? state.pkgCard : null;
     state.pkgCard = id;
-    if (current === id) {
-      state.pkgOn = false;
-      [...state.selected].forEach((x) => eligible(byId.get(x)!) && state.selected.delete(x));
-    } else {
+    if (current !== id) {
       [...state.selected].forEach((x) => {
         const v = byId.get(x);
         if (!v || v.single || eligible(v)) state.selected.delete(x);
       });
-      pk.preset.forEach((x) => state.selected.add(x));
+      pk.preset.forEach((x) => addSvc(x));
       state.pkgOn = true;
+      state.time = null;
+      state.slot = null;
+      syncChecks();
     }
-    state.time = null;
-    state.slot = null;
-    syncChecks();
+    openPick();
   }
   $$<HTMLButtonElement>('[data-pkg]').forEach((b) => b.addEventListener('click', () => applyPkg(b.dataset.pkg!)));
 
@@ -2384,7 +2510,7 @@ const data = {
           state.selected.clear();
           state.pkgOn = false;
         } else [...state.selected].forEach((id) => byId.get(id)?.single && state.selected.delete(id));
-        state.selected.add(svc.id);
+        addSvc(svc.id);
       } else {
         state.selected.delete(svc.id);
       }
@@ -2944,13 +3070,15 @@ const data = {
     }
   }
 
-  // Ganzkörper: Zonenwahl direkt unter den Karten
+  // Ganzkörper: Zonenwahl im Overlay-Fenster
   function renderPicker() {
-    const box = root.querySelector<HTMLElement>(`[data-group-panel="${state.group}"] [data-pkg-pick]`);
-    $$('[data-pkg-pick]').forEach((b) => b !== box && (b.hidden = true));
+    const box = pickDialog();
+    $$<HTMLDialogElement>('[data-pkg-pick]').forEach((b) => b !== box && b.open && b.close());
     if (!box) return;
-    box.hidden = !state.pkgOn;
-    if (!state.pkgOn) return;
+    if (!state.pkgOn) {
+      if (box.open) box.close();
+      return;
+    }
     const pr = pricing();
     const zonesOf = (f: (x: Svc) => boolean) => data.services.filter((x) => x.group === state.group && eligible(x) && f(x));
     const chip = (x: Svc) =>
@@ -2965,6 +3093,7 @@ const data = {
     else status = `Einzeln günstiger (${fmtChf(pr.sum)}) – wir berechnen die Zonen einzeln.`;
     const extra = pr.pk?.extra ?? pkgsFor()[0]?.extra ?? 10;
     box.innerHTML = `
+      <button type="button" class="pick-x" data-pick-close aria-label="Schliessen"><span aria-hidden="true"></span></button>
       <div class="pick-head">
         <p class="pick-t">${name}</p>
         <p class="pick-r">${women ? 'Beine + 2 Zonen inklusive' : '3 Zonen inklusive'} · jede weitere + ${fmtChf(extra)}</p>
@@ -2972,22 +3101,41 @@ const data = {
       ${women ? `<p class="pick-l">Beine</p><div class="chips">${zonesOf((x) => isLeg(x.id)).map(chip).join('')}</div>` : ''}
       <p class="pick-l">${women ? 'Dazu deine Zonen' : 'Deine Zonen'} <span>${pr.others.length} gewählt</span></p>
       <div class="chips">${zonesOf((x) => !women || !isLeg(x.id)).map(chip).join('')}</div>
-      <p class="pick-status">${status}</p>`;
+      <div class="pick-foot">
+        <p class="pick-status">${status}</p>
+        <div class="pick-actions">
+          <button type="button" class="pick-remove" data-pick-remove>Paket entfernen</button>
+          <button type="button" class="btn btn-primary" data-pick-close>Übernehmen</button>
+        </div>
+      </div>`;
     box.querySelectorAll<HTMLButtonElement>('[data-z]').forEach((b) =>
       b.addEventListener('click', () => {
         const id = b.dataset.z!;
+        pickFocus = id;
         if (state.selected.has(id)) state.selected.delete(id);
         else {
           // Beine: nur eine Variante
           if (isLeg(id)) [LEG_FULL, ...LEG_HALF].forEach((x) => state.selected.delete(x));
-          state.selected.add(id);
+          addSvc(id);
         }
         state.time = null;
         state.slot = null;
         syncChecks();
       }),
     );
+    box.querySelectorAll('[data-pick-close]').forEach((b) => b.addEventListener('click', () => box.close()));
+    box.querySelector('[data-pick-remove]')?.addEventListener('click', removePkg);
+    if (pickFocus) {
+      box.querySelector<HTMLButtonElement>(`[data-z="${pickFocus}"]`)?.focus();
+      pickFocus = '';
+    }
   }
+  // Klick auf den abgedunkelten Hintergrund schliesst das Fenster
+  $$<HTMLDialogElement>('[data-pkg-pick]').forEach((d) =>
+    d.addEventListener('click', (e) => {
+      if (e.target === d) d.close();
+    }),
+  );
 
   // Hinweis, wenn sich ein Ganzkörper-Paket lohnt (nur ausserhalb der Paket-Auswahl)
   function renderPkgBox() {
