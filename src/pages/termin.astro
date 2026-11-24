@@ -4,7 +4,7 @@ import Icon from '../components/Icon.astro';
 import { Image } from 'astro:assets';
 import imgHeroF from '../assets/shoot/cd-bein.jpg';
 import imgHeroM from '../assets/shoot/geraet-2.jpg';
-import { signetOne } from '../lib/signet';
+import imgConsult from '../assets/shoot/beratung-haende.jpg';
 import { site, promo } from '../data/site';
 import { booking } from '../data/booking';
 import { googleRating } from '../data/reviews';
@@ -22,7 +22,23 @@ const bundles: Record<string, { parts: string[]; example?: boolean }> = {
   'ganzkoerper-1': { parts: ['beine', 'ruecken-inkl-nacken', 'brust'], example: true },
 };
 const byIdS = (id: string) => services.find((s) => s.id === id);
-const instead = (id: string) => (bundles[id] ? bundles[id].parts.reduce((a, x) => a + (byIdS(x)?.price ?? 0), 0) : 0);
+// Einzelpreis wie in der Buchung: klassische Paare zählen automatisch zum Kombipreis
+const pairs = [
+  { pair: ['unterschenkel', 'oberschenkel'], into: 'beine-komplett' },
+  { pair: ['bikini-intim', 'achseln'], into: 'kombi-intim-achseln' },
+  { pair: ['brust', 'bauch-1'], into: 'brust-bauch' },
+];
+const bestSum = (ids: string[], skip: string) => {
+  const left = new Set(ids);
+  let total = 0;
+  for (const m of pairs) {
+    if (m.into === skip || !m.pair.every((x) => left.has(x))) continue;
+    m.pair.forEach((x) => left.delete(x));
+    total += byIdS(m.into)?.price ?? 0;
+  }
+  return total + [...left].reduce((a, x) => a + (byIdS(x)?.price ?? 0), 0);
+};
+const instead = (id: string) => (bundles[id] ? bestSum(bundles[id].parts, id) : 0);
 const exampleText = (id: string) => (bundles[id]?.example ? `z. B. ${bundles[id].parts.map((x) => byIdS(x)?.name).join(' + ')}` : '');
 const heroImg = { frauen: imgHeroF, maenner: imgHeroM };
 
@@ -170,9 +186,12 @@ const data = {
                     })}
                   </div>
 
-                  <!-- Erstbesuch: Glas-Karte über Farbverlauf mit Signet -->
-                  <div class="first-visit" id={`erstbesuch-${g.id}`} data-first-visit style={`--signet:${signetOne}`}>
-                    <span class="fv-signet" aria-hidden="true"></span>
+                  <!-- Ganzkörper: Zonen direkt hier wählen -->
+                  <div class="pick" data-pkg-pick hidden></div>
+
+                  <!-- Erstbesuch: Glas-Karte über Foto -->
+                  <div class="first-visit" id={`erstbesuch-${g.id}`} data-first-visit>
+                    <Image class="fv-bg" src={imgConsult} alt="" widths={[800, 1400]} sizes="(min-width: 1000px) 60vw, 100vw" />
                     <div class="fv-glass">
                       <p class="fv-title">Noch unsicher?</p>
                       <p class="fv-sub">Lern uns zuerst kostenlos kennen – beraten wirst du bei jedem ersten Termin ohnehin.</p>
@@ -652,6 +671,122 @@ const data = {
     border-bottom: 1px solid currentColor;
   }
 
+  /* Ganzkörper: Zonenwahl */
+  .pick {
+    margin: 4px 0 0;
+    padding: clamp(20px, 2.6vw, 32px);
+    border: 1px solid var(--cta);
+    background: rgba(255, 255, 255, 0.45);
+  }
+
+  .pick[hidden] {
+    display: none;
+  }
+
+  .pick :global(.pick-head) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px 20px;
+    margin-bottom: 18px;
+  }
+
+  .pick :global(.pick-t) {
+    margin: 0;
+    font-weight: 300;
+    font-size: clamp(1.3rem, 2vw, 1.7rem);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .pick :global(.pick-r) {
+    margin: 0;
+    font-size: 0.92rem;
+    color: var(--ink-2);
+  }
+
+  .pick :global(.pick-l) {
+    display: flex;
+    justify-content: space-between;
+    margin: 16px 0 10px;
+    font-size: 0.76rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  .pick :global(.pick-l span) {
+    letter-spacing: 0.08em;
+    text-transform: none;
+    color: var(--cta);
+  }
+
+  .pick :global(.chips) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pick :global(.chip) {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1px solid var(--line-strong);
+    background: var(--bg);
+    font: inherit;
+    font-size: 0.95rem;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+  }
+
+  .pick :global(.chip small) {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .pick :global(.chip:hover) {
+    border-color: var(--ink-2);
+  }
+
+  .pick :global(.chip[aria-pressed='true']) {
+    background: var(--cta);
+    border-color: var(--cta);
+    color: #fff;
+  }
+
+  .pick :global(.chip[aria-pressed='true'] small) {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .pick :global(.pick-status) {
+    margin: 22px 0 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--line-strong);
+    font-size: 1rem;
+    color: var(--ink);
+  }
+
+  .pick :global(.pick-status b) {
+    font-weight: 500;
+    font-size: 1.15rem;
+  }
+
+  .pick :global(.pick-status s) {
+    color: var(--muted);
+  }
+
+  .pick :global(.pick-save) {
+    margin-left: 6px;
+    padding: 3px 8px;
+    font-size: 0.82rem;
+    background: var(--cta);
+    color: #fff;
+  }
+
   /* Ganzkörper-Hinweis (klebt beim Auswählen unten) */
   .pkg-box {
     position: sticky;
@@ -1127,7 +1262,7 @@ const data = {
     color: var(--ink);
   }
 
-  /* Erstbesuch: Glas-Karte über Farbverlauf mit Signet */
+  /* Erstbesuch: Glas-Karte über Close-up (zurückhaltend aufgehellt) */
   .first-visit {
     position: relative;
     display: grid;
@@ -1140,16 +1275,21 @@ const data = {
     scroll-margin-top: 100px;
   }
 
-  /* grosses, blasses Signet hinter dem Glas – das Glas zeichnet es weich */
-  .fv-signet {
+  .first-visit :global(.fv-bg) {
     position: absolute;
-    left: 58%;
-    top: 50%;
-    width: min(70%, 520px);
-    aspect-ratio: 151 / 78;
-    transform: translate(-50%, -50%);
-    background: var(--signet) center / contain no-repeat;
-    opacity: 0.22;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 45%;
+    filter: saturate(0.6) contrast(0.88);
+  }
+
+  .first-visit::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(223, 226, 225, 0.5);
   }
 
   .fv-glass {
@@ -2069,6 +2209,7 @@ const data = {
     group: null as 'frauen' | 'maenner' | null,
     selected: new Set<string>(),
     pkgOn: false,
+    pkgCard: null as string | null,
     date: null as Date | null,
     time: null as string | null,
     slot: null as Slot | null,
@@ -2089,31 +2230,81 @@ const data = {
   const maxDate = new Date(today);
   maxDate.setDate(maxDate.getDate() + data.booking.windowDays);
 
-  // ——— Preise: Zonen einzeln oder als Ganzkörper-Paket (nur wenn günstiger) ———
+  // ——— Preise ———
+  // Ganzkörper (Frauen) = Beine komplett + 2 Zonen, halbes Bein = Unter- oder Oberschenkel + 2 Zonen,
+  // Männer = 3 Zonen; jede weitere Zone mit Aufpreis. Ohne Beine kein Ganzkörper (Frauen).
+  // Klassische Paare werden automatisch zum günstigeren Kombipreis zusammengefasst.
   const pkgIdSet = new Set([...data.packages.map((x) => x.id), 'jede-weitere-zone-2']);
   const eligible = (x: Svc) => !x.single && x.tag !== 'Kombi' && !pkgIdSet.has(x.id);
-  const pkgsFor = () => data.packages.filter((x) => x.group === state.group);
-  function pickPkg(zones: Svc[]) {
-    const list = pkgsFor();
-    if (list.length < 2) return list[0];
-    return zones.some((z) => z.id === 'beine-komplett') ? list.find((x) => x.legs === 'full') : list.find((x) => x.legs === 'half');
+  const LEG_FULL = 'beine-komplett';
+  const LEG_HALF = ['unterschenkel', 'oberschenkel'];
+  const isLeg = (id: string) => id === LEG_FULL || LEG_HALF.includes(id);
+  const MERGES = [
+    { pair: ['unterschenkel', 'oberschenkel'], into: 'beine-komplett' },
+    { pair: ['bikini-intim', 'achseln'], into: 'kombi-intim-achseln' },
+    { pair: ['brust', 'bauch-1'], into: 'brust-bauch' },
+  ];
+  const asLine = (x: Svc): Line => ({ id: x.id, name: x.name, price: x.price, minutes: x.minutes, priceLabel: x.priceLabel, single: x.single });
+  // bester Einzelpreis: Paare automatisch als Kombi
+  function bestSingles(list: Svc[]) {
+    const ids = new Set(list.map((x) => x.id));
+    const lines: Line[] = [];
+    for (const m of MERGES) {
+      const into = byId.get(m.into);
+      if (!into || ids.has(m.into) || !m.pair.every((id) => ids.has(id))) continue;
+      const sep = m.pair.reduce((a, id) => a + (byId.get(id)?.price ?? 0), 0);
+      if ((into.price ?? 0) < sep) {
+        m.pair.forEach((id) => ids.delete(id));
+        lines.push(asLine(into));
+      }
+    }
+    list.forEach((x) => ids.has(x.id) && lines.push(asLine(x)));
+    return { lines, sum: lines.reduce((a, l) => a + (l.price ?? 0), 0) };
   }
+  const pkgsFor = () => data.packages.filter((x) => x.group === state.group);
   function pricing() {
     const sel = [...state.selected].map((id) => byId.get(id)!).filter(Boolean);
     const zones = sel.filter(eligible);
     const rest = sel.filter((x) => !eligible(x));
-    const sum = zones.reduce((a, x) => a + (x.price ?? 0), 0);
+    const single = bestSingles(zones);
+    const sum = single.sum;
     const mins = zones.reduce((a, x) => a + x.minutes, 0);
-    const pk = zones.length ? pickPkg(zones) : undefined;
-    const n = zones.length;
-    const pkgPrice = pk && n >= 3 ? pk.price + (n - 3) * pk.extra : 0;
-    const save = pk && n >= 3 ? sum - pkgPrice : 0;
-    const apply = state.pkgOn && !!pk && n >= 3 && save > 0;
-    const asLine = (x: Svc): Line => ({ id: x.id, name: x.name, price: x.price, minutes: x.minutes, priceLabel: x.priceLabel, single: x.single });
+    let pk: Pkg | undefined;
+    let others = zones;
+    let need = 0; // fehlende Zonen
+    let needLegs = false;
+    if (state.group === 'frauen') {
+      const ids = new Set(zones.map((z) => z.id));
+      const full = ids.has(LEG_FULL) || LEG_HALF.every((x) => ids.has(x));
+      const half = !full && LEG_HALF.some((x) => ids.has(x));
+      pk = pkgsFor().find((x) => x.legs === (full ? 'full' : half ? 'half' : 'none'));
+      needLegs = !full && !half;
+      others = zones.filter((z) => !isLeg(z.id));
+      need = Math.max(0, 2 - others.length);
+    } else {
+      pk = pkgsFor()[0];
+      need = Math.max(0, 3 - zones.length);
+    }
+    const included = state.group === 'frauen' ? 2 : 3;
+    const ok = !!pk && !needLegs && need === 0;
+    const pkgPrice = ok ? pk!.price + (others.length - included) * pk!.extra : 0;
+    const save = ok ? sum - pkgPrice : 0;
+    const apply = state.pkgOn && ok && save > 0;
+    const restLines = bestSingles(rest).lines;
     const lines: Line[] = apply
-      ? [{ id: pk!.id, name: `${pk!.name} (${zones.map((z) => z.name).join(', ')})`, price: pkgPrice, minutes: Math.max(pk!.minutes + (n - 3) * pk!.extraMinutes, mins), priceLabel: null, single: false }]
-      : zones.map(asLine);
-    return { lines: [...lines, ...rest.map(asLine)], zones, pk, n, sum, pkgPrice, save, apply };
+      ? [
+          {
+            id: pk!.id,
+            name: `${pk!.name} (${zones.map((z) => z.name).join(', ')})`,
+            price: pkgPrice,
+            minutes: Math.max(pk!.minutes + Math.max(0, others.length - included) * pk!.extraMinutes, mins),
+            priceLabel: null,
+            single: false,
+          },
+          ...restLines,
+        ]
+      : bestSingles([...zones, ...rest]).lines;
+    return { lines, zones, others, pk, n: zones.length, sum, pkgPrice, save, apply, ok, need, needLegs, included };
   }
   const selectedList = () => pricing().lines;
   const totalMinutes = () => selectedList().reduce((a, s) => a + s.minutes, 0);
@@ -2147,8 +2338,9 @@ const data = {
   function applyPkg(id: string) {
     const pk = data.packages.find((x) => x.id === id);
     if (!pk) return;
-    const current = pricing().pk;
-    if (state.pkgOn && current?.id === id) {
+    const current = state.pkgOn ? pricing().pk?.id ?? state.pkgCard : null;
+    state.pkgCard = id;
+    if (current === id) {
       state.pkgOn = false;
       [...state.selected].forEach((x) => eligible(byId.get(x)!) && state.selected.delete(x));
     } else {
@@ -2368,7 +2560,9 @@ const data = {
     const stepMin = data.booking.slotStep;
     const contiguous = all.every((x, k) => k === 0 || toMin(x.time) - toMin(all[k - 1].time) === stepMin);
     const emptyDay = !!op && all.length > 0 && all[0].time === op.open && contiguous;
-    const recommended = emptyDay ? all.filter((x) => toMin(x.time) % 60 === 0) : all.filter((x) => x.adj);
+    const recommended = emptyDay
+      ? all.filter((x, k) => k === 0 || k === all.length - 1 || toMin(x.time) % 60 === 0)
+      : all.filter((x) => x.adj);
     const list = showAll ? all : recommended;
     const title = state.date.toLocaleDateString('de-CH', { weekday: 'long', day: 'numeric', month: 'long' });
     const parts: [string, (m: number) => boolean][] = [
@@ -2750,32 +2944,69 @@ const data = {
     }
   }
 
-  // Ganzkörper-Hinweis: Ersparnis zeigen oder Paket vorschlagen
+  // Ganzkörper: Zonenwahl direkt unter den Karten
+  function renderPicker() {
+    const box = root.querySelector<HTMLElement>(`[data-group-panel="${state.group}"] [data-pkg-pick]`);
+    $$('[data-pkg-pick]').forEach((b) => b !== box && (b.hidden = true));
+    if (!box) return;
+    box.hidden = !state.pkgOn;
+    if (!state.pkgOn) return;
+    const pr = pricing();
+    const zonesOf = (f: (x: Svc) => boolean) => data.services.filter((x) => x.group === state.group && eligible(x) && f(x));
+    const chip = (x: Svc) =>
+      `<button type="button" class="chip" data-z="${x.id}" aria-pressed="${state.selected.has(x.id)}"><span>${x.name}</span><small>${fmtChf(x.price ?? 0)}</small></button>`;
+    const women = state.group === 'frauen';
+    const name = pr.pk?.name ?? 'Ganzkörper';
+    let status = '';
+    if (pr.needLegs) status = 'Wähle zuerst die Beine: komplett oder ein halbes Bein.';
+    else if (pr.need) status = `Wähle noch ${pr.need} ${pr.need === 1 ? 'Zone' : 'Zonen'}.`;
+    else if (pr.apply)
+      status = `<b>${fmtChf(pr.pkgPrice)}</b> statt einzeln <s>${fmtChf(pr.sum)}</s> <span class="pick-save">– ${fmtChf(pr.save)}</span>`;
+    else status = `Einzeln günstiger (${fmtChf(pr.sum)}) – wir berechnen die Zonen einzeln.`;
+    const extra = pr.pk?.extra ?? pkgsFor()[0]?.extra ?? 10;
+    box.innerHTML = `
+      <div class="pick-head">
+        <p class="pick-t">${name}</p>
+        <p class="pick-r">${women ? 'Beine + 2 Zonen inklusive' : '3 Zonen inklusive'} · jede weitere + ${fmtChf(extra)}</p>
+      </div>
+      ${women ? `<p class="pick-l">Beine</p><div class="chips">${zonesOf((x) => isLeg(x.id)).map(chip).join('')}</div>` : ''}
+      <p class="pick-l">${women ? 'Dazu deine Zonen' : 'Deine Zonen'} <span>${pr.others.length} gewählt</span></p>
+      <div class="chips">${zonesOf((x) => !women || !isLeg(x.id)).map(chip).join('')}</div>
+      <p class="pick-status">${status}</p>`;
+    box.querySelectorAll<HTMLButtonElement>('[data-z]').forEach((b) =>
+      b.addEventListener('click', () => {
+        const id = b.dataset.z!;
+        if (state.selected.has(id)) state.selected.delete(id);
+        else {
+          // Beine: nur eine Variante
+          if (isLeg(id)) [LEG_FULL, ...LEG_HALF].forEach((x) => state.selected.delete(x));
+          state.selected.add(id);
+        }
+        state.time = null;
+        state.slot = null;
+        syncChecks();
+      }),
+    );
+  }
+
+  // Hinweis, wenn sich ein Ganzkörper-Paket lohnt (nur ausserhalb der Paket-Auswahl)
   function renderPkgBox() {
+    renderPicker();
     const box = root.querySelector<HTMLElement>(`[data-group-panel="${state.group}"] [data-pkg-box]`);
     $$('[data-pkg-box]').forEach((b) => b !== box && (b.hidden = true));
     if (!box) return;
     const pr = pricing();
     let html = '';
-    if (state.pkgOn && pr.pk) {
-      if (pr.n < 3) {
-        html = `<p class="pkg-t">${pr.pk.name}</p><p class="pkg-x">Wähle noch ${3 - pr.n} ${3 - pr.n === 1 ? 'Zone' : 'Zonen'} in der Liste.</p>`;
-      } else if (pr.apply) {
-        html = `<p class="pkg-t">${pr.pk.name} · ${pr.n} Zonen <span class="pkg-save">– ${fmtChf(pr.save)}</span></p>
-          <p class="pkg-x"><b>${fmtChf(pr.pkgPrice)}</b> statt einzeln <s>${fmtChf(pr.sum)}</s>. Zonen frei anpassbar, jede weitere + ${fmtChf(pr.pk.extra)}.</p>`;
-      } else {
-        html = `<p class="pkg-t">Einzeln günstiger</p><p class="pkg-x">Diese Zonen kosten einzeln ${fmtChf(pr.sum)} – wir berechnen sie einzeln.</p>`;
-      }
-    } else if (pr.pk && pr.n >= 3 && pr.save > 0) {
-      html = `<p class="pkg-t">Als ${pr.pk.name} sparst du ${fmtChf(pr.save)}</p>
+    if (!state.pkgOn && pr.ok && pr.save > 0) {
+      html = `<p class="pkg-t">Als ${pr.pk!.name} sparst du ${fmtChf(pr.save)}</p>
         <p class="pkg-x"><b>${fmtChf(pr.pkgPrice)}</b> statt ${fmtChf(pr.sum)} für deine ${pr.n} Zonen.</p>
         <button type="button" class="pkg-btn" data-pkg-on>Übernehmen</button>`;
     }
     box.hidden = !html;
-    box.classList.toggle('is-offer', !state.pkgOn);
     box.innerHTML = html;
     box.querySelector('[data-pkg-on]')?.addEventListener('click', () => {
       state.pkgOn = true;
+      state.pkgCard = pr.pk!.id;
       state.time = null;
       state.slot = null;
       render();
@@ -2825,7 +3056,7 @@ const data = {
     renderPkgBox();
     const pr = pricing();
     root.querySelectorAll<HTMLElement>('[data-pkg]').forEach((b) => {
-      const on = state.pkgOn && pr.pk?.id === b.dataset.pkg;
+      const on = state.pkgOn && (pr.pk?.id ?? state.pkgCard) === b.dataset.pkg;
       b.classList.toggle('is-on', on);
       b.setAttribute('aria-pressed', String(on));
     });
