@@ -191,15 +191,23 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   }
 
   /* ——— Startseite: ruhige, helle Leiste mit mittigem Logo ——— */
+  /* scrollt mit der Seite weg (nicht fixiert) */
   .is-calm {
-    position: fixed;
+    position: absolute;
+    transform: none !important;
     color: var(--ink);
     --head: currentColor;
     background: transparent;
   }
 
-  .is-calm:global(.is-scrolled),
+  .is-calm:global(.is-scrolled) {
+    background: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
   .is-calm:global(.menu-open) {
+    position: fixed;
     background: rgba(251, 250, 246, 0.94);
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
@@ -208,7 +216,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   }
 
   .calm-bar {
-    height: var(--header-h);
+    height: 104px;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
@@ -223,7 +231,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 
   .calm-nav a,
   .calm-cta {
-    font-size: 0.8rem;
+    font-size: 0.86rem;
     font-weight: 400;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -253,7 +261,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   }
 
   .calm-logo :global(svg) {
-    height: 30px;
+    height: 46px;
   }
 
   .calm-r {
@@ -266,8 +274,9 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   .calm-cta {
     display: inline-flex;
     align-items: center;
-    min-height: 42px;
-    padding: 0 22px;
+    min-height: 46px;
+    padding: 0 26px;
+    border-radius: 999px;
     border: 1px solid currentColor;
     transition:
       background 0.3s ease,
@@ -317,7 +326,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 
   @media (max-width: 640px) {
     .calm-logo :global(svg) {
-      height: 24px;
+      height: 32px;
     }
   }
 

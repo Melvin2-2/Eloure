@@ -1,8 +1,9 @@
 ---
 // Startseite – ruhig, hell, klinisch-hochwertig.
-// Feine Schrift (Source Sans 3 Light, Grossbuchstaben), warmes Off-White, Deep Indigo für Schrift,
-// Salvia Blue als leiser Akzent, das Eloure-Signet als durchlaufende Linie, Frosted-Glass-Elemente
-// und zurückhaltende Scroll-Effekte (Parallaxe, wandernde Typo, schwebende Detailbilder).
+// Aufbau nach Moodboard (u. a. evnia, Whole Body Beauty, Nerea, Salvia): heller Bildstreifen mit
+// hohem Video-Fenster, feine Grossbuchstaben-Typo (Source Sans 3 Light), warmes Off-White,
+// Deep Indigo für Schrift, schlanke Pill-Buttons, grosse transparente Signets als Linie
+// und nur wenige, sehr ruhige Scroll-Effekte.
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
@@ -13,12 +14,9 @@ import { site } from '../data/site';
 
 import imgGel from '../assets/shoot/gel-achsel.jpg';
 import imgRelief from '../assets/shoot/detail-relief.jpg';
-import imgTulpen from '../assets/shoot/detail-tulpen.jpg';
-import imgObjekte from '../assets/shoot/detail-objekte.jpg';
 import imgPflanze from '../assets/shoot/detail-pflanze.jpg';
 import imgSessel from '../assets/shoot/sessel.jpg';
 import imgLiege from '../assets/shoot/liege-fenster.jpg';
-import imgLounge from '../assets/shoot/lounge.jpg';
 import imgStep1 from '../assets/shoot/beratung-haende.jpg';
 import imgStep2 from '../assets/shoot/detail-tuecher.jpg';
 import imgStep3 from '../assets/shoot/laser-achsel.jpg';
@@ -45,13 +43,13 @@ const groups: { id: Group; label: string }[] = [
 
 const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy H.'].map(pickReview).filter(Boolean);
 
-// Signet als feines, wiederholtes Linienmuster (Salvia Blue)
+// Signet als grosses, sehr transparentes Muster (Deep Indigo, Deckkraft über CSS)
 const signetPaths = [
   'M165.63 2.986c10.504 0 25.65 8.292 25.871 35.711h9.398C200.899 6.634 178.787 0 165.519 0c-13.156 0-35.27 6.634-35.27 38.698h9.397c.222-27.42 15.37-35.712 25.984-35.712zM220.729 0h9.397v38.698h-9.397zM136.703 77.394c13.269 0 35.38-6.632 35.38-38.696h-9.397c-.221 27.419-15.367 35.712-25.872 35.712-10.613 0-25.762-8.293-25.982-35.712h-9.398c-.001 32.064 22.113 38.696 35.269 38.696z',
   'M224.118 77.394c22.887 0 26.093-23.771 26.203-36.816v-1.88h-2.984v1.88c-.221 27.308-12.716 33.833-23.219 33.833-10.505 0-22.998-6.524-23.219-33.833v-2.383l-9.398.503v1.991c0 31.841 19.459 36.705 32.617 36.705z',
 ];
 const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
-  `<svg xmlns='http://www.w3.org/2000/svg' viewBox='20 -4 311 86'><g fill='#9baec9'>${signetPaths.map((d) => `<path d='${d}'/>`).join('')}</g></svg>`,
+  `<svg xmlns='http://www.w3.org/2000/svg' viewBox='15 -2 321 82'><g fill='#2b2f40'>${signetPaths.map((d) => `<path d='${d}'/>`).join('')}</g></svg>`,
 )}")`;
 ---
 
@@ -62,56 +60,47 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
   theme="calm"
   announce={false}
 >
-  <!-- 1 · Start: Video-Fenster, grosse feine Typo darüber, schwebende Details, Glas-Karte -->
+  <!-- 1 · Start: heller Bildstreifen, hohes Video-Fenster, Typo überlappt beides -->
   <section class="c-hero">
-    <figure class="c-float c-float-l" data-drift-y="-30">
-      <Image src={imgTulpen} alt="" widths={[300, 500]} sizes="14vw" />
-    </figure>
-    <figure class="c-float c-float-r" data-drift-y="-55">
-      <Image src={imgObjekte} alt="" widths={[300, 500]} sizes="12vw" />
-    </figure>
+    <div class="c-hero-band" aria-hidden="true">
+      <Image src={imgRelief} alt="" widths={[1400, 2200]} sizes="100vw" loading="eager" />
+    </div>
 
     <h1 class="c-hero-type">
-      <span class="c-hl c-hl1"><span data-drift="-4">Laserhaar</span></span>
-      <span class="c-hl c-hl2"><span data-drift="4">entfernung</span></span>
-      <span class="sr-only"> in Amriswil</span>
+      <span class="c-hl">Laserhaar-</span>
+      <span class="c-hl">entfernung</span>
+      <span class="c-hl c-hl-sub">in Amriswil</span>
     </h1>
 
     <div class="c-hero-panel">
-      <video autoplay muted loop playsinline preload="auto" poster="/video/studio-2026.jpg" aria-label="Einblick in das Eloure Studio in Amriswil" data-parallax="10">
+      <video autoplay muted loop playsinline preload="auto" poster="/video/studio-2026.jpg" aria-label="Einblick in das Eloure Studio in Amriswil">
         <source src="/video/studio-2026.mp4" type="video/mp4" />
       </video>
       <p class="c-hero-type c-hero-type-in" aria-hidden="true">
-        <span class="c-hl c-hl1"><span data-drift="-4">Laserhaar</span></span>
-        <span class="c-hl c-hl2"><span data-drift="4">entfernung</span></span>
+        <span class="c-hl">Laserhaar-</span>
+        <span class="c-hl">entfernung</span>
+        <span class="c-hl c-hl-sub">in Amriswil</span>
       </p>
     </div>
 
-    <p class="c-hero-meta" data-anim="up">
-      <span>In Amriswil</span>
-      <span>{site.address.street} · {site.address.zip} {site.address.city}</span>
+    <a class="c-btn c-btn-dark c-hero-cta" href="/termin">Termin buchen</a>
+
+    <p class="c-hero-info c-hero-info-l">
+      <span>{site.address.street}, {site.address.zip} {site.address.city}</span>
       <span>Mo–Fr 10–20 · Sa 10–16</span>
     </p>
-
-    <div class="c-glass c-hero-card" data-anim="up">
-      <a class="c-hero-rating" href={site.googleReviewsUrl} target="_blank" rel="noopener">
-        <span class="c-stars">★★★★★</span>
-        <span><b>{rating}</b> · {googleRating.count} Google-Bewertungen</span>
-      </a>
-      <p>Medizinischer Diodenlaser, persönlich begleitet von Caro. Bezahlt wird erst vor Ort.</p>
-      <div class="c-hero-actions">
-        <a class="c-btn c-btn-dark" href="/termin">Termin buchen</a>
-        <a class="c-link" href="#zonen">Zonen & Preise</a>
-      </div>
-    </div>
+    <p class="c-hero-info c-hero-info-r">
+      <a href={site.phoneHref}>{site.phone}</a>
+      <a href={site.googleReviewsUrl} target="_blank" rel="noopener">{rating} ★ · {googleRating.count} Google-Bewertungen</a>
+    </p>
   </section>
 
-  <!-- 2 · Haltung, umrahmt von schwebenden Details -->
+  <!-- 2 · Haltung, gerahmt von zwei Detailbildern -->
   <section class="c-intro">
-    <figure class="c-intro-img c-intro-img-l" data-drift-y="-18">
+    <figure class="c-intro-img c-intro-img-l">
       <Image src={imgPflanze} alt="" widths={[300, 500]} sizes="16vw" />
     </figure>
-    <figure class="c-intro-img c-intro-img-r" data-drift-y="-34">
+    <figure class="c-intro-img c-intro-img-r">
       <Image src={imgSessel} alt="" widths={[300, 500]} sizes="14vw" />
     </figure>
     <div class="c-narrow">
@@ -125,21 +114,19 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
   </section>
 
   <!-- Signet-Linie über beide Sections -->
-  <div class="c-band" aria-hidden="true" style={`--signet:${signetPattern}`}><div class="c-band-strip" data-drift="6"></div></div>
+  <div class="c-band" aria-hidden="true" style={`--signet:${signetPattern}`}><div class="c-band-strip" data-drift="1"></div></div>
 
   <!-- 3 · Grosses Wort über Bild und Textur -->
   <section class="c-word" aria-label="Glatte Haut">
     <div class="c-texture" aria-hidden="true">
-      <Image src={imgRelief} alt="" widths={[1200, 2000]} sizes="100vw" data-parallax="12" />
+      <Image src={imgRelief} alt="" widths={[1200, 2000]} sizes="100vw" />
     </div>
-    <p class="c-word-text" aria-hidden="true"><span data-drift="5">Glatte Haut</span></p>
+    <p class="c-word-text" aria-hidden="true">Glatte Haut</p>
     <figure class="c-word-img">
-      <Image src={imgGel} alt="Kühlendes Gel wird vor der Laserbehandlung auf die Achsel aufgetragen" widths={[700, 1100, 1500]} sizes="(min-width: 900px) 40vw, 80vw" data-parallax="10" />
-      <p class="c-word-text c-word-text-in" aria-hidden="true"><span data-drift="5">Glatte Haut</span></p>
+      <Image src={imgGel} alt="Kühlendes Gel wird vor der Laserbehandlung auf die Achsel aufgetragen" widths={[700, 1100, 1500]} sizes="(min-width: 900px) 40vw, 80vw" data-parallax="4" />
+      <p class="c-word-text c-word-text-in" aria-hidden="true">Glatte Haut</p>
     </figure>
-    <div class="c-glass c-word-note reveal">
-      <p>Für Frauen und Männer. Über 30 Zonen, einzeln oder als Kombi – sanft gekühlt und medizinisch präzise.</p>
-    </div>
+    <p class="c-word-note reveal">Für Frauen und Männer.<br />Über 30 Zonen, einzeln oder als Kombi.</p>
   </section>
 
   <!-- 4 · Ablauf in vier Bildern -->
@@ -151,12 +138,12 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
     <ol class="c-steps-row">
       {
         steps.map((s, i) => (
-          <li class="c-step reveal" style={`--d:${i * 90}ms`}>
+          <li class="c-step reveal">
             <figure class="c-step-img">
-              <Image src={s.img} alt={s.alt} widths={[500, 800, 1100]} sizes="(min-width: 900px) 25vw, 50vw" style={`object-position:${s.pos}`} data-parallax="8" />
+              <Image src={s.img} alt={s.alt} widths={[500, 800, 1100]} sizes="(min-width: 900px) 25vw, 50vw" style={`object-position:${s.pos}`} />
               <span class="c-step-title">
-                {s.title}
                 <small>0{i + 1}</small>
+                {s.title}
               </span>
             </figure>
             <p>{s.text}</p>
@@ -166,19 +153,15 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
     </ol>
   </section>
 
-  <div class="c-band" aria-hidden="true" style={`--signet:${signetPattern}`}><div class="c-band-strip" data-drift="-6"></div></div>
+  <div class="c-band" aria-hidden="true" style={`--signet:${signetPattern}`}><div class="c-band-strip c-band-strip-2" data-drift="-1"></div></div>
 
-  <!-- 5 · Beliebte Zonen: Bild mit Glas-Hinweis + ruhige Liste -->
+  <!-- 5 · Beliebte Zonen: Raumfoto + ruhige Liste -->
   <section class="c-prices" id="zonen" data-c-prices>
     <div class="c-wrap c-prices-grid">
-      <div class="c-prices-media">
-        <figure class="c-prices-img">
-          <Image src={imgLiege} alt="Behandlungsliege am Fenster im hellen Behandlungsraum" widths={[600, 900, 1300]} sizes="(min-width: 900px) 34vw, 90vw" data-parallax="10" />
-        </figure>
-        <div class="c-glass c-prices-note reveal">
-          <p>Bezahlt wird erst vor Ort. Kostenlos absagen bis 24 Stunden vorher.</p>
-        </div>
-      </div>
+      <figure class="c-prices-img">
+        <Image src={imgLiege} alt="Behandlungsliege am Fenster im hellen Behandlungsraum" widths={[600, 900, 1300]} sizes="(min-width: 900px) 34vw, 90vw" />
+        <figcaption>Bezahlt wird erst vor Ort.<br />Kostenlos absagen bis 24 Stunden vorher.</figcaption>
+      </figure>
       <div class="c-prices-list">
         <h2 class="c-ttl reveal">Beliebte Zonen</h2>
         <div class="c-tabs reveal" role="tablist" aria-label="Zonen für">
@@ -199,8 +182,8 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
                     <span class="c-l-name">{s!.name}</span>
                     <span class="c-l-dur">{duration(s!.minutes)}</span>
                     <span class="c-l-price">{chf(s!.price)}</span>
-                    <span class="c-l-go">
-                      Buchen <Icon name="arrow" size={14} />
+                    <span class="c-l-go" aria-hidden="true">
+                      <Icon name="arrow" size={16} />
                     </span>
                   </a>
                 </li>
@@ -208,7 +191,7 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
             </ul>
           ))
         }
-        <a class="c-link c-prices-all reveal" href="/preise">Alle Zonen & Preise</a>
+        <a class="c-btn c-btn-line c-prices-all reveal" href="/preise">Alle Zonen & Preise</a>
       </div>
     </div>
   </section>
@@ -216,39 +199,34 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
   <!-- 6 · Ruhepunkt -->
   <StudioCalm />
 
-  <!-- 7 · Kundenstimmen: Glas-Karte über der Lounge -->
+  <!-- 7 · Kundenstimmen: ruhig, ohne Grossbild – feine Linien, Sterne, Zitat -->
   <section class="c-voices" data-c-voices aria-label="Kundenstimmen">
-    <div class="c-voices-bg" aria-hidden="true">
-      <Image src={imgLounge} alt="" widths={[1200, 2000, 2600]} sizes="100vw" data-parallax="14" />
-    </div>
-    <div class="c-glass c-voices-card reveal">
-      <p class="c-voices-score">{rating}</p>
-      <p class="c-voices-meta"><span class="c-stars">★★★★★</span> {googleRating.count} Bewertungen auf Google</p>
-      <div class="c-voices-quotes">
-        {
-          voices.map((v, i) => (
-            <figure class="c-quote" data-c-quote hidden={i !== 0}>
-              <blockquote>«{v!.short ?? v!.text}»</blockquote>
-              <figcaption>{v!.name}</figcaption>
-            </figure>
-          ))
-        }
+    <div class="c-voices-inner">
+      <button type="button" class="c-arrow c-arrow-l" aria-label="Vorherige Stimme" data-c-prev><span></span></button>
+      <div class="c-voices-body">
+        <p class="c-voices-stars" aria-label={`${rating} von 5 Sternen`}>★★★★★</p>
+        <div class="c-voices-quotes">
+          {
+            voices.map((v, i) => (
+              <figure class="c-quote" data-c-quote hidden={i !== 0}>
+                <blockquote>«{v!.short ?? v!.text}»</blockquote>
+                <figcaption>— {v!.name} —</figcaption>
+              </figure>
+            ))
+          }
+        </div>
+        <a class="c-link" href={site.googleReviewsUrl} target="_blank" rel="noopener">{rating} · {googleRating.count} Google-Bewertungen</a>
       </div>
-      <div class="c-voices-nav">
-        <button type="button" aria-label="Vorherige Stimme" data-c-prev><span class="c-flip"><Icon name="arrow" size={16} /></span></button>
-        <span data-c-count>01 / 0{voices.length}</span>
-        <button type="button" aria-label="Nächste Stimme" data-c-next><Icon name="arrow" size={16} /></button>
-      </div>
-      <a class="c-link" href={site.googleReviewsUrl} target="_blank" rel="noopener">Alle Bewertungen</a>
+      <button type="button" class="c-arrow c-arrow-r" aria-label="Nächste Stimme" data-c-next><span></span></button>
     </div>
   </section>
 
   <!-- 8 · Abschluss -->
   <section class="c-end" style={`--signet:${signetPattern}`}>
     <div class="c-texture" aria-hidden="true">
-      <Image src={imgRelief} alt="" widths={[1200, 2000]} sizes="100vw" data-parallax="12" />
+      <Image src={imgRelief} alt="" widths={[1200, 2000]} sizes="100vw" />
     </div>
-    <div class="c-end-band" aria-hidden="true"></div>
+    <div class="c-end-signet" aria-hidden="true"></div>
     <div class="c-narrow c-end-inner">
       <h2 class="c-ttl reveal">Bereit für<br />glatte Haut?</h2>
       <p class="reveal">Buche deinen Termin direkt online – oder komm zuerst zu einem kostenlosen Beratungsgespräch.</p>
@@ -274,15 +252,13 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
   const voices = document.querySelector<HTMLElement>('[data-c-voices]');
   if (voices) {
     const quotes = [...voices.querySelectorAll<HTMLElement>('[data-c-quote]')];
-    const count = voices.querySelector<HTMLElement>('[data-c-count]')!;
     let i = 0;
     const show = (n: number) => {
       i = (n + quotes.length) % quotes.length;
       quotes.forEach((q, k) => {
         q.hidden = k !== i;
-        if (k === i) q.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 600, easing: 'ease-out' });
+        if (k === i) q.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 700, easing: 'ease-out' });
       });
-      count.textContent = `${String(i + 1).padStart(2, '0')} / ${String(quotes.length).padStart(2, '0')}`;
     };
     voices.querySelector('[data-c-prev]')?.addEventListener('click', () => show(i - 1));
     voices.querySelector('[data-c-next]')?.addEventListener('click', () => show(i + 1));
@@ -296,24 +272,24 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
     font-weight: 300;
     font-stretch: 100%;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    line-height: 1.08;
-    font-size: clamp(2rem, 3.6vw, 3.4rem);
+    letter-spacing: 0.05em;
+    line-height: 1.06;
+    font-size: clamp(2.5rem, 4.6vw, 4.6rem);
     color: var(--head);
-    margin: 0 0 0.6em;
+    margin: 0 0 0.55em;
     text-wrap: balance;
   }
 
   p {
     font-weight: 300;
-    font-size: clamp(1.02rem, 1.15vw, 1.15rem);
-    line-height: 1.75;
+    font-size: clamp(1.15rem, 1.35vw, 1.35rem);
+    line-height: 1.7;
     color: var(--ink-body);
   }
 
   .c-wrap {
     width: 100%;
-    max-width: 1320px;
+    max-width: 1360px;
     margin-inline: auto;
     padding-inline: var(--gutter);
   }
@@ -321,28 +297,31 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
   .c-narrow {
     position: relative;
     z-index: 2;
-    max-width: 640px;
+    max-width: 760px;
     margin-inline: auto;
     padding-inline: var(--gutter);
     text-align: center;
   }
 
+  /* Schlanke Pill-Buttons statt Kästen */
   .c-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 50px;
-    padding: 0 30px;
-    font-size: 0.8rem;
+    min-height: 56px;
+    padding: 0 36px;
+    border-radius: 999px;
+    font-size: 0.9rem;
     font-weight: 400;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     text-decoration: none;
+    white-space: nowrap;
     border: 1px solid;
     transition:
-      background 0.35s ease,
-      color 0.35s ease,
-      border-color 0.35s ease;
+      background 0.4s ease,
+      color 0.4s ease,
+      border-color 0.4s ease;
   }
 
   .c-btn-dark {
@@ -352,22 +331,24 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
   }
 
   .c-btn-dark:hover {
-    background: var(--indigo-soft);
-    border-color: var(--indigo-soft);
+    background: transparent;
+    color: var(--indigo);
   }
 
   .c-btn-line {
     color: var(--indigo);
-    border-color: var(--line-strong);
+    border-color: rgba(43, 47, 64, 0.35);
   }
 
   .c-btn-line:hover {
+    background: var(--indigo);
     border-color: var(--indigo);
+    color: #fff;
   }
 
   .c-link {
     display: inline-block;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     text-decoration: none;
@@ -381,34 +362,17 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
     border-color: var(--ink);
   }
 
-  .c-stars {
-    letter-spacing: 3px;
-    color: var(--salvia-ink);
-  }
-
-  /* Frosted Glass */
-  .c-glass {
-    background: rgba(251, 250, 246, 0.58);
-    -webkit-backdrop-filter: blur(22px) saturate(1.25);
-    backdrop-filter: blur(22px) saturate(1.25);
-    border: 1px solid rgba(255, 255, 255, 0.65);
-    box-shadow: 0 30px 60px -40px rgba(27, 30, 42, 0.35);
-  }
-
-  /* Bilder mit Parallaxe: etwas höher als ihr Rahmen */
   figure :global(img[data-parallax]),
-  .c-texture :global(img),
-  .c-voices-bg :global(img),
   .c-hero-panel video {
     position: absolute;
     left: 0;
-    top: -6%;
+    top: -3%;
     width: 100%;
-    height: 112%;
+    height: 106%;
     object-fit: cover;
   }
 
-  /* Signet-Linie: wiederholtes Signet, läuft über die Grenze zweier Sections */
+  /* Signet-Linie: wenige, grosse, sehr transparente Signets über der Section-Grenze */
   .c-band {
     position: relative;
     z-index: 6;
@@ -419,13 +383,19 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
 
   .c-band-strip {
     position: absolute;
-    left: -25%;
-    width: 150%;
-    top: -10px;
-    height: 20px;
+    left: -6%;
+    width: 112%;
+    top: clamp(-90px, -6vw, -46px);
+    height: clamp(92px, 12vw, 180px);
     background-image: var(--signet);
     background-repeat: repeat-x;
     background-size: auto 100%;
+    background-position: 8% 0;
+    opacity: 0.06;
+  }
+
+  .c-band-strip-2 {
+    background-position: 46% 0;
   }
 
   /* Texturen aus eigenen Detailfotos */
@@ -437,29 +407,52 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
   }
 
   .c-texture :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     opacity: 0.22;
     filter: grayscale(1) contrast(0.9);
     mix-blend-mode: multiply;
   }
 
-  /* ——— 1 · Start ——— */
+  /* ——— 1 · Start (Aufbau nach evnia) ——— */
   .c-hero {
     position: relative;
     height: 100svh;
-    min-height: 680px;
+    min-height: 720px;
+    max-height: 1100px;
     overflow: hidden;
     background: var(--bg);
   }
 
+  .c-hero-band {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 74%;
+    overflow: hidden;
+    background: #ebe8e1;
+  }
+
+  .c-hero-band :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.55;
+    filter: grayscale(1) contrast(0.85) brightness(1.06);
+    mix-blend-mode: multiply;
+  }
+
   .c-hero-panel {
     position: absolute;
-    left: 33%;
-    width: 34%;
-    top: 14%;
-    bottom: 8%;
+    left: 34%;
+    width: 32%;
+    top: 11%;
+    bottom: 0;
     overflow: hidden;
     z-index: 2;
-    background: #e9e6de;
+    background: #d9d4ca;
   }
 
   .c-hero-panel::after {
@@ -467,33 +460,36 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
     position: absolute;
     inset: 0;
     z-index: 1;
-    background: rgba(17, 19, 28, 0.16);
+    background: rgba(17, 19, 28, 0.12);
   }
 
-  /* Typo zweimal deckungsgleich: Indigo auf der Fläche, Weiss im Video-Fenster */
+  /* Typo zweimal deckungsgleich: Indigo auf dem Streifen, Weiss im Video-Fenster.
+     Fenster: links 34 %, Breite 32 %, oben 11 %, unten 0 → Typo-Mitte bei 36 % */
   .c-hero-type {
     position: absolute;
     z-index: 1;
     left: 0;
     width: 100%;
-    top: 50%;
+    top: 36%;
     transform: translateY(-50%);
     margin: 0;
+    padding-left: 7%;
     font-family: var(--sans);
     font-weight: 200;
     font-stretch: 100%;
     text-transform: uppercase;
-    font-size: clamp(3rem, 10.6vw, 12.5rem);
-    line-height: 0.92;
-    letter-spacing: 0.02em;
+    font-size: clamp(3rem, 6.4vw, 7.6rem);
+    line-height: 0.98;
+    letter-spacing: 0.03em;
     color: var(--indigo);
     pointer-events: none;
   }
 
   .c-hero-type-in {
-    left: -97.0588%;
-    width: 294.1176%;
-    top: 46.1538%;
+    left: -106.25%;
+    width: 312.5%;
+    top: 28.0899%;
+    padding-left: 21.875%;
     z-index: 3;
     color: #fff;
   }
@@ -503,110 +499,60 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
     white-space: nowrap;
   }
 
-  .c-hl > span {
-    display: block;
+  .c-hl-sub {
+    margin-top: 0.5em;
+    font-size: 0.28em;
+    letter-spacing: 0.34em;
+    font-weight: 300;
   }
 
-  .c-hl1 {
-    padding-left: 5%;
-  }
-
-  .c-hl2 {
-    text-align: right;
-    padding-right: 5%;
-  }
-
-  .c-float {
-    position: absolute;
-    margin: 0;
-    overflow: hidden;
-    z-index: 0;
-  }
-
-  .c-float :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .c-float-l {
-    left: 8%;
-    top: 54%;
-    width: 10%;
-    aspect-ratio: 3 / 4;
-  }
-
-  .c-float-r {
-    right: 7%;
-    top: 22%;
-    width: 11%;
-    aspect-ratio: 1;
-  }
-
-  .c-hero-meta {
+  .c-hero-cta {
     position: absolute;
     z-index: 4;
-    left: var(--gutter);
-    bottom: clamp(24px, 4vh, 44px);
+    left: calc(66% - 110px);
+    top: 66%;
+  }
+
+  .c-hero-info {
+    position: absolute;
+    z-index: 4;
+    top: 80%;
+    width: 26%;
     display: grid;
-    gap: 2px;
+    gap: 6px;
     margin: 0;
-    font-size: 0.78rem;
-    letter-spacing: 0.18em;
+    font-size: 0.82rem;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
+    text-align: center;
     color: var(--ink-2);
   }
 
-  .c-hero-meta span:first-child {
-    color: var(--ink);
-    margin-bottom: 6px;
-  }
-
-  .c-hero-card {
-    position: absolute;
-    z-index: 4;
-    right: max(var(--gutter), 14%);
-    bottom: clamp(24px, 5vh, 52px);
-    width: min(360px, 30vw);
-    padding: 26px 28px 28px;
-  }
-
-  .c-hero-rating {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 6px 12px;
-    font-size: 0.82rem;
-    letter-spacing: 0.08em;
+  .c-hero-info a {
+    color: inherit;
     text-decoration: none;
+  }
+
+  .c-hero-info a:hover {
     color: var(--ink);
   }
 
-  .c-hero-rating b {
-    font-weight: 500;
+  .c-hero-info-l {
+    left: 4%;
   }
 
-  .c-hero-card p {
-    font-size: 0.98rem;
-    line-height: 1.65;
-    margin: 14px 0 22px;
-  }
-
-  .c-hero-actions {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 16px 22px;
+  .c-hero-info-r {
+    right: 4%;
   }
 
   /* ——— 2 · Haltung ——— */
   .c-intro {
     position: relative;
-    padding-block: clamp(140px, 16vw, 230px) clamp(150px, 16vw, 230px);
+    padding-block: clamp(150px, 16vw, 240px) clamp(170px, 18vw, 260px);
   }
 
   .c-intro .c-ttl {
-    margin-bottom: 0.9em;
+    margin-bottom: 0.8em;
   }
 
   .c-intro p + p {
@@ -627,14 +573,14 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
 
   .c-intro-img-l {
     left: 5%;
-    top: 22%;
+    top: 20%;
     width: 15%;
     aspect-ratio: 3 / 4;
   }
 
   .c-intro-img-r {
     right: 6%;
-    top: 46%;
+    top: 44%;
     width: 13%;
     aspect-ratio: 4 / 5;
   }
@@ -642,7 +588,7 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
   /* ——— 3 · Grosses Wort ——— */
   .c-word {
     position: relative;
-    height: clamp(600px, 64vw, 900px);
+    height: clamp(620px, 66vw, 940px);
     overflow: hidden;
     background: #f3f1ea;
   }
@@ -673,16 +619,12 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
     text-align: center;
     white-space: nowrap;
     font-weight: 200;
-    font-size: clamp(3.2rem, 12.4vw, 13rem);
+    font-size: clamp(3.4rem, 12.6vw, 14rem);
     line-height: 1;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--indigo);
     pointer-events: none;
-  }
-
-  .c-word-text > span {
-    display: block;
   }
 
   .c-word-text-in {
@@ -695,28 +637,26 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
   .c-word-note {
     position: absolute;
     z-index: 4;
-    right: calc(30% - 120px);
-    bottom: 5%;
-    width: 300px;
-    padding: 22px 26px;
-  }
-
-  .c-word-note p {
+    right: var(--gutter);
+    bottom: 9%;
     margin: 0;
-    font-size: 0.96rem;
+    max-width: 20em;
+    font-size: clamp(1rem, 1.15vw, 1.15rem);
     line-height: 1.6;
+    text-align: right;
+    color: var(--ink-2);
   }
 
   /* ——— 4 · Ablauf ——— */
   .c-steps {
-    padding-block: clamp(110px, 13vw, 190px) clamp(110px, 12vw, 170px);
+    padding-block: clamp(130px, 14vw, 210px) clamp(130px, 13vw, 190px);
   }
 
   .c-steps-head {
     display: grid;
-    gap: 16px 64px;
+    gap: 18px 64px;
     align-items: end;
-    margin-bottom: clamp(48px, 6vw, 80px);
+    margin-bottom: clamp(52px, 6vw, 88px);
   }
 
   .c-steps-head .c-ttl {
@@ -724,7 +664,7 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
   }
 
   .c-steps-head p {
-    max-width: 30em;
+    max-width: 28em;
     margin: 0;
   }
 
@@ -741,7 +681,7 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
 
   .c-step {
     background: var(--bg);
-    padding-bottom: 28px;
+    padding-bottom: 32px;
   }
 
   .c-step-img {
@@ -751,56 +691,59 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
     overflow: hidden;
   }
 
+  .c-step-img :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .c-step-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(17, 19, 28, 0) 55%, rgba(17, 19, 28, 0.42) 100%);
+  }
+
   .c-step-title {
     position: absolute;
     z-index: 2;
-    left: 16px;
-    right: 16px;
-    bottom: 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 10px;
-    padding: 14px 18px;
-    background: rgba(251, 250, 246, 0.55);
-    -webkit-backdrop-filter: blur(16px) saturate(1.2);
-    backdrop-filter: blur(16px) saturate(1.2);
-    border: 1px solid rgba(255, 255, 255, 0.55);
-    color: var(--ink);
+    left: 0;
+    right: 0;
+    bottom: 26px;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    color: #fff;
     font-weight: 300;
-    font-size: clamp(0.78rem, 1vw, 0.95rem);
-    letter-spacing: 0.2em;
+    font-size: clamp(1.05rem, 1.4vw, 1.35rem);
+    letter-spacing: 0.22em;
     text-transform: uppercase;
   }
 
   .c-step-title small {
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    color: var(--ink-2);
+    font-size: 0.7em;
+    letter-spacing: 0.2em;
+    opacity: 0.85;
   }
 
   .c-step p {
-    margin: 22px auto 0;
-    max-width: 22em;
-    padding-inline: 18px;
+    margin: 26px auto 0;
+    max-width: 20em;
+    padding-inline: 20px;
     text-align: center;
-    font-size: 0.98rem;
+    font-size: clamp(1.05rem, 1.15vw, 1.15rem);
     line-height: 1.65;
   }
 
   /* ——— 5 · Beliebte Zonen ——— */
   .c-prices {
-    padding-block: clamp(120px, 13vw, 190px);
+    padding-block: clamp(150px, 15vw, 220px) clamp(130px, 13vw, 190px);
     background: #f3f1ea;
   }
 
   .c-prices-grid {
     display: grid;
-    gap: 64px clamp(48px, 8vw, 140px);
-  }
-
-  .c-prices-media {
-    position: relative;
+    gap: 64px clamp(56px, 8vw, 150px);
   }
 
   .c-prices-img {
@@ -810,33 +753,43 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
     overflow: hidden;
   }
 
-  .c-prices-note {
+  .c-prices-img :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .c-prices-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(17, 19, 28, 0) 62%, rgba(17, 19, 28, 0.4) 100%);
+  }
+
+  .c-prices-img figcaption {
     position: absolute;
     z-index: 2;
-    left: -24px;
-    bottom: 40px;
-    max-width: 280px;
-    padding: 20px 24px;
+    left: 28px;
+    right: 28px;
+    bottom: 26px;
+    font-weight: 300;
+    font-size: clamp(1rem, 1.1vw, 1.1rem);
+    line-height: 1.55;
+    letter-spacing: 0.02em;
+    color: #fff;
   }
-
-  .c-prices-note p {
-    margin: 0;
-    font-size: 0.95rem;
-    line-height: 1.6;
-  }
-
 
   .c-tabs {
     display: flex;
-    gap: 28px;
-    margin: 8px 0 28px;
+    gap: 32px;
+    margin: 4px 0 30px;
   }
 
   .c-tabs button {
     border: 0;
     background: none;
     padding: 0 0 6px;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--muted);
@@ -864,97 +817,88 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
     display: grid;
     grid-template-columns: 1fr auto auto;
     align-items: baseline;
-    gap: 8px 28px;
-    padding: 24px 0;
+    gap: 8px 32px;
+    padding: 26px 0;
     text-decoration: none;
     color: var(--ink);
-    transition: padding 0.4s var(--ease);
-  }
-
-  .c-list a:hover {
-    padding-left: 10px;
   }
 
   .c-l-name {
     font-weight: 300;
-    font-size: clamp(1.1rem, 1.5vw, 1.35rem);
-    letter-spacing: 0.06em;
+    font-size: clamp(1.25rem, 1.8vw, 1.65rem);
+    letter-spacing: 0.05em;
     text-transform: uppercase;
+    transition: color 0.3s ease;
   }
 
   .c-l-dur {
-    font-size: 0.92rem;
+    white-space: nowrap;
+    font-size: 1rem;
     color: var(--muted);
   }
 
   .c-l-price {
+    white-space: nowrap;
     font-weight: 400;
-    font-size: 1.05rem;
+    font-size: clamp(1.1rem, 1.3vw, 1.25rem);
     min-width: 5.5em;
     text-align: right;
   }
 
   .c-l-go {
     display: none;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.74rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
+    color: var(--muted);
+    transition:
+      color 0.3s ease,
+      transform 0.4s var(--ease);
+  }
+
+  .c-list a:hover .c-l-name,
+  .c-list a:hover .c-l-go {
     color: var(--salvia-ink);
   }
 
-  .c-list a:hover .c-l-name {
-    color: var(--salvia-ink);
+  .c-list a:hover .c-l-go {
+    transform: translateX(4px);
   }
 
   .c-prices-all {
-    margin-top: 36px;
+    margin-top: 40px;
   }
 
-  /* ——— 7 · Kundenstimmen ——— */
+  /* ——— 7 · Kundenstimmen (nach evnia: Sterne, Zitat, feine Pfeile) ——— */
   .c-voices {
     position: relative;
-    min-height: clamp(620px, 72vw, 900px);
-    display: grid;
-    place-items: center;
-    padding: 100px var(--gutter);
-    overflow: hidden;
+    padding-block: clamp(140px, 14vw, 210px);
+    border-bottom: 1px solid var(--line);
   }
 
-  .c-voices-bg {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-  }
-
-  .c-voices-card {
+  .c-voices-inner {
     position: relative;
-    z-index: 2;
-    width: min(640px, 100%);
-    padding: clamp(36px, 5vw, 64px);
+    max-width: 1360px;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: clamp(16px, 4vw, 64px);
+  }
+
+  .c-voices-body {
+    max-width: 820px;
+    margin-inline: auto;
     text-align: center;
   }
 
-  .c-voices-score {
-    margin: 0;
-    font-weight: 200;
-    font-size: clamp(4rem, 8vw, 7rem);
-    line-height: 1;
-    letter-spacing: 0.02em;
-    color: var(--ink);
-  }
-
-  .c-voices-meta {
-    margin: 12px 0 34px;
-    font-size: 0.8rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-2);
+  .c-voices-stars {
+    margin: 0 0 34px;
+    font-size: clamp(1.3rem, 1.8vw, 1.7rem);
+    letter-spacing: 0.4em;
+    color: var(--salvia-ink);
   }
 
   .c-voices-quotes {
-    min-height: 9em;
+    min-height: 8.5em;
     display: grid;
     align-items: center;
   }
@@ -964,88 +908,113 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
   }
 
   .c-quote blockquote {
-    margin: 0 0 18px;
+    margin: 0 0 26px;
     font-weight: 300;
-    font-size: clamp(1.2rem, 1.8vw, 1.55rem);
-    line-height: 1.5;
+    font-size: clamp(1.45rem, 2.3vw, 2.1rem);
+    line-height: 1.45;
     color: var(--ink);
+    text-wrap: balance;
   }
 
   .c-quote figcaption {
-    font-size: 0.8rem;
-    letter-spacing: 0.2em;
+    font-size: 0.9rem;
+    letter-spacing: 0.24em;
     text-transform: uppercase;
     color: var(--ink-2);
   }
 
-  .c-voices-nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 22px;
-    margin: 28px 0 30px;
-    font-size: 0.8rem;
-    letter-spacing: 0.14em;
+  .c-voices .c-link {
+    margin-top: 36px;
     color: var(--ink-2);
   }
 
-  .c-voices-nav button {
-    display: grid;
-    place-items: center;
-    width: 44px;
+  /* Feine Linien-Pfeile */
+  .c-arrow {
+    position: relative;
+    width: clamp(44px, 5vw, 72px);
     height: 44px;
-    border: 1px solid var(--line-strong);
-    background: transparent;
-    color: var(--ink);
+    border: 0;
+    background: none;
     cursor: pointer;
-    transition:
-      background 0.3s ease,
-      color 0.3s ease;
+    color: var(--ink);
   }
 
-  .c-voices-nav button:hover {
-    background: var(--indigo);
-    color: #fff;
+  .c-arrow span,
+  .c-arrow span::before {
+    position: absolute;
+    display: block;
   }
 
-  .c-flip {
-    display: grid;
-    transform: scaleX(-1);
+  .c-arrow span {
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: currentColor;
+    transition: transform 0.4s var(--ease);
+  }
+
+  .c-arrow span::before {
+    content: '';
+    top: -5px;
+    width: 10px;
+    height: 10px;
+    border-top: 1px solid currentColor;
+  }
+
+  .c-arrow-l span::before {
+    left: 0;
+    border-left: 1px solid currentColor;
+    transform: rotate(-45deg);
+    transform-origin: 0 0;
+    top: 0;
+  }
+
+  .c-arrow-r span::before {
+    right: 0;
+    border-right: 1px solid currentColor;
+    transform: rotate(45deg);
+    transform-origin: 100% 0;
+    top: 0;
+  }
+
+  .c-arrow-l:hover span {
+    transform: translateX(-4px);
+  }
+
+  .c-arrow-r:hover span {
+    transform: translateX(4px);
   }
 
   /* ——— 8 · Abschluss ——— */
   .c-end {
     position: relative;
-    padding-block: clamp(130px, 14vw, 200px);
+    padding-block: clamp(150px, 15vw, 220px);
     background: #f3f1ea;
     overflow: hidden;
   }
 
-  .c-end-band {
+  .c-end-signet {
     position: absolute;
     z-index: 1;
-    left: 0;
-    right: 0;
+    left: 50%;
     top: 50%;
-    height: 20px;
-    transform: translateY(-50%);
+    width: min(70vw, 900px);
+    aspect-ratio: 321 / 82;
+    transform: translate(-50%, -50%);
     background-image: var(--signet);
-    background-repeat: repeat-x;
-    background-size: auto 100%;
-    opacity: 0.45;
-  }
-
-  .c-end-inner {
-    padding: clamp(40px, 5vw, 64px) clamp(28px, 4vw, 56px);
-    background: rgba(243, 241, 234, 0.86);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    opacity: 0.05;
   }
 
   .c-end-btns {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 14px;
-    margin-top: 40px;
+    gap: 16px;
+    margin-top: 44px;
   }
 
   /* ——— Breakpoints ——— */
@@ -1066,57 +1035,54 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
       grid-template-columns: repeat(4, 1fr);
     }
     .c-prices-grid {
-      grid-template-columns: 0.9fr 1.1fr;
+      grid-template-columns: 0.85fr 1.15fr;
       align-items: center;
     }
   }
 
   @media (max-width: 899px) {
-    /* Start: Fenster 8 % links, 84 % breit, oben 16 %, unten 30 % → Typo-Mitte bei 43 % */
+    /* Start: Fenster links 10 %, Breite 80 %, oben 13 %, unten 14 % → Typo-Mitte bei 34 % */
     .c-hero {
       min-height: 640px;
     }
+    .c-hero-band {
+      height: 62%;
+    }
     .c-hero-panel {
-      left: 8%;
-      width: 84%;
-      top: 16%;
-      bottom: 30%;
+      left: 10%;
+      width: 80%;
+      top: 13%;
+      bottom: 14%;
     }
     .c-hero-type {
-      font-size: 15.5vw;
-      top: 43%;
+      top: 34%;
+      padding-left: 6%;
+      font-size: 12.4vw;
     }
     .c-hero-type-in {
-      left: -9.5238%;
-      width: 119.0476%;
-      top: 50%;
+      left: -12.5%;
+      width: 125%;
+      top: 28.7671%;
+      padding-left: 7.5%;
     }
-    .c-hl1 {
-      padding-left: 4%;
+    .c-hero-cta {
+      left: 50%;
+      top: auto;
+      bottom: calc(14% - 28px);
+      transform: translateX(-50%);
     }
-    .c-hl2 {
-      padding-right: 4%;
+    .c-hero-info {
+      display: none;
     }
-    .c-float,
-    .c-hero-meta,
     .c-intro-img {
       display: none;
     }
-    .c-hero-card {
-      left: var(--gutter);
-      right: var(--gutter);
-      width: auto;
-      bottom: 5%;
-      padding: 20px 22px 22px;
-    }
-    .c-hero-card p {
-      display: none;
-    }
-    .c-hero-rating {
-      margin-bottom: 16px;
+    .c-band-strip {
+      height: 70px;
+      top: -35px;
     }
 
-    /* Grosses Wort: Bild 14 % links, 72 % breit, oben 6 %, unten 18 % → Wortmitte bei 44 % */
+    /* Grosses Wort: Bild 14 % links, 72 % breit, oben 6 %, unten 20 % → Wortmitte bei 43 % */
     .c-word {
       height: 150vw;
     }
@@ -1124,11 +1090,11 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
       left: 14%;
       width: 72%;
       top: 6%;
-      bottom: 18%;
+      bottom: 20%;
     }
     .c-word-text {
       font-size: 13.5vw;
-      top: 44%;
+      top: 43%;
     }
     .c-word-text-in {
       left: -19.4444%;
@@ -1138,14 +1104,23 @@ const signetPattern = `url("data:image/svg+xml,${encodeURIComponent(
     .c-word-note {
       left: var(--gutter);
       right: var(--gutter);
-      bottom: 4vw;
-      width: auto;
-      padding: 16px 18px;
+      bottom: 5%;
+      max-width: none;
+      text-align: center;
     }
 
-    .c-prices-note {
-      left: 12px;
-      bottom: 16px;
+    .c-voices-inner {
+      grid-template-columns: 1fr 1fr;
+    }
+    .c-voices-body {
+      grid-column: 1 / -1;
+      grid-row: 1;
+    }
+    .c-arrow-l {
+      justify-self: end;
+    }
+    .c-arrow-r {
+      justify-self: start;
     }
   }
 </style>

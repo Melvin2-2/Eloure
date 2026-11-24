@@ -673,6 +673,13 @@ body.theme-calm {
   transform: translateY(40px);
 }
 
+/* Startseite: noch ruhiger einblenden */
+.theme-calm.motion .reveal,
+.motion .theme-calm .reveal,
+.motion .theme-calm [data-anim='up'] {
+  transform: translateY(14px);
+}
+
 .motion .reveal-img,
 .motion [data-anim='img'] {
   clip-path: inset(12% 0 12% 0);
