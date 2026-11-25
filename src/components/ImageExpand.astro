@@ -24,7 +24,7 @@ const { image, alt, word, title, text, ctaHref, ctaLabel } = Astro.props;
   </div>
   <p class="word serif" data-expand-text aria-hidden="true">{word}</p>
   <div class="card glass" data-expand-text>
-    <h2>{title}</h2>
+    <h2 set:html={title} />
     <p>{text}</p>
     {
       ctaHref && (
@@ -68,7 +68,7 @@ const { image, alt, word, title, text, ctaHref, ctaLabel } = Astro.props;
   .word {
     position: absolute;
     left: 50%;
-    top: 46%;
+    top: 34%;
     transform: translate(-50%, -50%);
     margin: 0;
     font-size: clamp(3.2rem, 14vw, 15rem);
@@ -92,6 +92,8 @@ const { image, alt, word, title, text, ctaHref, ctaLabel } = Astro.props;
 
   .card h2 {
     font-size: clamp(2rem, 3.4vw, 3rem);
+    hyphens: manual;
+    overflow-wrap: normal;
   }
 
   .card p {

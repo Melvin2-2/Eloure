@@ -54,6 +54,28 @@ const zoneRegions = (g: Group) =>
   byRegion(g)
     .map(([r, list]) => [r, list.filter((x) => !pkgIds.has(x.id))] as const)
     .filter(([, list]) => list.length);
+// Varianten, die sich ausschliessen: in der Liste als eine Auswahlzeile
+const CHOICES = [
+  ['oberlippe', 'oberlippe-kinn', 'gesicht'],
+  ['unterschenkel', 'oberschenkel', 'beine-komplett'],
+  ['bikinilinie', 'bikini-intim'],
+  ['oberarme', 'arme-komplett'],
+];
+type Item = { one: (typeof services)[number] } | { choice: (typeof services)[number][] };
+const regionItems = (list: (typeof services)[number][]): Item[] => {
+  const done = new Set<string>();
+  const out: Item[] = [];
+  for (const x of list) {
+    if (done.has(x.id)) continue;
+    const grp = CHOICES.find((c) => c.includes(x.id));
+    const members = grp ? grp.map((id) => list.find((y) => y.id === id)).filter((y): y is (typeof services)[number] => !!y) : [];
+    if (members.length > 1) {
+      members.forEach((m) => done.add(m.id));
+      out.push({ choice: members });
+    } else out.push({ one: x });
+  }
+  return out;
+};
 const quick = (g: Group) => services.filter((s) => s.group === g && s.tag).sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
 const groups: { id: Group; label: string }[] = [
   { id: 'frauen', label: 'Frauen' },
@@ -222,25 +244,45 @@ const data = {
                     {zoneRegions(g.id).map(([region, list]) => (
                       <fieldset class="region">
                         <legend>{region}</legend>
-                        {list.map((s) => (
-                          <label class="opt" data-opt={s.id}>
-                            <input type="checkbox" value={s.id} data-service />
-                            <span class="box" aria-hidden="true">
-                              <Icon name="check" size={13} />
-                            </span>
-                            <span class="o-name">
-                              <span>
-                                {s.name}
-                                {s.tag && <em class:list={['o-tag', s.tag === 'Kombi' ? 'o-k' : 'o-t']}>{s.tag}</em>}
+                        {regionItems(list).map((it) =>
+                          'choice' in it ? (
+                            <div class="choice" role="group" aria-label="Eine Variante wählen">
+                              <span class="choice-l">Eine Variante</span>
+                              <div class="choice-opts">
+                                {it.choice.map((s) => (
+                                  <label class="opt" data-opt={s.id}>
+                                    <input type="checkbox" value={s.id} data-service />
+                                    <span class="c-name">
+                                      {s.name}
+                                      {s.tag && <em class="o-tag">{s.tag}</em>}
+                                    </span>
+                                    <span class="c-meta">
+                                      <span class="c-dur">{duration(s.minutes)} · </span><b>{chf(s.price)}</b>
+                                    </span>
+                                  </label>
+                                ))}
+                              </div>
+                            </div>
+                          ) : (
+                            <label class="opt" data-opt={it.one.id}>
+                              <input type="checkbox" value={it.one.id} data-service />
+                              <span class="box" aria-hidden="true">
+                                <Icon name="check" size={13} />
                               </span>
-                              <small>
-                                {duration(s.minutes)}
-                                {s.note && <> · {s.note}</>}
-                              </small>
-                            </span>
-                            <span class="o-price">{chf(s.price)}</span>
-                          </label>
-                        ))}
+                              <span class="o-name">
+                                <span>
+                                  {it.one.name}
+                                  {it.one.tag && <em class:list={['o-tag', it.one.tag === 'Kombi' ? 'o-k' : 'o-t']}>{it.one.tag}</em>}
+                                </span>
+                                <small>
+                                  {duration(it.one.minutes)}
+                                  {it.one.note && <> · {it.one.note}</>}
+                                </small>
+                              </span>
+                              <span class="o-price">{chf(it.one.price)}</span>
+                            </label>
+                          ),
+                        )}
                       </fieldset>
                     ))}
                   </div>
@@ -823,6 +865,7 @@ const data = {
   .pick :global(.chips) {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 8px;
   }
 
@@ -838,6 +881,30 @@ const data = {
     color: var(--ink);
     cursor: pointer;
     transition: background 0.2s, border-color 0.2s, color 0.2s;
+  }
+
+  .pick :global(.chip-group) {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    padding: 5px;
+    border: 1px dashed var(--line-strong);
+  }
+
+  .pick :global(.chip-group i) {
+    font-style: normal;
+    font-size: 0.74rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .pick :global(.pick-status small) {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 0.88rem;
+    color: var(--ink-2);
   }
 
   .pick :global(.chip small) {
@@ -1346,6 +1413,99 @@ const data = {
   .opt:has(input:focus-visible) {
     outline: 2px solid var(--cta);
     outline-offset: -2px;
+  }
+
+  /* Varianten: eine davon wählen */
+  .choice {
+    padding: 14px 0 16px;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .choice:last-child {
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .choice-l {
+    display: block;
+    margin: 0 0 10px 8px;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .choice-opts {
+    display: grid;
+    grid-auto-columns: 1fr;
+    grid-auto-flow: column;
+    border: 1px solid var(--line-strong);
+  }
+
+  .choice .opt {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 3px;
+    padding: 12px 14px;
+    border: 0;
+    border-left: 1px solid var(--line-strong);
+  }
+
+  .choice .opt:first-child {
+    border-left: 0;
+  }
+
+  .choice .opt:last-child {
+    border-bottom: 0;
+  }
+
+  .c-name {
+    font-weight: 350;
+    font-size: 1rem;
+    line-height: 1.25;
+    color: var(--ink);
+  }
+
+  .c-name .o-tag {
+    display: block;
+    margin: 2px 0 0;
+  }
+
+  .c-meta {
+    font-size: 0.86rem;
+    color: var(--muted);
+  }
+
+  .c-meta b {
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .choice .opt:has(input:checked) {
+    background: var(--cta);
+  }
+
+  .choice .opt:has(input:checked) .c-name,
+  .choice .opt:has(input:checked) .c-meta,
+  .choice .opt:has(input:checked) .c-meta b,
+  .choice .opt:has(input:checked) .o-tag {
+    color: #fff;
+  }
+
+  @media (max-width: 640px) {
+    .c-dur {
+      display: none;
+    }
+    .choice .opt {
+      padding: 12px 8px;
+    }
+  }
+
+  .choice .opt[data-cover]::after {
+    position: static;
+    margin-top: 4px;
   }
 
   /* Zone steckt im Paket oder in einer Kombi */
@@ -2401,6 +2561,15 @@ const data = {
   }
   const pkgsFor = () => data.packages.filter((x) => x.group === state.group);
 
+  const CHOICES = [
+    ['oberlippe', 'oberlippe-kinn', 'gesicht'],
+    ['unterschenkel', 'oberschenkel', 'beine-komplett'],
+    ['bikinilinie', 'bikini-intim'],
+    ['oberarme', 'arme-komplett'],
+    ['nacken', 'ruecken-inkl-nacken'],
+  ];
+  // Paket: 3 Zonen inklusive, höchstens 5 Zonen im Paket – weitere werden einzeln berechnet
+  const MAX_PKG = 5;
   // Kombi-Produkte bestehen aus ihren Zonen: so zählen sie im Ganzkörper-Paket als 2 Zonen
   const EXPANDS: Record<string, string[]> = {
     'kombi-intim-achseln': ['bikini-intim', 'achseln'],
@@ -2409,20 +2578,13 @@ const data = {
   // Leistungen, die sich ausschliessen (eine enthält die andere): beim Anhaken wird die andere abgewählt
   const CONFLICTS: string[][] = [
     ['oberlippe', 'oberlippe-kinn', 'gesicht'],
-    ['beine-komplett', 'unterschenkel'],
-    ['beine-komplett', 'oberschenkel'],
+    ['unterschenkel', 'oberschenkel', 'beine-komplett'],
     ['bikinilinie', 'bikini-intim'],
     ['ruecken-inkl-nacken', 'nacken'],
     ['arme-komplett', 'oberarme'],
   ];
   function addSvc(id: string) {
     if (EXPANDS[id]) return EXPANDS[id].forEach((x) => addSvc(x));
-    // Unter- und Oberschenkel zusammen = Beine komplett
-    const other = LEG_HALF.find((x) => x !== id);
-    if (LEG_HALF.includes(id) && other && state.selected.has(other)) {
-      state.selected.delete(other);
-      id = LEG_FULL;
-    }
     for (const g of CONFLICTS) if (g.includes(id)) g.forEach((x) => x !== id && state.selected.delete(x));
     state.selected.add(id);
   }
@@ -2430,32 +2592,36 @@ const data = {
     const sel = [...state.selected].map((id) => byId.get(id)!).filter(Boolean);
     const zones = sel.filter(eligible);
     const rest = sel.filter((x) => !eligible(x));
-    const single = bestSingles(zones);
-    const sum = single.sum;
-    const mins = zones.reduce((a, x) => a + x.minutes, 0);
+    // teuerste Zonen zuerst ins Paket (am günstigsten für die Kundin)
+    const sorted = [...zones].sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
+    const pz = sorted.slice(0, MAX_PKG);
+    const over = sorted.slice(MAX_PKG);
     const n = zones.length;
+    const pn = pz.length;
+    const sum = bestSingles(pz).sum;
+    const mins = pz.reduce((a, x) => a + x.minutes, 0);
     let pk: Pkg | undefined;
     if (state.group === 'frauen') {
-      const ids = new Set(zones.map((z) => z.id));
+      const ids = new Set(pz.map((z) => z.id));
       const half = !ids.has(LEG_FULL) && LEG_HALF.some((x) => ids.has(x));
       pk = pkgsFor().find((x) => x.legs === (half ? 'half' : 'full'));
     } else pk = pkgsFor()[0];
     const included = 3;
     const need = Math.max(0, included - n);
     const ok = !!pk && need === 0;
-    const pkgPrice = ok ? pk!.price + (n - included) * pk!.extra : 0;
+    const pkgPrice = ok ? pk!.price + (pn - included) * pk!.extra : 0;
     const save = ok ? sum - pkgPrice : 0;
     // automatisch, sobald das Paket günstiger ist
     const apply = ok && save > 0;
-    const restCalc = bestSingles(rest);
+    const restCalc = bestSingles([...over, ...rest]);
     const allCalc = bestSingles([...zones, ...rest]);
     const lines: Line[] = apply
       ? [
           {
             id: pk!.id,
-            name: `${pk!.name} (${zones.map((z) => z.name).join(', ')})`,
+            name: `${pk!.name} (${pz.map((z) => z.name).join(', ')})`,
             price: pkgPrice,
-            minutes: Math.max(pk!.minutes + Math.max(0, n - included) * pk!.extraMinutes, mins),
+            minutes: Math.max(pk!.minutes + Math.max(0, pn - included) * pk!.extraMinutes, mins),
             priceLabel: null,
             single: false,
           },
@@ -2463,9 +2629,9 @@ const data = {
         ]
       : allCalc.lines;
     // Zonen, die in einem Paket/einer Kombi stecken (in der Liste nicht einzeln angehakt)
-    const inPkg = new Set(apply ? zones.map((z) => z.id) : []);
+    const inPkg = new Set(apply ? pz.map((z) => z.id) : []);
     const inKombi = new Set(apply ? restCalc.merged : allCalc.merged);
-    return { lines, zones, pk, n, sum, pkgPrice, save, apply, ok, need, included, inPkg, inKombi };
+    return { lines, zones: pz, over, pk, n, pn, sum, pkgPrice, save, apply, ok, need, included, inPkg, inKombi };
   }
   const selectedList = () => pricing().lines;
   const totalMinutes = () => selectedList().reduce((a, s) => a + s.minutes, 0);
@@ -3144,23 +3310,40 @@ const data = {
     const zonesOf = (f: (x: Svc) => boolean) => data.services.filter((x) => x.group === state.group && eligible(x) && f(x));
     const chip = (x: Svc) =>
       `<button type="button" class="chip" data-z="${x.id}" aria-pressed="${state.selected.has(x.id)}"><span>${x.name}</span><small>${fmtChf(x.price ?? 0)}</small></button>`;
+    // Varianten (eine davon) als zusammenhängende Gruppe mit „oder“
+    const chips = (list: Svc[]) => {
+      const done = new Set<string>();
+      let html = '';
+      for (const x of list) {
+        if (done.has(x.id)) continue;
+        const grp = CHOICES.find((c) => c.includes(x.id));
+        const members = grp ? (grp.map((id) => list.find((y) => y.id === id)).filter(Boolean) as Svc[]) : [];
+        if (members.length > 1) {
+          members.forEach((m) => done.add(m.id));
+          html += `<span class="chip-group" role="group" aria-label="Eine Variante">${members.map(chip).join('<i>oder</i>')}</span>`;
+        } else html += chip(x);
+      }
+      return html;
+    };
     const women = state.group === 'frauen';
     const name = pr.pk?.name ?? 'Ganzkörper';
     let status = '';
     if (pr.need) status = `Wähle noch ${pr.need} ${pr.need === 1 ? 'Zone' : 'Zonen'}.`;
     else if (pr.apply)
-      status = `<b>${fmtChf(pr.pkgPrice)}</b> statt einzeln <s>${fmtChf(pr.sum)}</s> <span class="pick-save">– ${fmtChf(pr.save)}</span>`;
+      status = `<b>${fmtChf(pr.pkgPrice)}</b> statt einzeln <s>${fmtChf(pr.sum)}</s> <span class="pick-save">– ${fmtChf(pr.save)}</span>${
+        pr.over.length ? `<br /><small>Mehr als ${MAX_PKG} Zonen: ${pr.over.map((z) => z.name).join(', ')} berechnen wir einzeln.</small>` : ''
+      }`;
     else status = `Einzeln günstiger (${fmtChf(pr.sum)}) – wir berechnen die Zonen einzeln.`;
     const extra = pr.pk?.extra ?? pkgsFor()[0]?.extra ?? 10;
     box.innerHTML = `
       <button type="button" class="pick-x" data-pick-close aria-label="Schliessen"><span aria-hidden="true"></span></button>
       <div class="pick-head">
         <p class="pick-t">${name}</p>
-        <p class="pick-r">3 Zonen inklusive · jede weitere + ${fmtChf(extra)}</p>
+        <p class="pick-r">3 Zonen inklusive · bis zu 2 weitere je + ${fmtChf(extra)}</p>
       </div>
-      ${women ? `<p class="pick-l">Beine <span>optional</span></p><div class="chips">${zonesOf((x) => isLeg(x.id)).map(chip).join('')}</div>` : ''}
-      <p class="pick-l">${women ? 'Weitere Zonen' : 'Deine Zonen'} <span>${pr.n} von 3 gewählt</span></p>
-      <div class="chips">${zonesOf((x) => !women || !isLeg(x.id)).map(chip).join('')}</div>
+      ${women ? `<p class="pick-l">Beine <span>optional</span></p><div class="chips">${chips(zonesOf((x) => isLeg(x.id)))}</div>` : ''}
+      <p class="pick-l">${women ? 'Weitere Zonen' : 'Deine Zonen'} <span>${pr.n} gewählt · max. ${MAX_PKG} im Paket</span></p>
+      <div class="chips">${chips(zonesOf((x) => !women || !isLeg(x.id)))}</div>
       <div class="pick-foot">
         <p class="pick-status">${status}</p>
         <div class="pick-actions">
@@ -3206,7 +3389,7 @@ const data = {
     const pr = pricing();
     let html = '';
     if (pr.apply) {
-      html = `<p class="pkg-t">${pr.pk!.name} · ${pr.n} Zonen <span class="pkg-save">– ${fmtChf(pr.save)}</span></p>
+      html = `<p class="pkg-t">${pr.pk!.name} · ${pr.pn} Zonen <span class="pkg-save">– ${fmtChf(pr.save)}</span></p>
         <p class="pkg-x"><b>${fmtChf(pr.pkgPrice)}</b> statt einzeln ${fmtChf(pr.sum)} – automatisch zusammengefasst.</p>
         <button type="button" class="pkg-btn" data-pkg-edit>Bearbeiten</button>`;
     }

@@ -1,178 +1,299 @@
 ---
+// Kontakt: zwei klar getrennte Wege (Termin buchen · Frage stellen), darunter eigenständig das Formular
+// und die Anfahrt. Grossflächig, ruhig, Linien statt Boxen.
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
-import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
-import imgLounge from '../assets/shoot/detail-tuecher.jpg';
-import imgHero from '../assets/shoot/caro-portrait.jpg';
+import imgHero from '../assets/shoot/raum-weit.jpg';
+import imgTuecher from '../assets/shoot/detail-tuecher.jpg';
+
+const channels = [
+  { label: 'WhatsApp', value: 'Nachricht schreiben', href: site.whatsappHref, ext: true },
+  { label: 'Telefon', value: site.phone, href: site.phoneHref },
+  { label: 'E-Mail', value: site.email, href: `mailto:${site.email}?subject=Anfrage` },
+  { label: 'Instagram', value: site.instagramHandle, href: site.instagram, ext: true },
+];
 ---
 
 <Base
   title="Kontakt & Anfahrt | Eloure The Studio Amriswil"
   description="Eloure The Studio, Bahnhofstrasse 20, 8580 Amriswil. Mo–Fr 10–20 Uhr, Sa 10–16 Uhr. Erreiche uns per Telefon, WhatsApp, E-Mail oder buche direkt online."
 >
-  <PageHero
-    title={['Meld dich.', 'Wir freuen uns.']}
-    sub="Persönlich für dich da."
-    image={imgHero}
-    alt="Caro, deine Ansprechpartnerin bei Eloure"
-    lead="Ob kurze Frage oder erster Termin: Schreib uns, wie es dir am liebsten ist. Wir antworten persönlich."
-  />
+  <PageHero title={['Meld dich.', 'Wir freuen uns.']} image={imgHero} alt="Helle Lounge im Eloure Studio" position="center 55%" lead="Termin buchen oder kurz nachfragen – wie es dir am liebsten ist." />
 
-  <section class="section bg-sand">
-    <div class="wrap grid">
-      <div class="channels">
-        <a class="ch main" href="/termin">
-          <Icon name="calendar" size={24} />
-          <span><strong>Direkt online buchen</strong><small>Freie Termine sehen und sofort anfragen</small></span>
-          <Icon name="arrow" size={18} class="go" />
-        </a>
-        <a class="ch" href={site.whatsappHref} target="_blank" rel="noopener">
-          <Icon name="whatsapp" size={24} />
-          <span><strong>WhatsApp</strong><small>Am schnellsten für kurze Fragen</small></span>
-          <Icon name="arrow" size={18} class="go" />
-        </a>
-        <a class="ch" href={site.phoneHref}>
-          <Icon name="phone" size={24} />
-          <span><strong>{site.phone}</strong><small>Ruf uns an während der Öffnungszeiten</small></span>
-          <Icon name="arrow" size={18} class="go" />
-        </a>
-        <a class="ch" href={`mailto:${site.email}?subject=Anfrage`}>
-          <Icon name="mail" size={24} />
-          <span><strong>{site.email}</strong><small>Für alles, was etwas mehr Platz braucht</small></span>
-          <Icon name="arrow" size={18} class="go" />
-        </a>
-        <a class="ch" href={site.instagram} target="_blank" rel="noopener">
-          <Icon name="instagram" size={24} />
-          <span><strong>{site.instagramHandle}</strong><small>Einblicke ins Studio & Behandlungen</small></span>
-          <Icon name="arrow" size={18} class="go" />
-        </a>
+  <!-- Zwei Wege -->
+  <section class="ways">
+    <div class="ways-grid">
+      <a class="way way-book" href="/termin" data-anim="soft">
+        <h2>Termin<br />buchen</h2>
+        <p>Freie Zeiten sehen und direkt online buchen. Bezahlt wird vor Ort.</p>
+        <span class="way-btn">Zur Buchung</span>
+      </a>
+
+      <div class="way way-ask" data-anim="soft">
+        <h2>Frage<br />stellen</h2>
+        <p>Wir antworten persönlich – am schnellsten per WhatsApp.</p>
+        <ul class="lines">
+          {
+            channels.map((c) => (
+              <li>
+                <a href={c.href} target={c.ext ? '_blank' : undefined} rel={c.ext ? 'noopener' : undefined}>
+                  <span class="l-label">{c.label}</span>
+                  <span class="l-value">{c.value}</span>
+                  <span class="l-arrow" aria-hidden="true" />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
       </div>
+    </div>
+  </section>
 
-      <form class="form" data-contact-form>
-        <h2>Nachricht schreiben</h2>
+  <!-- Nachricht schreiben: eigenständig -->
+  <section class="write" id="nachricht">
+    <div class="write-in">
+      <div class="write-head">
+        <h2 class="reveal">Nachricht<br />schreiben</h2>
+        <p class="reveal">Für alles, was etwas mehr Platz braucht. Wir antworten persönlich.</p>
+      </div>
+      <form class="form reveal" data-contact-form>
         <div class="row2">
           <label>Vorname<input name="vorname" autocomplete="given-name" required /></label>
           <label>Nachname<input name="nachname" autocomplete="family-name" /></label>
         </div>
-        <label>E-Mail<input type="email" name="email" autocomplete="email" required /></label>
-        <label>Telefon <span class="opt">(optional)</span><input type="tel" name="telefon" autocomplete="tel" /></label>
-        <label>Deine Nachricht<textarea name="nachricht" rows="5" required placeholder="Was möchtest du wissen?"></textarea></label>
+        <div class="row2">
+          <label>E-Mail<input type="email" name="email" autocomplete="email" required /></label>
+          <label><span>Telefon <span class="opt">(optional)</span></span><input type="tel" name="telefon" autocomplete="tel" /></label>
+        </div>
+        <label>Deine Nachricht<textarea name="nachricht" rows="5" required></textarea></label>
         <label class="consent">
           <input type="checkbox" required />
           <span>Ich bin einverstanden, dass meine Angaben zur Beantwortung meiner Anfrage verwendet werden. Mehr in der <a href="/datenschutz">Datenschutzerklärung</a>.</span>
         </label>
-        <button class="btn btn-primary" type="submit">Nachricht senden<span class="arrow"><Icon name="arrow" size={15} /></span></button>
-        <p class="sent" hidden data-sent>
-          <Icon name="check" size={18} /> Danke! Wir haben deine Nachricht erhalten und melden uns so schnell wie möglich.
-        </p>
+        <button class="send" type="submit">Nachricht senden</button>
+        <p class="sent" hidden data-sent>Danke! Wir haben deine Nachricht erhalten und melden uns so schnell wie möglich.</p>
       </form>
     </div>
   </section>
 
-  <section class="section bg-mist">
-    <div class="wrap split">
-      <div>
-        <h2 class="reveal">So findest du zu uns.</h2>
-        <address class="lead">
-          {site.name}<br />
+  <!-- Anfahrt -->
+  <section class="visit">
+    <div class="visit-grid">
+      <div class="visit-text">
+        <h2 class="reveal">So findest<br />du zu uns.</h2>
+        <address class="reveal">
           {site.address.street}<br />
           {site.address.zip} {site.address.city}
         </address>
-        <p class="park">{site.parking} · Bezahlung: {site.paymentMethods}</p>
-        <dl class="hours">
-          {site.hours.map((h) => (<div><dt>{h.days}</dt><dd>{h.time}</dd></div>))}
+        <dl class="hours reveal">
+          {
+            site.hours.map((h) => (
+              <div>
+                <dt>{h.days}</dt>
+                <dd>{h.time}</dd>
+              </div>
+            ))
+          }
         </dl>
-        <a class="btn btn-ghost" href={site.mapsUrl} target="_blank" rel="noopener"><Icon name="pin" size={18} /> Route in Google Maps</a>
+        <p class="park reveal">{site.parking} · Bezahlung: {site.paymentMethods}</p>
+        <a class="route reveal" href={site.mapsUrl} target="_blank" rel="noopener">Route planen</a>
       </div>
-      <div class="media pic" data-anim="img">
-        <Image src={imgLounge} alt="Frische Tücher im Behandlungsraum" widths={[500, 800]} sizes="(min-width: 900px) 46vw, 100vw" />
-      </div>
+      <figure class="visit-img" data-anim="soft">
+        <Image src={imgTuecher} alt="Frische Tücher im Behandlungsraum" widths={[500, 800, 1100]} sizes="(min-width: 900px) 44vw, 100vw" />
+      </figure>
     </div>
   </section>
 </Base>
 
 <style>
-  .grid {
-    display: grid;
-    gap: 40px 64px;
+  h2 {
+    font-family: var(--sans);
+    font-style: normal;
+    font-weight: 200;
+    text-transform: uppercase;
+    line-height: 1;
+    letter-spacing: 0.005em;
+    color: var(--ink);
   }
 
-  @media (min-width: 960px) {
-    .grid {
-      grid-template-columns: 0.9fr 1.1fr;
-      align-items: start;
+  /* ——— Zwei Wege ——— */
+  .ways {
+    padding-block: clamp(110px, 11vw, 170px);
+  }
+
+  .ways-grid {
+    display: grid;
+    gap: 14px;
+    max-width: 1320px;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  @media (min-width: 900px) {
+    .ways-grid {
+      grid-template-columns: 1fr 1fr;
     }
   }
 
-  .channels {
-    display: grid;
-    gap: 10px;
-  }
-
-  .ch {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 16px;
-    padding: 18px 20px;
-    border-radius: 0;
-    background: var(--paper);
-    border: 1px solid var(--line);
-    text-decoration: none;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-
-  .ch:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow);
-  }
-
-  .ch span {
+  .way {
     display: flex;
     flex-direction: column;
-    min-width: 0;
+    padding: clamp(32px, 4.4vw, 64px);
+    min-height: clamp(420px, 42vw, 560px);
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .way h2 {
+    margin: 0 0 22px;
+    font-size: clamp(2.6rem, 4.8vw, 5rem);
+  }
+
+  .way p {
+    max-width: 24em;
+    margin: 0;
+    font-size: 1.05rem;
+    color: var(--ink-2);
+  }
+
+  .way-book {
+    background: var(--frost);
+    --ink-2: #33363a;
+    transition:
+      transform 0.4s var(--ease),
+      box-shadow 0.4s var(--ease);
+  }
+
+  .way-book:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 26px 48px -30px rgba(40, 50, 62, 0.55);
+  }
+
+  .way-btn {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    min-height: 58px;
+    margin-top: auto;
+    padding: 0 40px;
+    font-size: 0.88rem;
+    font-weight: 450;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--cta);
+    transition: background 0.3s ease;
+  }
+
+  .way-book:hover .way-btn {
+    background: var(--cta-hover);
+  }
+
+  .way-ask {
+    background: var(--veil);
+  }
+
+  .lines {
+    list-style: none;
+    margin: auto 0 0;
+    padding: 32px 0 0;
+  }
+
+  .lines li {
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .lines li:last-child {
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .lines a {
+    display: grid;
+    grid-template-columns: 110px 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 4px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: padding 0.3s var(--ease);
+  }
+
+  .lines a:hover {
+    padding-left: 12px;
+  }
+
+  .l-label {
+    font-size: 0.76rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  .l-value {
     overflow-wrap: anywhere;
+    font-size: 1.05rem;
   }
 
-  .ch small {
-    color: var(--muted);
-    font-size: 0.94rem;
+  .l-arrow {
+    position: relative;
+    width: 22px;
+    height: 1px;
+    background: currentColor;
   }
 
-  .ch.main {
-    background: var(--ink);
-    color: var(--paper);
-    --head: currentColor;
+  .l-arrow::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -4px;
+    width: 8px;
+    height: 8px;
+    border-top: 1px solid currentColor;
+    border-right: 1px solid currentColor;
+    transform: rotate(45deg);
   }
 
-  .ch.main small {
-    color: rgba(250, 251, 252, 0.7);
+  /* ——— Nachricht ——— */
+  .write {
+    padding-block: clamp(110px, 11vw, 170px);
+    background: var(--veil);
   }
 
-  .ch.main :global(.go) {
-    color: var(--paper);
-    --head: currentColor;
+  .write-in {
+    display: grid;
+    gap: 48px clamp(48px, 7vw, 120px);
+    max-width: 1320px;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  @media (min-width: 960px) {
+    .write-in {
+      grid-template-columns: 0.8fr 1.2fr;
+    }
+  }
+
+  .write-head h2 {
+    margin: 0 0 22px;
+    font-size: clamp(2.6rem, 4.4vw, 4.6rem);
+  }
+
+  .write-head p {
+    max-width: 22em;
+    margin: 0;
+    color: var(--ink-2);
   }
 
   .form {
     display: grid;
-    gap: 16px;
-    padding: clamp(24px, 4vw, 44px);
-    border-radius: 0;
-    background: var(--paper);
-    border: 1px solid var(--line);
-  }
-
-  .form h2 {
-    font-size: 2.2rem;
-    margin-bottom: 4px;
+    gap: 22px;
   }
 
   .row2 {
     display: grid;
-    gap: 16px;
+    gap: 22px;
   }
 
   @media (min-width: 560px) {
@@ -181,102 +302,171 @@ import imgHero from '../assets/shoot/caro-portrait.jpg';
     }
   }
 
-  label {
+  .form label:not(.consent) {
     display: grid;
-    gap: 6px;
-    font-weight: 600;
-    font-size: 0.92rem;
+    gap: 8px;
+    font-size: 0.76rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
   }
 
   .opt {
-    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: none;
     color: var(--muted);
   }
 
   input:not([type='checkbox']),
   textarea {
     width: 100%;
-    padding: 14px 16px;
+    padding: 14px 0;
+    border: 0;
+    border-bottom: 1px solid var(--line-strong);
     border-radius: 0;
-    border: 1px solid var(--line-strong);
-    background: var(--bg);
-    font-weight: 500;
-    font-size: 1rem;
-    transition: border-color 0.2s, background 0.2s;
+    background: transparent;
+    font: inherit;
+    font-size: 1.05rem;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--ink);
+  }
+
+  textarea {
+    resize: vertical;
   }
 
   input:focus,
   textarea:focus {
     outline: none;
-    border-color: var(--ink);
-    background: var(--paper);
+    border-color: var(--cta);
   }
 
   .consent {
+    display: grid;
     grid-template-columns: 20px 1fr;
-    align-items: start;
-    gap: 10px;
-    font-weight: 500;
-    font-size: 0.94rem;
+    gap: 12px;
+    font-size: 0.95rem;
     color: var(--ink-2);
   }
 
   .consent input {
     width: 18px;
     height: 18px;
-    margin-top: 2px;
-    accent-color: var(--ink);
+    margin-top: 3px;
+    accent-color: var(--cta);
   }
 
-  .form .btn {
+  .send {
     justify-self: start;
+    min-height: 58px;
+    padding: 0 40px;
+    border: 1px solid var(--cta);
+    background: var(--cta);
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 450;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .send:hover {
+    background: var(--cta-hover);
+  }
+
+  .send:disabled {
+    opacity: 0.5;
+    cursor: default;
   }
 
   .sent {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    padding: 14px 16px;
-    border-radius: 0;
-    background: var(--linen);
-    font-weight: 600;
+    margin: 0;
+    color: var(--cta);
   }
 
-  .sent[hidden] {
-    display: none;
+  /* ——— Anfahrt ——— */
+  .visit {
+    padding-block: clamp(110px, 11vw, 170px);
+  }
+
+  .visit-grid {
+    display: grid;
+    gap: 48px clamp(48px, 7vw, 120px);
+    align-items: center;
+    max-width: 1320px;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  @media (min-width: 900px) {
+    .visit-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .visit-text h2 {
+    margin: 0 0 28px;
+    font-size: clamp(2.6rem, 4.4vw, 4.6rem);
   }
 
   address {
+    margin-bottom: 28px;
     font-style: normal;
-    margin-bottom: 24px;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: var(--ink);
   }
 
   .hours {
-    margin: 0 0 28px;
-    max-width: 360px;
-    display: grid;
-    gap: 6px;
+    margin: 0 0 20px;
+    border-top: 1px solid var(--line-strong);
   }
 
   .hours div {
     display: flex;
     justify-content: space-between;
-    padding-bottom: 6px;
-    border-bottom: 1px solid var(--line-light);
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .hours dt {
+    color: var(--ink-2);
   }
 
   .hours dd {
     margin: 0;
-    font-weight: 600;
-  }
-
-  .pic {
-    aspect-ratio: 4 / 5;
+    color: var(--ink);
   }
 
   .park {
-    font-weight: 600;
-    margin-bottom: 20px;
+    margin: 0 0 28px;
+    font-size: 0.95rem;
+    color: var(--ink-2);
+  }
+
+  .route {
+    display: inline-block;
+    padding-bottom: 6px;
+    font-size: 0.86rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .visit-img {
+    margin: 0;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+  }
+
+  .visit-img :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 </style>
 

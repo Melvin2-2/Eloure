@@ -40,7 +40,7 @@ const slug = (t: string) =>
     <div class="wrap layout">
       <nav class="toc" aria-label="Themen">
         <ul>
-          {faqGroups.map((g) => <li><a href={`#${slug(g.title)}`}>{g.title}</a></li>)}
+          {faqGroups.map((g) => <li><a href={`#${slug(g.title)}`} data-toc={slug(g.title)}>{g.title}</a></li>)}
         </ul>
         <div class="toc-help">
           <p><strong>Nicht fündig geworden?</strong> Schreib uns – wir antworten persönlich.</p>
@@ -52,9 +52,11 @@ const slug = (t: string) =>
       <div class="groups">
         {
           faqGroups.map((g) => (
-            <section id={slug(g.title)} class="group">
-              <h2>{g.title}</h2>
-              {g.intro && <p class="muted">{g.intro}</p>}
+            <section id={slug(g.title)} class="group" data-group>
+              <header class="g-head">
+                <h2>{g.title}</h2>
+                {g.intro && <p>{g.intro}</p>}
+              </header>
               <FaqList items={g.items} />
             </section>
           ))
@@ -65,6 +67,21 @@ const slug = (t: string) =>
 
   <CtaFinal title="Alles klar? Dann bis bald." />
 </Base>
+
+<script>
+  // Aktives Thema in der Navigation hervorheben
+  const links = new Map([...document.querySelectorAll<HTMLAnchorElement>('[data-toc]')].map((a) => [a.dataset.toc!, a]));
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        links.forEach((a, id) => a.classList.toggle('is-active', id === e.target.id));
+      }
+    },
+    { rootMargin: '-35% 0px -60% 0px' },
+  );
+  document.querySelectorAll('[data-group]').forEach((g) => io.observe(g));
+</script>
 
 <style>
   .layout {
@@ -92,33 +109,45 @@ const slug = (t: string) =>
     gap: 8px;
   }
 
+  .toc ul a {
+    display: block;
+    padding: 10px 14px;
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink-2);
+    border: 1px solid var(--line-strong);
+    transition:
+      color 0.25s,
+      background 0.25s,
+      border-color 0.25s;
+  }
+
+  .toc ul a:hover,
+  .toc ul a.is-active {
+    color: #fff;
+    background: var(--cta);
+    border-color: var(--cta);
+  }
+
   @media (min-width: 960px) {
     .toc ul {
       flex-direction: column;
-      gap: 2px;
+      gap: 0;
+      border-left: 1px solid var(--line-strong);
     }
-  }
-
-  .toc ul a {
-    display: block;
-    padding: 8px 14px;
-    border-radius: 999px;
-    background: var(--paper);
-    border: 1px solid var(--line);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.93rem;
-  }
-
-  @media (min-width: 960px) {
     .toc ul a {
-      background: transparent;
+      padding: 12px 0 12px 18px;
       border: 0;
-      padding: 8px 0;
-      border-radius: 0;
+      border-left: 2px solid transparent;
+      margin-left: -1px;
     }
-    .toc ul a:hover {
-      text-decoration: underline;
+    .toc ul a:hover,
+    .toc ul a.is-active {
+      color: var(--cta);
+      background: transparent;
+      border-left-color: var(--cta);
     }
   }
 
@@ -145,16 +174,64 @@ const slug = (t: string) =>
     }
   }
 
+  /* Gruppen: farbiger Kopf, darunter die Fragen als Linien */
+  .group {
+    scroll-margin-top: 32px;
+    background: rgba(255, 255, 255, 0.4);
+  }
+
   .group + .group {
-    margin-top: 64px;
+    margin-top: 40px;
   }
 
-  .group h2 {
-    font-size: clamp(2rem, 3.6vw, 2.8rem);
-    margin-bottom: 0.25em;
+  .g-head {
+    padding: clamp(24px, 3vw, 36px) clamp(22px, 3vw, 40px);
+    background: var(--frost);
+    --ink-2: #33363a;
   }
 
-  .group > p {
-    margin-bottom: 24px;
+  .group:nth-child(even) .g-head {
+    background: var(--veil);
   }
-</style>
+
+  .g-head h2 {
+    margin: 0;
+    font-weight: 200;
+    font-size: clamp(1.9rem, 3.2vw, 2.8rem);
+    line-height: 1.05;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .g-head p {
+    margin: 10px 0 0;
+    max-width: 34em;
+    color: var(--ink-2);
+  }
+
+  .group :global(.faq) {
+    padding: 4px clamp(22px, 3vw, 40px) 18px;
+    border-top: 0;
+  }
+
+  .group :global(summary) {
+    font-weight: 400;
+    transition: color 0.25s;
+  }
+
+  .group :global(summary:hover),
+  .group :global(details[open] > summary) {
+    color: var(--cta);
+  }
+
+  .group :global(details[open] .pm) {
+    background: var(--cta);
+    border-color: var(--cta);
+    color: #fff;
+  }
+
+  .group :global(details[open] .answer) {
+    padding-left: 18px;
+    border-left: 2px solid var(--cta);
+  }
+</style></style>
