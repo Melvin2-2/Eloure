@@ -33,6 +33,7 @@ import imgLiegeLicht from '../assets/shoot/liege-licht.jpg';
 import imgKnoechel from '../assets/shoot/cd-knoechel.jpg';
 import imgRaumHoch from '../assets/shoot/raum-hoch.jpg';
 import imgRelief from '../assets/shoot/detail-relief.jpg';
+import imgPkg from '../assets/shoot/cd-bein.jpg';
 
 const rating = googleRating.rating.toFixed(1).replace('.', ',');
 
@@ -45,6 +46,14 @@ const steps = [
 ];
 
 // Bestseller als breite Linienliste (Frauen | Männer nebeneinander)
+// Pakete im Stil der Buchung: ein grosses Paket, zwei Kombis – mit Ersparnis gegenüber den Einzelpreisen
+const price = (id: string) => services.find((x) => x.id === id)?.price ?? 0;
+const pkgCards = [
+  { id: 'ganzkoerper', tag: 'Kombi', name: 'Ganzkörper', meta: '3 Zonen deiner Wahl', was: price('kombi-intim-achseln') + price('beine-komplett') },
+  { id: 'beine-komplett', tag: 'Topseller', name: 'Beine komplett', meta: '45 Min.', was: price('unterschenkel') + price('oberschenkel') },
+  { id: 'kombi-intim-achseln', tag: 'Kombi', name: 'Intim + Achseln', meta: '30 Min.', was: price('bikini-intim') + price('achseln') },
+].map((c) => ({ ...c, price: price(c.id), save: (c.was as number) - price(c.id) }));
+
 const best: Record<Group, string[]> = {
   frauen: ['achseln', 'bikini-intim', 'kombi-intim-achseln', 'beine-komplett'],
   maenner: ['achseln-1', 'brust-bauch', 'ruecken-inkl-nacken', 'beine'],
@@ -231,11 +240,48 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
       <p class="c-film-link reveal"><a class="c-link" href="/laserhaarentfernung">Zur Behandlung</a></p>
     </div>
     <div class="c-film-media">
-      <LoopVideo name="laser-sequenz" label="Close-ups einer Laserbehandlung am Bein: Kühlgel auftragen, lasern" pos="center" />
+      <LoopVideo name="laser-szenen" label="Close-ups einer Laserbehandlung am Bein: Kühlgel auftragen, lasern" pos="center" />
     </div>
   </section>
 
-  <!-- 10 · Grossformat: Exhale -->
+  <!-- 10 · Pakete im Stil der Buchung: reduziert, ein grosses Paket und zwei Kombis -->
+  <section class="c-pk on-veil" aria-labelledby="pakete-titel">
+    <div class="c-narrow c-pk-head">
+      <h2 class="c-ttl reveal" id="pakete-titel">Mehr Zonen,<br />weniger zahlen.</h2>
+      <p class="reveal">3 Zonen deiner Wahl für höchstens CHF 179 – jede weitere nur CHF 10.</p>
+    </div>
+    <div class="c-pk-grid">
+      {
+        pkgCards.map((c, i) => (
+          <a class:list={['c-pk-card', { 'is-hero': i === 0 }]} href={`/termin?behandlung=${c.id}&gruppe=frauen`} data-anim="soft">
+            {i === 0 && (
+              <span class="c-pk-img" aria-hidden="true">
+                <Image src={imgPkg} alt="" widths={[500, 900]} sizes="(min-width: 900px) 30vw, 100vw" />
+              </span>
+            )}
+            <span class="c-pk-body">
+              <span class="c-pk-top">
+                <span class="c-pk-tag">{c.tag}</span>
+                <span class="c-pk-save">– {chf(c.save)}</span>
+              </span>
+              <span class="c-pk-name">{c.name}</span>
+              <span class="c-pk-meta">{c.meta}</span>
+              <span class="c-pk-price">
+                {chf(c.price)}
+                <s>einzeln {chf(c.was)}</s>
+              </span>
+            </span>
+          </a>
+        ))
+      }
+    </div>
+    <p class="c-pk-more reveal">
+      <a class="c-link" href="/termin?gruppe=frauen">Alle Angebote</a>
+      <a class="c-link" href="/termin?gruppe=maenner">Für Männer</a>
+    </p>
+  </section>
+
+  <!-- 11 · Grossformat: Exhale -->
   <section class="c-big">
     <figure class="c-big-img" data-anim="soft">
       <Image src={imgExhale} alt="Heller Raum mit weissem Sessel und Kunstwerk an der Wand" widths={[800, 1200, 1800]} sizes="(min-width: 900px) 55vw, 100vw" />
@@ -819,6 +865,149 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
     font-size: clamp(0.98rem, 1.05vw, 1.06rem);
     line-height: 1.55;
     color: rgba(255, 255, 255, 0.94);
+  }
+
+  /* ——— Pakete im Stil der Buchung ——— */
+  .c-pk {
+    padding-block: clamp(130px, 13vw, 200px);
+  }
+
+  .c-pk-head {
+    margin-bottom: clamp(56px, 6vw, 88px);
+  }
+
+  .c-pk-head p {
+    margin: 0 auto;
+    max-width: 30em;
+  }
+
+  .c-pk-grid {
+    display: grid;
+    gap: 14px;
+    max-width: 1180px;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .c-pk-card {
+    display: grid;
+    text-decoration: none;
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+    background: rgba(255, 255, 255, 0.35);
+    transition:
+      transform 0.4s var(--ease),
+      box-shadow 0.4s var(--ease);
+  }
+
+  .c-pk-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 22px 40px -28px rgba(40, 50, 62, 0.5);
+  }
+
+  .c-pk-card.is-hero {
+    border: 0;
+    background: var(--frost);
+    --ink-2: #33363a;
+  }
+
+  .c-pk-img {
+    display: block;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+
+  .c-pk-img :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: contrast(0.92) saturate(0.85);
+  }
+
+  .c-pk-body {
+    display: grid;
+    align-content: end;
+    gap: 6px;
+    padding: clamp(24px, 2.6vw, 36px);
+  }
+
+  .c-pk-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .c-pk-tag {
+    font-size: 0.72rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--cta);
+  }
+
+  .is-hero .c-pk-tag {
+    color: #243a51;
+  }
+
+  .c-pk-save {
+    padding: 3px 9px;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: #fff;
+    background: var(--cta);
+  }
+
+  .c-pk-name {
+    font-weight: 300;
+    font-size: clamp(1.4rem, 1.9vw, 1.8rem);
+    line-height: 1.1;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .is-hero .c-pk-name {
+    font-weight: 200;
+    font-size: clamp(2.2rem, 3.6vw, 3.4rem);
+    letter-spacing: 0.02em;
+  }
+
+  .c-pk-meta {
+    font-size: 0.95rem;
+    color: var(--ink-2);
+  }
+
+  .c-pk-price {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-top: 18px;
+    font-size: 1.4rem;
+  }
+
+  .c-pk-price s {
+    font-size: 0.86rem;
+    color: var(--ink-2);
+  }
+
+  .c-pk-more {
+    display: flex;
+    justify-content: center;
+    gap: 36px;
+    margin: clamp(48px, 5vw, 72px) 0 0;
+  }
+
+  @media (min-width: 900px) {
+    .c-pk-grid {
+      grid-template-columns: 1.4fr 1fr;
+      grid-template-rows: 1fr 1fr;
+    }
+    .c-pk-card.is-hero {
+      grid-row: 1 / 3;
+      grid-template-columns: 1fr 1fr;
+    }
+    .c-pk-img {
+      aspect-ratio: auto;
+    }
   }
 
   /* ——— Video für sich: ganze Sectionhöhe ——— */

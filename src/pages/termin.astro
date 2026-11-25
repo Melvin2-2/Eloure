@@ -179,6 +179,7 @@ const data = {
                               {save > 0 && <s class="qk-was">einzeln {chf(was)}</s>}
                             </span>
                             {exampleText(s.id) && <span class="qk-ex">{exampleText(s.id)}</span>}
+                            {pkgIds.has(s.id) && <span class="qk-inc" data-pkg-inc={s.id} hidden />}
                           </span>
                           <span class="qk-check" aria-hidden="true"><Icon name="check" size={14} /></span>
                         </button>
@@ -1144,6 +1145,33 @@ const data = {
     color: var(--muted);
   }
 
+  .qk-inc {
+    grid-column: 1 / -1;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(51, 54, 58, 0.25);
+    font-size: 0.9rem;
+    color: var(--ink);
+  }
+
+  .qk-inc[hidden] {
+    display: none;
+  }
+
+  .qk.is-on .qk-ex {
+    display: none;
+  }
+
+  .qk :global(.qk-edit) {
+    margin-left: 8px;
+    padding-bottom: 2px;
+    font-size: 0.74rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--cta);
+    border-bottom: 1px solid currentColor;
+  }
+
   .qk-ex {
     grid-column: 1 / -1;
     margin-top: 8px;
@@ -1318,6 +1346,22 @@ const data = {
   .opt:has(input:focus-visible) {
     outline: 2px solid var(--cta);
     outline-offset: -2px;
+  }
+
+  /* Zone steckt im Paket oder in einer Kombi */
+  .opt[data-cover] .o-price {
+    opacity: 0.45;
+  }
+
+  .opt[data-cover]::after {
+    content: attr(data-cover);
+    position: absolute;
+    right: 8px;
+    top: 6px;
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--cta);
   }
 
   .opt:has(input:disabled) {
@@ -2302,8 +2346,6 @@ const data = {
     step: 1,
     group: null as 'frauen' | 'maenner' | null,
     selected: new Set<string>(),
-    pkgOn: false,
-    pkgCard: null as string | null,
     date: null as Date | null,
     time: null as string | null,
     slot: null as Slot | null,
@@ -2343,35 +2385,44 @@ const data = {
   function bestSingles(list: Svc[]) {
     const ids = new Set(list.map((x) => x.id));
     const lines: Line[] = [];
+    const merged: string[] = [];
     for (const m of MERGES) {
       const into = byId.get(m.into);
       if (!into || ids.has(m.into) || !m.pair.every((id) => ids.has(id))) continue;
       const sep = m.pair.reduce((a, id) => a + (byId.get(id)?.price ?? 0), 0);
       if ((into.price ?? 0) < sep) {
         m.pair.forEach((id) => ids.delete(id));
+        merged.push(...m.pair);
         lines.push(asLine(into));
       }
     }
     list.forEach((x) => ids.has(x.id) && lines.push(asLine(x)));
-    return { lines, sum: lines.reduce((a, l) => a + (l.price ?? 0), 0) };
+    return { lines, merged, sum: lines.reduce((a, l) => a + (l.price ?? 0), 0) };
   }
   const pkgsFor = () => data.packages.filter((x) => x.group === state.group);
 
+  // Kombi-Produkte bestehen aus ihren Zonen: so zählen sie im Ganzkörper-Paket als 2 Zonen
+  const EXPANDS: Record<string, string[]> = {
+    'kombi-intim-achseln': ['bikini-intim', 'achseln'],
+    'brust-bauch': ['brust', 'bauch-1'],
+  };
   // Leistungen, die sich ausschliessen (eine enthält die andere): beim Anhaken wird die andere abgewählt
   const CONFLICTS: string[][] = [
     ['oberlippe', 'oberlippe-kinn', 'gesicht'],
     ['beine-komplett', 'unterschenkel'],
     ['beine-komplett', 'oberschenkel'],
     ['bikinilinie', 'bikini-intim'],
-    ['kombi-intim-achseln', 'bikini-intim'],
-    ['kombi-intim-achseln', 'bikinilinie'],
-    ['kombi-intim-achseln', 'achseln'],
-    ['brust-bauch', 'brust'],
-    ['brust-bauch', 'bauch-1'],
     ['ruecken-inkl-nacken', 'nacken'],
     ['arme-komplett', 'oberarme'],
   ];
   function addSvc(id: string) {
+    if (EXPANDS[id]) return EXPANDS[id].forEach((x) => addSvc(x));
+    // Unter- und Oberschenkel zusammen = Beine komplett
+    const other = LEG_HALF.find((x) => x !== id);
+    if (LEG_HALF.includes(id) && other && state.selected.has(other)) {
+      state.selected.delete(other);
+      id = LEG_FULL;
+    }
     for (const g of CONFLICTS) if (g.includes(id)) g.forEach((x) => x !== id && state.selected.delete(x));
     state.selected.add(id);
   }
@@ -2382,42 +2433,39 @@ const data = {
     const single = bestSingles(zones);
     const sum = single.sum;
     const mins = zones.reduce((a, x) => a + x.minutes, 0);
+    const n = zones.length;
     let pk: Pkg | undefined;
-    let others = zones;
-    let need = 0; // fehlende Zonen
-    let needLegs = false;
     if (state.group === 'frauen') {
       const ids = new Set(zones.map((z) => z.id));
-      const full = ids.has(LEG_FULL) || LEG_HALF.every((x) => ids.has(x));
-      const half = !full && LEG_HALF.some((x) => ids.has(x));
-      pk = pkgsFor().find((x) => x.legs === (full ? 'full' : half ? 'half' : 'none'));
-      needLegs = !full && !half;
-      others = zones.filter((z) => !isLeg(z.id));
-      need = Math.max(0, 2 - others.length);
-    } else {
-      pk = pkgsFor()[0];
-      need = Math.max(0, 3 - zones.length);
-    }
-    const included = state.group === 'frauen' ? 2 : 3;
-    const ok = !!pk && !needLegs && need === 0;
-    const pkgPrice = ok ? pk!.price + (others.length - included) * pk!.extra : 0;
+      const half = !ids.has(LEG_FULL) && LEG_HALF.some((x) => ids.has(x));
+      pk = pkgsFor().find((x) => x.legs === (half ? 'half' : 'full'));
+    } else pk = pkgsFor()[0];
+    const included = 3;
+    const need = Math.max(0, included - n);
+    const ok = !!pk && need === 0;
+    const pkgPrice = ok ? pk!.price + (n - included) * pk!.extra : 0;
     const save = ok ? sum - pkgPrice : 0;
-    const apply = state.pkgOn && ok && save > 0;
-    const restLines = bestSingles(rest).lines;
+    // automatisch, sobald das Paket günstiger ist
+    const apply = ok && save > 0;
+    const restCalc = bestSingles(rest);
+    const allCalc = bestSingles([...zones, ...rest]);
     const lines: Line[] = apply
       ? [
           {
             id: pk!.id,
             name: `${pk!.name} (${zones.map((z) => z.name).join(', ')})`,
             price: pkgPrice,
-            minutes: Math.max(pk!.minutes + Math.max(0, others.length - included) * pk!.extraMinutes, mins),
+            minutes: Math.max(pk!.minutes + Math.max(0, n - included) * pk!.extraMinutes, mins),
             priceLabel: null,
             single: false,
           },
-          ...restLines,
+          ...restCalc.lines,
         ]
-      : bestSingles([...zones, ...rest]).lines;
-    return { lines, zones, others, pk, n: zones.length, sum, pkgPrice, save, apply, ok, need, needLegs, included };
+      : allCalc.lines;
+    // Zonen, die in einem Paket/einer Kombi stecken (in der Liste nicht einzeln angehakt)
+    const inPkg = new Set(apply ? zones.map((z) => z.id) : []);
+    const inKombi = new Set(apply ? restCalc.merged : allCalc.merged);
+    return { lines, zones, pk, n, sum, pkgPrice, save, apply, ok, need, included, inPkg, inKombi };
   }
   const selectedList = () => pricing().lines;
   const totalMinutes = () => selectedList().reduce((a, s) => a + s.minutes, 0);
@@ -2434,10 +2482,7 @@ const data = {
   const serviceInputs = $$<HTMLInputElement>('[data-service]');
 
   function setGroup(g: 'frauen' | 'maenner') {
-    if (state.group !== g) {
-      state.selected.clear();
-      state.pkgOn = false;
-    }
+    if (state.group !== g) state.selected.clear();
     state.group = g;
     groupInputs.forEach((i) => (i.checked = i.value === g));
     $$('[data-group-panel]').forEach((p) => (p.hidden = p.dataset.groupPanel !== g));
@@ -2456,25 +2501,23 @@ const data = {
     if (d && !d.open) d.showModal();
   }
   function removePkg() {
-    state.pkgOn = false;
     [...state.selected].forEach((x) => eligible(byId.get(x)!) && state.selected.delete(x));
     state.time = null;
     state.slot = null;
     pickDialog()?.close();
     syncChecks();
   }
+  // Karte: Paket mit klassischen Zonen wählen – oder, wenn schon gewählt, bearbeiten
   function applyPkg(id: string) {
     const pk = data.packages.find((x) => x.id === id);
     if (!pk) return;
-    const current = state.pkgOn ? pricing().pk?.id ?? state.pkgCard : null;
-    state.pkgCard = id;
-    if (current !== id) {
+    const pr = pricing();
+    if (!(pr.apply && pr.pk?.id === id)) {
       [...state.selected].forEach((x) => {
         const v = byId.get(x);
         if (!v || v.single || eligible(v)) state.selected.delete(x);
       });
       pk.preset.forEach((x) => addSvc(x));
-      state.pkgOn = true;
       state.time = null;
       state.slot = null;
       syncChecks();
@@ -2484,19 +2527,27 @@ const data = {
   $$<HTMLButtonElement>('[data-pkg]').forEach((b) => b.addEventListener('click', () => applyPkg(b.dataset.pkg!)));
 
   function syncChecks() {
+    const pr = pricing();
+    const pkgName = pr.pk?.name ?? 'Ganzkörper';
     serviceInputs.forEach((i) => {
-      i.checked = state.selected.has(i.value);
-      const svc = byId.get(i.value);
-      if (svc?.requires.length) {
-        const ok = svc.requires.some((r) => state.selected.has(r));
-        i.disabled = !ok;
-        if (!ok) {
-          state.selected.delete(svc.id);
-          i.checked = false;
-        }
+      const id = i.value;
+      const row = i.closest<HTMLElement>('.opt');
+      let checked = state.selected.has(id);
+      let cover = '';
+      if (EXPANDS[id]) checked = EXPANDS[id].every((x) => pr.inKombi.has(x));
+      else if (pr.inPkg.has(id)) {
+        checked = false;
+        cover = `in ${pkgName}`;
+      } else if (pr.inKombi.has(id)) {
+        checked = false;
+        cover = 'in Kombi';
+      }
+      i.checked = checked;
+      if (row) {
+        if (cover) row.dataset.cover = cover;
+        else delete row.dataset.cover;
       }
     });
-    if (!pricing().n) state.pkgOn = false;
     $('[data-zones-note]').hidden = true;
     render();
   }
@@ -2504,15 +2555,29 @@ const data = {
   groupInputs.forEach((i) => i.addEventListener('change', () => setGroup(i.value as 'frauen' | 'maenner')));
   serviceInputs.forEach((i) =>
     i.addEventListener('change', () => {
-      const svc = byId.get(i.value)!;
-      if (i.checked) {
-        if (svc.single) {
-          state.selected.clear();
-          state.pkgOn = false;
-        } else [...state.selected].forEach((id) => byId.get(id)?.single && state.selected.delete(id));
-        addSvc(svc.id);
+      const id = i.value;
+      const svc = byId.get(id)!;
+      const pr = pricing();
+      if (pr.inPkg.has(id)) {
+        // steckt im Paket: dort bearbeiten
+        syncChecks();
+        openPick();
+        return;
+      }
+      if (EXPANDS[id]) {
+        if (EXPANDS[id].every((x) => pr.inKombi.has(x))) EXPANDS[id].forEach((x) => state.selected.delete(x));
+        else {
+          [...state.selected].forEach((x) => byId.get(x)?.single && state.selected.delete(x));
+          addSvc(id);
+        }
+      } else if (pr.inKombi.has(id)) {
+        state.selected.delete(id);
+      } else if (i.checked) {
+        if (svc.single) state.selected.clear();
+        else [...state.selected].forEach((x) => byId.get(x)?.single && state.selected.delete(x));
+        addSvc(id);
       } else {
-        state.selected.delete(svc.id);
+        state.selected.delete(id);
       }
       // Zeitslot ggf. neu wählen, wenn sich die Dauer ändert
       state.time = null;
@@ -3075,10 +3140,6 @@ const data = {
     const box = pickDialog();
     $$<HTMLDialogElement>('[data-pkg-pick]').forEach((b) => b !== box && b.open && b.close());
     if (!box) return;
-    if (!state.pkgOn) {
-      if (box.open) box.close();
-      return;
-    }
     const pr = pricing();
     const zonesOf = (f: (x: Svc) => boolean) => data.services.filter((x) => x.group === state.group && eligible(x) && f(x));
     const chip = (x: Svc) =>
@@ -3086,8 +3147,7 @@ const data = {
     const women = state.group === 'frauen';
     const name = pr.pk?.name ?? 'Ganzkörper';
     let status = '';
-    if (pr.needLegs) status = 'Wähle zuerst die Beine: komplett oder ein halbes Bein.';
-    else if (pr.need) status = `Wähle noch ${pr.need} ${pr.need === 1 ? 'Zone' : 'Zonen'}.`;
+    if (pr.need) status = `Wähle noch ${pr.need} ${pr.need === 1 ? 'Zone' : 'Zonen'}.`;
     else if (pr.apply)
       status = `<b>${fmtChf(pr.pkgPrice)}</b> statt einzeln <s>${fmtChf(pr.sum)}</s> <span class="pick-save">– ${fmtChf(pr.save)}</span>`;
     else status = `Einzeln günstiger (${fmtChf(pr.sum)}) – wir berechnen die Zonen einzeln.`;
@@ -3096,10 +3156,10 @@ const data = {
       <button type="button" class="pick-x" data-pick-close aria-label="Schliessen"><span aria-hidden="true"></span></button>
       <div class="pick-head">
         <p class="pick-t">${name}</p>
-        <p class="pick-r">${women ? 'Beine + 2 Zonen inklusive' : '3 Zonen inklusive'} · jede weitere + ${fmtChf(extra)}</p>
+        <p class="pick-r">3 Zonen inklusive · jede weitere + ${fmtChf(extra)}</p>
       </div>
-      ${women ? `<p class="pick-l">Beine</p><div class="chips">${zonesOf((x) => isLeg(x.id)).map(chip).join('')}</div>` : ''}
-      <p class="pick-l">${women ? 'Dazu deine Zonen' : 'Deine Zonen'} <span>${pr.others.length} gewählt</span></p>
+      ${women ? `<p class="pick-l">Beine <span>optional</span></p><div class="chips">${zonesOf((x) => isLeg(x.id)).map(chip).join('')}</div>` : ''}
+      <p class="pick-l">${women ? 'Weitere Zonen' : 'Deine Zonen'} <span>${pr.n} von 3 gewählt</span></p>
       <div class="chips">${zonesOf((x) => !women || !isLeg(x.id)).map(chip).join('')}</div>
       <div class="pick-foot">
         <p class="pick-status">${status}</p>
@@ -3137,7 +3197,7 @@ const data = {
     }),
   );
 
-  // Hinweis, wenn sich ein Ganzkörper-Paket lohnt (nur ausserhalb der Paket-Auswahl)
+  // Hinweis-Leiste: Paket ist aktiv (automatisch oder gewählt) – mit Bearbeiten
   function renderPkgBox() {
     renderPicker();
     const box = root.querySelector<HTMLElement>(`[data-group-panel="${state.group}"] [data-pkg-box]`);
@@ -3145,19 +3205,19 @@ const data = {
     if (!box) return;
     const pr = pricing();
     let html = '';
-    if (!state.pkgOn && pr.ok && pr.save > 0) {
-      html = `<p class="pkg-t">Als ${pr.pk!.name} sparst du ${fmtChf(pr.save)}</p>
-        <p class="pkg-x"><b>${fmtChf(pr.pkgPrice)}</b> statt ${fmtChf(pr.sum)} für deine ${pr.n} Zonen.</p>
-        <button type="button" class="pkg-btn" data-pkg-on>Übernehmen</button>`;
+    if (pr.apply) {
+      html = `<p class="pkg-t">${pr.pk!.name} · ${pr.n} Zonen <span class="pkg-save">– ${fmtChf(pr.save)}</span></p>
+        <p class="pkg-x"><b>${fmtChf(pr.pkgPrice)}</b> statt einzeln ${fmtChf(pr.sum)} – automatisch zusammengefasst.</p>
+        <button type="button" class="pkg-btn" data-pkg-edit>Bearbeiten</button>`;
     }
     box.hidden = !html;
     box.innerHTML = html;
-    box.querySelector('[data-pkg-on]')?.addEventListener('click', () => {
-      state.pkgOn = true;
-      state.pkgCard = pr.pk!.id;
-      state.time = null;
-      state.slot = null;
-      render();
+    box.querySelector('[data-pkg-edit]')?.addEventListener('click', openPick);
+    // Paket-Karten: gewählte Zonen anzeigen
+    root.querySelectorAll<HTMLElement>('[data-pkg-inc]').forEach((el) => {
+      const on = pr.apply && pr.pk?.id === el.dataset.pkgInc;
+      el.hidden = !on;
+      el.innerHTML = on ? `${pr.zones.map((z) => z.name).join(' · ')} <span class="qk-edit">Bearbeiten</span>` : '';
     });
   }
 
@@ -3204,12 +3264,13 @@ const data = {
     renderPkgBox();
     const pr = pricing();
     root.querySelectorAll<HTMLElement>('[data-pkg]').forEach((b) => {
-      const on = state.pkgOn && (pr.pk?.id ?? state.pkgCard) === b.dataset.pkg;
+      const on = pr.apply && pr.pk?.id === b.dataset.pkg;
       b.classList.toggle('is-on', on);
       b.setAttribute('aria-pressed', String(on));
     });
     root.querySelectorAll<HTMLElement>('[data-quick]').forEach((b) => {
-      const on = state.selected.has(b.dataset.quick!);
+      const box = root.querySelector<HTMLInputElement>(`[data-group-panel="${state.group}"] input[data-service][value="${b.dataset.quick}"]`);
+      const on = !!box?.checked;
       b.classList.toggle('is-on', on);
       b.setAttribute('aria-pressed', String(on));
     });
@@ -3226,7 +3287,7 @@ const data = {
   else if (preSvc?.single) setGroup('frauen');
   if (preSvc && pkgIdSet.has(preSvc.id)) applyPkg(preSvc.id);
   else if (preSvc && (preSvc.group === state.group || preSvc.id === 'beratungsgespraech')) {
-    state.selected.add(preSvc.id);
+    addSvc(preSvc.id);
     syncChecks();
     requestAnimationFrame(() => {
       const el = root.querySelector(`[data-group-panel="${state.group}"] input[value="${preSvc.id}"]`);
