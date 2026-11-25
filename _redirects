@@ -1,0 +1,8 @@
+# Hosting-Redirects (Netlify / Cloudflare Pages) für alte Wix-URLs
+/service-page/*      /preise   301
+/booking-calendar/*  /termin   301
+/book-online         /preise   301
+/über-uns            /studio   301
+/%C3%BCber-uns       /studio   301
+/agb-s               /agb      301
+/bewertungen         /         301
