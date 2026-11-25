@@ -1,12 +1,15 @@
 ---
-// Kontakt: zwei klar getrennte Wege (Termin buchen · Frage stellen), darunter eigenständig das Formular
-// und die Anfahrt. Grossflächig, ruhig, Linien statt Boxen.
+// Kontakt: zwei klar getrennte Wege (Termin buchen · Frage stellen), darunter die Anfahrt. Grossflächig, ruhig, Linien statt Boxen.
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import { site } from '../data/site';
 import imgHero from '../assets/shoot/raum-weit.jpg';
 import imgTuecher from '../assets/shoot/detail-tuecher.jpg';
+
+const dest = encodeURIComponent(`${site.address.street}, ${site.address.zip} ${site.address.city}`);
+const appleMaps = `https://maps.apple.com/?daddr=${dest}&q=${encodeURIComponent(site.name)}`;
+const googleMaps = `https://www.google.com/maps/dir/?api=1&destination=${dest}`;
 
 const channels = [
   { label: 'WhatsApp', value: 'Nachricht schreiben', href: site.whatsappHref, ext: true },
@@ -51,33 +54,6 @@ const channels = [
     </div>
   </section>
 
-  <!-- Nachricht schreiben: eigenständig -->
-  <section class="write" id="nachricht">
-    <div class="write-in">
-      <div class="write-head">
-        <h2 class="reveal">Nachricht<br />schreiben</h2>
-        <p class="reveal">Für alles, was etwas mehr Platz braucht. Wir antworten persönlich.</p>
-      </div>
-      <form class="form reveal" data-contact-form>
-        <div class="row2">
-          <label>Vorname<input name="vorname" autocomplete="given-name" required /></label>
-          <label>Nachname<input name="nachname" autocomplete="family-name" /></label>
-        </div>
-        <div class="row2">
-          <label>E-Mail<input type="email" name="email" autocomplete="email" required /></label>
-          <label><span>Telefon <span class="opt">(optional)</span></span><input type="tel" name="telefon" autocomplete="tel" /></label>
-        </div>
-        <label>Deine Nachricht<textarea name="nachricht" rows="5" required></textarea></label>
-        <label class="consent">
-          <input type="checkbox" required />
-          <span>Ich bin einverstanden, dass meine Angaben zur Beantwortung meiner Anfrage verwendet werden. Mehr in der <a href="/datenschutz">Datenschutzerklärung</a>.</span>
-        </label>
-        <button class="send" type="submit">Nachricht senden</button>
-        <p class="sent" hidden data-sent>Danke! Wir haben deine Nachricht erhalten und melden uns so schnell wie möglich.</p>
-      </form>
-    </div>
-  </section>
-
   <!-- Anfahrt -->
   <section class="visit">
     <div class="visit-grid">
@@ -87,6 +63,10 @@ const channels = [
           {site.address.street}<br />
           {site.address.zip} {site.address.city}
         </address>
+        <p class="routes reveal">
+          <a href={appleMaps} target="_blank" rel="noopener">Route in Apple Karten</a>
+          <a href={googleMaps} target="_blank" rel="noopener">Route in Google Maps</a>
+        </p>
         <dl class="hours reveal">
           {
             site.hours.map((h) => (
@@ -98,7 +78,6 @@ const channels = [
           }
         </dl>
         <p class="park reveal">{site.parking} · Bezahlung: {site.paymentMethods}</p>
-        <a class="route reveal" href={site.mapsUrl} target="_blank" rel="noopener">Route planen</a>
       </div>
       <figure class="visit-img" data-anim="soft">
         <Image src={imgTuecher} alt="Frische Tücher im Behandlungsraum" widths={[500, 800, 1100]} sizes="(min-width: 900px) 44vw, 100vw" />
@@ -255,140 +234,32 @@ const channels = [
     transform: rotate(45deg);
   }
 
-  /* ——— Nachricht ——— */
-  .write {
+  /* ——— Anfahrt ——— */
+  .visit {
     padding-block: clamp(110px, 11vw, 170px);
     background: var(--veil);
   }
 
-  .write-in {
-    display: grid;
-    gap: 48px clamp(48px, 7vw, 120px);
-    max-width: 1320px;
-    margin-inline: auto;
-    padding-inline: var(--gutter);
+  .routes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 32px;
+    margin: -8px 0 32px;
   }
 
-  @media (min-width: 960px) {
-    .write-in {
-      grid-template-columns: 0.8fr 1.2fr;
-    }
-  }
-
-  .write-head h2 {
-    margin: 0 0 22px;
-    font-size: clamp(2.6rem, 4.4vw, 4.6rem);
-  }
-
-  .write-head p {
-    max-width: 22em;
-    margin: 0;
-    color: var(--ink-2);
-  }
-
-  .form {
-    display: grid;
-    gap: 22px;
-  }
-
-  .row2 {
-    display: grid;
-    gap: 22px;
-  }
-
-  @media (min-width: 560px) {
-    .row2 {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-
-  .form label:not(.consent) {
-    display: grid;
-    gap: 8px;
-    font-size: 0.76rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-2);
-  }
-
-  .opt {
-    letter-spacing: 0.06em;
-    text-transform: none;
-    color: var(--muted);
-  }
-
-  input:not([type='checkbox']),
-  textarea {
-    width: 100%;
-    padding: 14px 0;
-    border: 0;
-    border-bottom: 1px solid var(--line-strong);
-    border-radius: 0;
-    background: transparent;
-    font: inherit;
-    font-size: 1.05rem;
-    letter-spacing: normal;
-    text-transform: none;
-    color: var(--ink);
-  }
-
-  textarea {
-    resize: vertical;
-  }
-
-  input:focus,
-  textarea:focus {
-    outline: none;
-    border-color: var(--cta);
-  }
-
-  .consent {
-    display: grid;
-    grid-template-columns: 20px 1fr;
-    gap: 12px;
-    font-size: 0.95rem;
-    color: var(--ink-2);
-  }
-
-  .consent input {
-    width: 18px;
-    height: 18px;
-    margin-top: 3px;
-    accent-color: var(--cta);
-  }
-
-  .send {
-    justify-self: start;
-    min-height: 58px;
-    padding: 0 40px;
-    border: 1px solid var(--cta);
-    background: var(--cta);
-    font: inherit;
-    font-size: 0.88rem;
-    font-weight: 450;
+  .routes a {
+    padding-bottom: 6px;
+    font-size: 0.8rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: #fff;
-    cursor: pointer;
+    text-decoration: none;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line-strong);
   }
 
-  .send:hover {
-    background: var(--cta-hover);
-  }
-
-  .send:disabled {
-    opacity: 0.5;
-    cursor: default;
-  }
-
-  .sent {
-    margin: 0;
+  .routes a:hover {
+    border-color: var(--cta);
     color: var(--cta);
-  }
-
-  /* ——— Anfahrt ——— */
-  .visit {
-    padding-block: clamp(110px, 11vw, 170px);
   }
 
   .visit-grid {
@@ -446,16 +317,6 @@ const channels = [
     color: var(--ink-2);
   }
 
-  .route {
-    display: inline-block;
-    padding-bottom: 6px;
-    font-size: 0.86rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: var(--ink);
-    border-bottom: 1px solid var(--line-strong);
-  }
 
   .visit-img {
     margin: 0;
@@ -469,13 +330,3 @@ const channels = [
     object-fit: cover;
   }
 </style>
-
-<script>
-  // Visuelle Demo: Vor dem Livegang an einen Formular-Dienst (z. B. Formspree, Netlify Forms) anbinden.
-  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
-  form?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    form.querySelector<HTMLElement>('[data-sent]')!.hidden = false;
-    form.querySelector<HTMLButtonElement>('button[type=submit]')!.disabled = true;
-  });
-</script>

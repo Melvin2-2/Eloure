@@ -9,7 +9,7 @@ import Base from '../layouts/Base.astro';
 import StudioCalm from '../components/StudioCalm.astro';
 import UspLines from '../components/UspLines.astro';
 import LoopVideo from '../components/LoopVideo.astro';
-import { services, chf, type Group } from '../data/services';
+import { services, firstVisit, chf, duration, type Group } from '../data/services';
 import { googleRating, pickReview } from '../data/reviews';
 import { signetRow, signetOne } from '../lib/signet';
 
@@ -53,6 +53,9 @@ const pkgCards = [
   { id: 'beine-komplett', tag: 'Topseller', name: 'Beine komplett', meta: '45 Min.', was: price('unterschenkel') + price('oberschenkel') },
   { id: 'kombi-intim-achseln', tag: 'Kombi', name: 'Intim + Achseln', meta: '30 Min.', was: price('bikini-intim') + price('achseln') },
 ].map((c) => ({ ...c, price: price(c.id), save: (c.was as number) - price(c.id) }));
+
+// Probebehandlung für Neukundinnen
+const probe = firstVisit.find((x) => x.id === 'probebehandlung-achsel-inkl-beratung')!;
 
 const best: Record<Group, string[]> = {
   frauen: ['achseln', 'bikini-intim', 'kombi-intim-achseln', 'beine-komplett'],
@@ -108,6 +111,25 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
     <div class="c-narrow">
       <h2 class="c-ttl reveal">Ein Studio.<br />Eine Sache.</h2>
       <p class="reveal">Laserhaarentfernung mit medizinischem Diodenlaser – und sonst nichts.</p>
+    </div>
+  </section>
+
+  <!-- Probebehandlung: Neukundinnen 50 % -->
+  <section class="c-probe on-frost" aria-labelledby="probe-titel">
+    <div class="c-probe-in">
+      <div class="c-probe-text">
+        <h2 class="c-ttl reveal" id="probe-titel">Erst mal<br />testen.</h2>
+        <p class="reveal">Probebehandlung Achsel inklusive Beratung – für Neukundinnen 50 % günstiger.</p>
+      </div>
+      <div class="c-probe-offer reveal">
+        <span class="c-probe-tag">Neukunden –50 %</span>
+        <p class="c-probe-price">
+          {chf(probe.price)}
+          <s>{chf(probe.was ?? null)}</s>
+        </p>
+        <p class="c-probe-meta">{duration(probe.minutes)} · Achsel inkl. Beratung</p>
+        <a class="c-btn c-btn-cta" href={`/termin?behandlung=${probe.id}&gruppe=frauen`}>Probebehandlung buchen</a>
+      </div>
     </div>
   </section>
 
@@ -865,6 +887,71 @@ const voices = ['Julia F.', 'Dina G.', 'Cindy A.', 'Gökce', 'Natalie B.', 'Amy 
     font-size: clamp(0.98rem, 1.05vw, 1.06rem);
     line-height: 1.55;
     color: rgba(255, 255, 255, 0.94);
+  }
+
+  /* ——— Probebehandlung ——— */
+  .c-probe {
+    padding-block: clamp(110px, 11vw, 170px);
+  }
+
+  .c-probe-in {
+    display: grid;
+    gap: 48px clamp(48px, 8vw, 140px);
+    align-items: center;
+    max-width: 1240px;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .c-probe-text .c-ttl {
+    font-size: clamp(2.8rem, 5.6vw, 6.2rem);
+  }
+
+  .c-probe-text p {
+    max-width: 24em;
+    margin: 0;
+  }
+
+  .c-probe-offer {
+    padding-top: 28px;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .c-probe-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    color: #fff;
+    background: var(--cta);
+  }
+
+  .c-probe-price {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    margin: 22px 0 6px;
+    font-weight: 200;
+    font-size: clamp(3.2rem, 6vw, 5.6rem);
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .c-probe-price s {
+    font-weight: 300;
+    font-size: 1.3rem;
+    color: var(--ink-2);
+  }
+
+  .c-probe-meta {
+    margin: 0 0 32px;
+    font-size: 1rem;
+  }
+
+  @media (min-width: 900px) {
+    .c-probe-in {
+      grid-template-columns: 1.1fr 0.9fr;
+    }
   }
 
   /* ——— Pakete im Stil der Buchung ——— */
